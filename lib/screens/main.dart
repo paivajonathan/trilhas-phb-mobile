@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/screens/chat/chat.dart';
 import 'package:trilhas_phb/screens/home/home.dart';
 import 'package:trilhas_phb/screens/profile/profile.dart';
 import 'package:trilhas_phb/screens/ranking/ranking.dart';
-import 'package:trilhas_phb/services/auth.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -20,41 +21,37 @@ class _MainScreenState extends State<MainScreen> {
     ProfileScreen()
   ];
 
-  final AuthService _auth = AuthService();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Trilhas PHB',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold
-          ),
-        ),
-        backgroundColor: Colors.green,
-        actions: [
-          ElevatedButton(
-            onPressed: () async {
-              await _auth.signOut();
-            },
-            child: Text('Log off'),
-          )
-        ],
-      ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chat'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.leaderboard), label: 'Ranking'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+            icon: Icon(FontAwesomeIcons.solidCompass),
+            label: 'Explorar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble),
+            label: 'Comunicados',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.leaderboard),
+            label: 'Classificação',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.red,
-        unselectedItemColor: Colors.blue,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.secondary,
+        type: BottomNavigationBarType.fixed,
+        selectedFontSize: 10,
+        unselectedFontSize: 10,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
         onTap: (int index) {
           setState(() {
             _selectedIndex = index;
