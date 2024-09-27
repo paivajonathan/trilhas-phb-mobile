@@ -13,17 +13,6 @@ class AuthService {
       .map((User? user) => _userModelFromUser(user));
   }
 
-  // Future<User?> signInAnonymously() async {
-  //   try {
-  //     UserCredential result = await _auth.signInAnonymously();
-  //     User? user = result.user;
-  //     return user;
-  //   } catch (e) {
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
-
   Future<UserModel?> signInWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(

@@ -11,8 +11,9 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<UserModel?>(context);
     
-    if (user == null)
-      return Authenticate();
+    if (user == null) {
+      return const Authenticate();
+    }
 
     return MainScreen();
   }
