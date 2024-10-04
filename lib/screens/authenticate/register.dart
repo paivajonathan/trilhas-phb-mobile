@@ -80,11 +80,7 @@ class _RegisterState extends State<Register> {
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    dynamic result = await _auth.registerWithEmailAndPassword(email, password);
-
-                    if (result == null) {
-                      setState(() => error = 'Ocorreu um erro ao cadastrar');
-                    }
+                    print("Testando");
                   }
                 },
                 child: const Text('Register', style: TextStyle(color: Colors.black)),

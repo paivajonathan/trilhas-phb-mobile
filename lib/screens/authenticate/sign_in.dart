@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
+import 'package:trilhas_phb/screens/main.dart';
 import 'package:trilhas_phb/services/auth.dart';
 
 class SignIn extends StatefulWidget {
@@ -28,7 +29,7 @@ class _SignInState extends State<SignIn> {
         children: [
           Container(
             clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(10),
                 bottomRight: Radius.circular(10),
@@ -39,15 +40,15 @@ class _SignInState extends State<SignIn> {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             child: Form(
               key: _formKey,
               child: Column(
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Container(
                     width: double.infinity,
-                    child: Text(
+                    child: const Text(
                       'Bem Vindo(a)!',
                       textAlign: TextAlign.left,
                       style: TextStyle(
@@ -56,23 +57,23 @@ class _SignInState extends State<SignIn> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       hintText: 'Email',
-                      hintStyle: TextStyle(fontSize: 16),
+                      hintStyle: const TextStyle(fontSize: 16),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: const Color.fromARGB(255, 138, 138, 138),
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 138, 138, 138),
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: const Color.fromARGB(255, 138, 138, 138),
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 138, 138, 138),
                         ),
                       ),
                     ),
@@ -87,23 +88,23 @@ class _SignInState extends State<SignIn> {
                       setState(() => email = value);
                     },
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextFormField(
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       hintText: 'Senha',
-                      hintStyle: TextStyle(fontSize: 16),
+                      hintStyle: const TextStyle(fontSize: 16),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: const Color.fromARGB(255, 138, 138, 138),
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 138, 138, 138),
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          color: const Color.fromARGB(255, 138, 138, 138),
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 138, 138, 138),
                         ),
                       ),
                     ),
@@ -124,31 +125,38 @@ class _SignInState extends State<SignIn> {
                     obscureText: true,
                     obscuringCharacter: '*',
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Container(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          dynamic result = await _auth
-                              .signInWithEmailAndPassword(email, password);
+                          final response = await _auth.login(email, password);
+                          
+                          if (!context.mounted) return;
 
-                          if (result == null) {
-                            setState(
-                                () => error = 'Ocorreu um erro ao fazer login');
+                          if (response.statusCode == 200) {
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (context) => MainScreen()),
+                              (Route<dynamic> route) => false,
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Error")),
+                            );
                           }
                         }
                       },
-                      child: Text(
-                        'Login',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         padding: EdgeInsets.symmetric(vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
+                      ),
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
                   ),
@@ -159,18 +167,20 @@ class _SignInState extends State<SignIn> {
                       onPressed: () {
                         widget.toggleView();
                       },
-                      child: Text('Criar conta',
-                          style: TextStyle(color: AppColors.primary)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        side: BorderSide(
+                        side: const BorderSide(
                           width: 1,
                           color: AppColors.primary,
                         ),
+                      ),
+                      child: const Text(
+                        'Criar conta',
+                        style: TextStyle(color: AppColors.primary),
                       ),
                     ),
                   ),
