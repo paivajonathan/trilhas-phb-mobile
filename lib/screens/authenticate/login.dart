@@ -1,24 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:trilhas_phb/constants/app_colors.dart';
-import 'package:trilhas_phb/screens/main.dart';
-import 'package:trilhas_phb/services/auth.dart';
+import "package:flutter/material.dart";
+import "package:trilhas_phb/constants/app_colors.dart";
+import "package:trilhas_phb/screens/main.dart";
+import "package:trilhas_phb/services/auth.dart";
 
-class SignIn extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   final Function toggleView;
 
-  const SignIn({super.key, required this.toggleView});
+  const LoginScreen({super.key, required this.toggleView});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _SignInState extends State<SignIn> {
+class _LoginScreenState extends State<LoginScreen> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
-  String email = '';
-  String password = '';
-  String error = '';
+  String email = "";
+  String password = "";
+  String error = "";
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,7 @@ class _SignInState extends State<SignIn> {
                   Container(
                     width: double.infinity,
                     child: const Text(
-                      'Bem Vindo(a)!',
+                      "Bem Vindo(a)!",
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -62,7 +63,7 @@ class _SignInState extends State<SignIn> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
-                      hintText: 'Email',
+                      hintText: "Email",
                       hintStyle: const TextStyle(fontSize: 16),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -79,7 +80,7 @@ class _SignInState extends State<SignIn> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Digite um email.';
+                        return "Digite um email.";
                       }
 
                       return null;
@@ -93,7 +94,7 @@ class _SignInState extends State<SignIn> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
-                      hintText: 'Senha',
+                      hintText: "Senha",
                       hintStyle: const TextStyle(fontSize: 16),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -110,11 +111,11 @@ class _SignInState extends State<SignIn> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Digite uma senha.';
+                        return "Digite uma senha.";
                       }
 
                       if (value.length < 6) {
-                        return 'Digite uma senha maior do que 6 caracteres';
+                        return "Digite uma senha maior do que 6 caracteres";
                       }
 
                       return null;
@@ -123,28 +124,30 @@ class _SignInState extends State<SignIn> {
                       setState(() => password = value);
                     },
                     obscureText: true,
-                    obscuringCharacter: '*',
+                    obscuringCharacter: "*",
                   ),
                   const SizedBox(height: 20),
                   Container(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          final response = await _auth.login(email, password);
-                          
-                          if (!context.mounted) return;
+                        if (!_formKey.currentState!.validate()) return;
 
-                          if (response.statusCode == 200) {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (context) => MainScreen()),
-                              (Route<dynamic> route) => false,
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Error")),
-                            );
-                          }
+                        setState(() => loading = true);
+                        final response = await _auth.login(email, password);
+                        setState(() => loading = false);
+                        
+                        if (!context.mounted) return;
+
+                        if (response.statusCode == 200) {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => MainScreen()),
+                            (Route<dynamic> route) => false,
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Error")),
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -154,10 +157,20 @@ class _SignInState extends State<SignIn> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
+                      child: loading 
+                        ? const SizedBox(
+                            height: 23.0,
+                            width: 23.0,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white)
+                              )
+                            ),
+                          )
+                        : const Text(
+                            "Login",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -179,7 +192,7 @@ class _SignInState extends State<SignIn> {
                         ),
                       ),
                       child: const Text(
-                        'Criar conta',
+                        "Criar conta",
                         style: TextStyle(color: AppColors.primary),
                       ),
                     ),

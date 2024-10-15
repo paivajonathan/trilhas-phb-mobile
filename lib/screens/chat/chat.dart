@@ -1,12 +1,11 @@
 import "package:flutter/material.dart";
-import "package:trilhas_phb/services/auth.dart";
 import "package:trilhas_phb/services/chat.dart";
-import "package:web_socket_channel/io.dart";
-import "package:web_socket_channel/web_socket_channel.dart";
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {

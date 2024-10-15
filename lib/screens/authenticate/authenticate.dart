@@ -1,27 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:trilhas_phb/screens/authenticate/register.dart';
-import 'package:trilhas_phb/screens/authenticate/sign_in.dart';
+import "package:flutter/material.dart";
+import "package:trilhas_phb/screens/authenticate/register.dart";
+import "package:trilhas_phb/screens/authenticate/login.dart";
 
-class Authenticate extends StatefulWidget {
-  const Authenticate({super.key});
+class AuthenticateScreen extends StatefulWidget {
+  const AuthenticateScreen({super.key});
 
   @override
-  State<Authenticate> createState() => _AuthenticateState();
+  State<AuthenticateScreen> createState() => _AuthenticateScreenState();
 }
 
-class _AuthenticateState extends State<Authenticate> {
-  bool showSignIn = true;
+class _AuthenticateScreenState extends State<AuthenticateScreen> {
+  bool showLogin = true;
 
   void toggleView() {
-    setState(() => showSignIn = !showSignIn);
+    setState(() => showLogin = !showLogin);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (showSignIn) {
-      return SignIn(toggleView: toggleView);
-    }
-
-    return Register(toggleView: toggleView);
+    return showLogin 
+      ? LoginScreen(toggleView: toggleView)
+      : RegisterScreen(toggleView: toggleView);
   }
 }

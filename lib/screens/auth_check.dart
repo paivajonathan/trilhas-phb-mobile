@@ -1,16 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:trilhas_phb/screens/authenticate/authenticate.dart';
-import 'package:trilhas_phb/screens/main.dart';
-import 'package:trilhas_phb/services/auth.dart';
+import "package:flutter/material.dart";
+import "package:trilhas_phb/screens/authenticate/authenticate.dart";
+import "package:trilhas_phb/screens/main.dart";
+import "package:trilhas_phb/services/auth.dart";
 
-class AuthCheck extends StatefulWidget {
-  const AuthCheck({super.key});
+class AuthCheckScreen extends StatefulWidget {
+  const AuthCheckScreen({super.key});
 
   @override
-  State<AuthCheck> createState() => _AuthCheckState();
+  State<AuthCheckScreen> createState() => _AuthCheckScreenState();
 }
 
-class _AuthCheckState extends State<AuthCheck> {
+class _AuthCheckScreenState extends State<AuthCheckScreen> {
   final authService = AuthService();
 
   late Future<Map<String, dynamic>?> _user;
@@ -32,10 +32,10 @@ class _AuthCheckState extends State<AuthCheck> {
 
         if (snapshot.data != null) {
           print(snapshot.data!["user_type"]);
-          return MainScreen();
+          return const MainScreen();
         }
 
-        return const Authenticate();
+        return const AuthenticateScreen();
       }
     );
   }

@@ -9,15 +9,15 @@ class HikeModel {
 
   factory HikeModel.fromMap(Map<String, dynamic> map) {
     return HikeModel(
-      name: map['name'] ?? '',
-      description: map['description'] ?? '',
+      name: map["name"] ?? "",
+      description: map["description"] ?? "",
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'name': name,
-      'description': description,
+      "name": name,
+      "description": description,
     };
   }
 }

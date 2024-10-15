@@ -1,26 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:trilhas_phb/services/auth.dart';
+import "package:flutter/material.dart";
+import "package:trilhas_phb/services/auth.dart";
 
-class Register extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   final Function toggleView;
   
-  const Register({
+  const RegisterScreen({
     super.key,
     required this.toggleView,
   });
 
   @override
-  State<Register> createState() => _RegisterState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterState extends State<Register> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
-  String email = '';
-  String password = '';
-  String error = '';
+  String email = "";
+  String password = "";
+  String error = "";
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +27,13 @@ class _RegisterState extends State<Register> {
       backgroundColor: Colors.black38,
       appBar: AppBar(
         backgroundColor: Colors.purple,
-        title: const Text('Sign Up'),
+        title: const Text("Sign Up"),
         actions: [
           ElevatedButton.icon(
             onPressed: () {
               widget.toggleView();
             },
-            label: const Text('Sign In'),
+            label: const Text("Sign In"),
             icon: const Icon(Icons.person),
           )
         ],
@@ -49,7 +48,7 @@ class _RegisterState extends State<Register> {
               TextFormField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Digite um email.';
+                    return "Digite um email.";
                   }
 
                   return null;
@@ -62,11 +61,11 @@ class _RegisterState extends State<Register> {
               TextFormField(
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Digite uma senha.';
+                    return "Digite uma senha.";
                   }
 
                   if (value.length < 6) {
-                    return 'Digite uma senha maior do que 6 caracteres';
+                    return "Digite uma senha maior do que 6 caracteres";
                   }
 
                   return null;
@@ -83,7 +82,7 @@ class _RegisterState extends State<Register> {
                     print("Testando");
                   }
                 },
-                child: const Text('Register', style: TextStyle(color: Colors.black)),
+                child: const Text("Register", style: TextStyle(color: Colors.black)),
               ),
               const SizedBox(height: 20),
               Text(

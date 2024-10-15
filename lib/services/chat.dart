@@ -1,6 +1,6 @@
-import 'package:trilhas_phb/services/auth.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import "package:trilhas_phb/services/auth.dart";
+import "package:web_socket_channel/io.dart";
+import "package:web_socket_channel/web_socket_channel.dart";
 
 class ChatService {
   final _auth = AuthService();

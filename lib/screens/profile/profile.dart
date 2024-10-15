@@ -1,11 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:trilhas_phb/screens/authenticate/authenticate.dart';
-import 'package:trilhas_phb/services/auth.dart';
+import "package:flutter/material.dart";
+import "package:trilhas_phb/screens/authenticate/authenticate.dart";
+import "package:trilhas_phb/services/auth.dart";
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+
+  const ProfileScreen({ super.key });
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   final _auth = AuthService();
-
-  ProfileScreen({ super.key });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
             width: double.infinity,
             child: GestureDetector(
               child: const Text(
-                'Sair',
+                "Sair",
                 textAlign: TextAlign.center,
               ),
               onTap: () async {
@@ -28,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
                 print("Testando");
                 if (!context.mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const Authenticate()),
+                  MaterialPageRoute(builder: (context) => const AuthenticateScreen()),
                   (Route<dynamic> route) => false,
                 );
               },
