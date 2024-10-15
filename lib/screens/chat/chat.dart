@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:trilhas_phb/services/auth.dart";
+import "package:trilhas_phb/services/chat.dart";
 import "package:web_socket_channel/io.dart";
 import "package:web_socket_channel/web_socket_channel.dart";
 
@@ -9,52 +10,29 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final _auth = AuthService();
-  late WebSocketChannel _channel;
+  final _chat = ChatService();
   final _controller = TextEditingController();
   final _messages = []; // Lista para armazenar mensagens
 
   @override
   void initState() {
     super.initState();
-    connectWebsocket();
-  }
-
-  Future<void> connectWebsocket() async {
-    String? token = await _auth.token;
-    Uri wsUrl = Uri.parse("wss://trilhas-phb-api.onrender.com/ws/chat/?token=$token");
-    
-    _channel = IOWebSocketChannel.connect(
-      wsUrl,
-      headers: {
-        "Content-type": "application/json",
-        "Accept": "application/json",
-        "Origin": "wss://trilhas-phb-api.onrender.com",
-      },
-    );
-    
-    print("Conexão realizada!");
-
-    // Escutando as mensagens recebidas
-    _channel.stream.listen((message) {
-      setState(() {
-        _messages.add(message); // Adiciona a nova mensagem à lista
-      });
+    _chat.connect((message) {
+      setState(() => _messages.add(message));
     });
   }
 
   @override
   void dispose() {
-    _channel.sink.close(); // Fecha a conexão WebSocket ao dispensar a tela
+    _chat.leave();
     _controller.dispose();
     super.dispose();
   }
 
   void _sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      _channel.sink.add(_controller.text); // Envia a mensagem para o servidor
-      _controller.clear();
-    }
+    if (_controller.text.isEmpty) return;
+    _chat.send(_controller.text);
+    _controller.clear();
   }
 
   @override
