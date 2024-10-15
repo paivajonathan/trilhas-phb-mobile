@@ -1,3 +1,5 @@
+import "dart:convert";
+
 import "package:flutter/material.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/screens/main.dart";
@@ -21,6 +23,51 @@ class _LoginScreenState extends State<LoginScreen> {
   String error = "";
   bool loading = false;
 
+  Future<void> _login(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => loading = true);
+    final response = await _auth.login(email, password);
+    setState(() => loading = false);
+      
+    if (!context.mounted) return;
+
+    if (response.statusCode != 200) {
+      Map<String, dynamic> message = json.decode(response.body);
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message["detail"])),
+      );
+
+      return;
+    }
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const MainScreen()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite um email.";
+    }
+
+    return null;                 
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite uma senha.";
+    }
+
+    if (value.length < 6) {
+      return "Digite uma senha maior do que 6 caracteres";
+    }
+
+    return null;
+  }
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,9 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 bottomRight: Radius.circular(10),
               ),
             ),
-            child: Image.network(
-              "https://images.pexels.com/photos/1578750/pexels-photo-1578750.jpeg?auto=compress&cs=tinysrgb&w=600",
-            ),
+            child: Image.asset("assets/hikes.jpeg"),
           ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -78,13 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Digite um email.";
-                      }
-
-                      return null;
-                    },
+                    validator: _validateEmail,
                     onChanged: (value) {
                       setState(() => email = value);
                     },
@@ -109,17 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Digite uma senha.";
-                      }
-
-                      if (value.length < 6) {
-                        return "Digite uma senha maior do que 6 caracteres";
-                      }
-
-                      return null;
-                    },
+                    validator: _validatePassword,
                     onChanged: (value) {
                       setState(() => password = value);
                     },
@@ -130,29 +159,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Container(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        if (!_formKey.currentState!.validate()) return;
-
-                        setState(() => loading = true);
-                        final response = await _auth.login(email, password);
-                        setState(() => loading = false);
-                        
-                        if (!context.mounted) return;
-
-                        if (response.statusCode == 200) {
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (context) => MainScreen()),
-                            (Route<dynamic> route) => false,
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Error")),
-                          );
-                        }
-                      },
+                      onPressed: () => _login(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
