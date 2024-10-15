@@ -6,7 +6,6 @@ import "package:jwt_decode/jwt_decode.dart";
 
 class AuthService {
   final storage = const FlutterSecureStorage();
-
   final apiUrl = "https://trilhas-phb-api.onrender.com/api/v1";
   
   Future<Map<String, dynamic>?> get user async {
@@ -20,6 +19,10 @@ class AuthService {
     if (isExpired) return null;
 
     return json.decode(user);
+  }
+
+  Future<String?> get token async {
+    return await storage.read(key: "jwt");
   }
 
   Future<http.Response> login(String email, String password) async {
