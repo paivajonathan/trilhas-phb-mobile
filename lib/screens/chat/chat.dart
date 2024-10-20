@@ -93,7 +93,7 @@ class MessageBubbleWidget extends StatelessWidget {
                  : const EdgeInsets.only(left: 10),
              width: 200,
              decoration: BoxDecoration(
-               color: isMe ? Colors.green : Colors.black12,
+               color: isMe ? Colors.yellow : Colors.black12,
                borderRadius: BorderRadius.circular(10),
              ),
              child: Column(
