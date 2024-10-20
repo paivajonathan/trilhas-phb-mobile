@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:trilhas_phb/screens/authenticate/authenticate.dart";
+import "package:trilhas_phb/screens/authenticate/login.dart";
 import "package:trilhas_phb/services/auth.dart";
 
 class ProfileScreen extends StatefulWidget {
@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 print("Testando");
                 if (!context.mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const AuthenticateScreen()),
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
                   (Route<dynamic> route) => false,
                 );
               },

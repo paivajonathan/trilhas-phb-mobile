@@ -1,13 +1,9 @@
 import "package:flutter/material.dart";
+import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/services/auth.dart";
 
-class RegisterScreen extends StatefulWidget {
-  final Function toggleView;
-  
-  const RegisterScreen({
-    super.key,
-    required this.toggleView,
-  });
+class RegisterScreen extends StatefulWidget {  
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -21,25 +17,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String password = "";
   String error = "";
 
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black38,
       appBar: AppBar(
-        backgroundColor: Colors.purple,
-        title: const Text("Sign Up"),
-        actions: [
-          ElevatedButton.icon(
-            onPressed: () {
-              widget.toggleView();
-            },
-            label: const Text("Sign In"),
-            icon: const Icon(Icons.person),
-          )
-        ],
+        iconTheme: const IconThemeData(
+          color: AppColors.primary, //change your color here
+        ),
+        backgroundColor: AppColors.secondary,
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        color: AppColors.secondary,
         child: Form(
           key: _formKey,
           child: Column(
@@ -76,13 +68,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 obscureText: true,
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    print("Testando");
-                  }
-                },
-                child: const Text("Register", style: TextStyle(color: Colors.black)),
+              Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    print("Hello World!");
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: loading 
+                    ? const SizedBox(
+                        height: 23.0,
+                        width: 23.0,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white)
+                          )
+                        ),
+                      )
+                    : const Text(
+                        "Cadastrar-se",
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                )
               ),
               const SizedBox(height: 20),
               Text(

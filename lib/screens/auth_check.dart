@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:trilhas_phb/screens/authenticate/authenticate.dart";
+import "package:trilhas_phb/screens/authenticate/login.dart";
 import "package:trilhas_phb/screens/main.dart";
 import "package:trilhas_phb/services/auth.dart";
 
@@ -35,7 +35,7 @@ class _AuthCheckScreenState extends State<AuthCheckScreen> {
           return const MainScreen();
         }
 
-        return const AuthenticateScreen();
+        return const LoginScreen();
       }
     );
   }

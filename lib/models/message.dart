@@ -15,9 +15,7 @@ class MessageModel {
     return MessageModel(
       content: map["content"] ?? "",
       sender: map["sender"] ?? "",
-      timestamp: map["timestamp"]
-        ? DateTime.fromMillisecondsSinceEpoch(map["timestamp"] * millisecondsInSeconds)
-        : DateTime.now(),
+      timestamp: DateTime.fromMillisecondsSinceEpoch(map["timestamp"] * millisecondsInSeconds),
     );
   }
 }

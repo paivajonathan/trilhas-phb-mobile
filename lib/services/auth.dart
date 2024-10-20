@@ -43,6 +43,41 @@ class AuthService {
     return response;
   }
 
+  Future<http.Response> register(
+    {
+      required String email,
+      required String password,
+      
+      required String fullName,
+      required String birthDate,
+      required String cellphone,
+      required String neighborhoodName,
+    }
+  ) async {
+    final url = Uri.parse("$apiUrl/users/");
+    
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(
+        {
+          "user": {
+            "email": email,
+            "password": password,
+          },
+          "profile": {
+            "full_name": fullName,
+            "cellphone": cellphone,
+            "birth_date": birthDate,
+            "neighborhood_name": neighborhoodName,
+          }
+        }
+      ),
+    );
+
+    return response;
+  }
+
   Future<void> logout() async {
     await storage.delete(key: "jwt");
     await storage.delete(key: "user");

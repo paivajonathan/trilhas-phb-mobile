@@ -2,13 +2,12 @@ import "dart:convert";
 
 import "package:flutter/material.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
+import "package:trilhas_phb/screens/authenticate/register.dart";
 import "package:trilhas_phb/screens/main.dart";
 import "package:trilhas_phb/services/auth.dart";
 
 class LoginScreen extends StatefulWidget {
-  final Function toggleView;
-
-  const LoginScreen({super.key, required this.toggleView});
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -188,7 +187,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        widget.toggleView();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterScreen()
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
