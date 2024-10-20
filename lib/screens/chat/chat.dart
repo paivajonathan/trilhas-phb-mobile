@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/models/message.dart";
 import "package:trilhas_phb/services/chat.dart";
 
@@ -11,29 +12,38 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final _chat = ChatService();
-  final _controller = TextEditingController();
-  final _messages = <MessageModel>[]; // Lista para armazenar mensagens
+  final _messageController = TextEditingController();
+  final _scrollController = ScrollController();
+  final _messages = <MessageModel>[];
 
   @override
   void initState() {
     super.initState();
     _chat.connect((message) {
-      print(message);
       setState(() => _messages.add(message));
+      _scrollToBottom();
     });
   }
 
   @override
   void dispose() {
     _chat.leave();
-    _controller.dispose();
+    _messageController.dispose();
     super.dispose();
   }
 
   void _sendMessage() {
-    if (_controller.text.isEmpty) return;
-    _chat.send(_controller.text);
-    _controller.clear();
+    if (_messageController.text.isEmpty) return;
+    _chat.send(_messageController.text);
+    _messageController.clear();
+  }
+
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
   }
 
   @override
@@ -45,19 +55,26 @@ class _ChatScreenState extends State<ChatScreen> {
             Expanded(
               child: ListView.builder(
                 itemCount: _messages.length,
+                controller: _scrollController,
+                reverse: true,
                 itemBuilder: (context, index) {
-                  return MessageBubbleWidget(chatMessage: _messages[index], isMe: true);
+                  var reversedMessages = _messages.reversed.toList();
+                  return MessageBubbleWidget(chatMessage: reversedMessages[index], isMe: true);
                 },
               ),
             ),
             TextField(
-              controller: _controller,
-              decoration: InputDecoration(labelText: "Send a message"),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _sendMessage,
-              child: Text("Send"),
+              controller: _messageController,
+              decoration: InputDecoration(
+                hintText: "Digite uma mensagem",
+                enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.primary, width: 2.5)),
+                focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: AppColors.primary, width: 2.5)),
+                suffixIconColor: AppColors.primary,
+                suffixIcon: IconButton(
+                  onPressed: _sendMessage,
+                  icon: const Icon(Icons.send),
+                ),
+              ),
             ),
           ],
         ),
@@ -93,7 +110,7 @@ class MessageBubbleWidget extends StatelessWidget {
                  : const EdgeInsets.only(left: 10),
              width: 200,
              decoration: BoxDecoration(
-               color: isMe ? Colors.yellow : Colors.black12,
+               color: isMe ? AppColors.primary : Colors.black12,
                borderRadius: BorderRadius.circular(10),
              ),
              child: Column(
