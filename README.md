@@ -9,17 +9,20 @@
 3. Clone o projeto para a sua máquina de desenvolvimento em uma pasta desejada <br>
 `git clone https://docs.flutter.dev/get-started/install/windows/mobile#configure-android-development`
 
-4. Crie a estrutura inicial de branches a partir do Git Flow <br>
+4. Entre na pasta do projeto
+`cd trilhas-phb-mobile`
+
+5. Crie a estrutura inicial de branches a partir do Git Flow <br>
 `git flow init --defaults`
 
-5. Mude a branch para a develop <br>
+6. Mude a branch para a develop <br>
 `git checkout develop`
 
-6. Instale as dependências necessárias do projeto <br>
+7. Instale as dependências necessárias do projeto <br>
 `flutter pub get`
 
-7. Visualize os códigos dos dispositivos disponíveis <br>
+8. Visualize os códigos dos dispositivos disponíveis <br>
 `flutter devices`
 
-8. Rode o projeto a partir do dispositivo desejado <br>
+9. Rode o projeto a partir do dispositivo desejado <br>
 `flutter run -d [codigo_dispositivo]`
