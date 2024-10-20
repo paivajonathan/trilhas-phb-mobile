@@ -26,23 +26,26 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => loading = true);
+    
     final response = await _auth.login(email, password);
+    int status = response.statusCode;
+    Map<String, dynamic> data = json.decode(response.body);
+
     setState(() => loading = false);
       
     if (!context.mounted) return;
 
-    if (response.statusCode != 200) {
-      Map<String, dynamic> message = json.decode(response.body);
-      
+    if (status != 200) {
+      String message = data["detail"];    
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message["detail"])),
+        SnackBar(content: Text(message)),
       );
-
       return;
     }
-
+  
+    Map<String, dynamic> userData = data["user"];
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const MainScreen()),
+      MaterialPageRoute(builder: (context) => MainScreen(userData: userData)),
       (Route<dynamic> route) => false,
     );
   }

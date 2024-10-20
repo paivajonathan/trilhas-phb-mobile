@@ -26,7 +26,7 @@ class AuthService {
   }
 
   Future<http.Response> login(String email, String password) async {
-    final url = Uri.parse("$apiUrl/auth/token");
+    final url = Uri.parse("$apiUrl/auth/token/");
     
     final response = await http.post(
       url,

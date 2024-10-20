@@ -27,12 +27,13 @@ class _AuthCheckScreenState extends State<AuthCheckScreen> {
       future: _user,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const Center(
+            child: CircularProgressIndicator()
+          );
         }
 
         if (snapshot.data != null) {
-          print(snapshot.data!["user_type"]);
-          return const MainScreen();
+          return MainScreen(userData: snapshot.data!);
         }
 
         return const LoginScreen();

@@ -1,10 +1,12 @@
 class MessageModel {
   final String content;
+  final int senderId;
   final String sender;
   final DateTime timestamp;
 
   MessageModel({
     required this.content,
+    required this.senderId,
     required this.sender,
     required this.timestamp,
   });
@@ -13,9 +15,12 @@ class MessageModel {
     const millisecondsInSeconds = 1000;
 
     return MessageModel(
-      content: map["content"] ?? "",
-      sender: map["sender"] ?? "",
-      timestamp: DateTime.fromMillisecondsSinceEpoch(map["timestamp"] * millisecondsInSeconds),
+      content: map["content"],
+      senderId: map["sender_id"],
+      sender: map["sender"],
+      timestamp: DateTime.fromMillisecondsSinceEpoch(
+        map["timestamp"] * millisecondsInSeconds
+      ),
     );
   }
 }

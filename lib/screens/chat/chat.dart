@@ -4,7 +4,9 @@ import "package:trilhas_phb/models/message.dart";
 import "package:trilhas_phb/services/chat.dart";
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final int userId;
+  
+  const ChatScreen({super.key, required this.userId});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -40,10 +42,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _scrollToBottom() {
     _scrollController.animateTo(
-        0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -58,8 +60,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 controller: _scrollController,
                 reverse: true,
                 itemBuilder: (context, index) {
-                  var reversedMessages = _messages.reversed.toList();
-                  return MessageBubbleWidget(chatMessage: reversedMessages[index], isMe: true);
+                  final reversedMessages = _messages.reversed.toList();
+                  final message = reversedMessages[index];
+                  return MessageBubbleWidget(chatMessage: message, isMe: message.senderId == widget.userId);
                 },
               ),
             ),

@@ -7,7 +7,9 @@ import "package:trilhas_phb/screens/ranking/ranking.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  MainScreen({super.key, required this.userData});
+
+  Map<String, dynamic> userData;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -16,12 +18,22 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    ChatScreen(),
-    RankingScreen(),
-    ProfileScreen()
-  ];
+  late List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    final userId = widget.userData["id"];
+    final userType = widget.userData["user_type"];
+
+    _screens = [
+      const HomeScreen(),
+      ChatScreen(userId: userId),
+      const RankingScreen(),
+      const ProfileScreen()
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
