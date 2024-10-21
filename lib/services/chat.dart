@@ -25,8 +25,21 @@ class ChatService {
 
     _channel.stream.listen((value) {
       var decodedJson = json.decode(value) as Map<String, dynamic>;
-      var message = MessageModel.fromMap(decodedJson);
-      if (onData != null) onData(message);
+      String eventType = decodedJson["type"];
+
+      switch (eventType) {
+        case "chat_message":
+          var message = MessageModel.fromMap(decodedJson);
+          if (onData != null) onData(message);
+          break;
+        case "recent_messages":
+          List<MessageModel> recentMessages = (decodedJson["messages"] as List)
+            .reversed
+            .map((messageJson) => MessageModel.fromMap(messageJson))
+            .toList();
+          if (onData != null) onData(recentMessages);
+          break;
+      }
     });
   }
 

@@ -21,9 +21,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    _chat.connect((message) {
-      setState(() => _messages.add(message));
-      _scrollToBottom();
+    _chat.connect((data) {
+      _handleIncomingData(data);
     });
   }
 
@@ -38,6 +37,15 @@ class _ChatScreenState extends State<ChatScreen> {
     if (_messageController.text.isEmpty) return;
     _chat.send(_messageController.text);
     _messageController.clear();
+  }
+
+  void _handleIncomingData(dynamic data) {
+    if (data is List<MessageModel>){
+      setState(() => _messages.insertAll(0, data));
+    } else {
+      setState(() => _messages.add(data));
+      _scrollToBottom();
+    }
   }
 
   void _scrollToBottom() {
@@ -55,7 +63,9 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: ListView.builder(
+              child: _messages.isEmpty
+              ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+              : ListView.builder(
                 itemCount: _messages.length,
                 controller: _scrollController,
                 reverse: true,

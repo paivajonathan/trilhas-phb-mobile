@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/screens/authenticate/login.dart";
 import "package:trilhas_phb/screens/main.dart";
 import "package:trilhas_phb/services/auth.dart";
@@ -28,7 +29,7 @@ class _AuthCheckScreenState extends State<AuthCheckScreen> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator()
+            child: CircularProgressIndicator(color: AppColors.primary)
           );
         }
 

@@ -31,7 +31,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               onTap: () async {
                 await _auth.logout();
-                print("Testando");
                 if (!context.mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const LoginScreen()),
