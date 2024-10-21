@@ -17,6 +17,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
   final _messages = <MessageModel>[];
+  bool _isLoadingMore = false;
 
   @override
   void initState() {
@@ -54,9 +55,23 @@ class _ChatScreenState extends State<ChatScreen> {
         _scrollController.offset >= _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange
       ) {
-      // User is at the top of the ListView
-      print("Usuario no topo");
+        _loadMoreMessages();
     }
+  }
+
+  Future<void> _loadMoreMessages() async {
+    if (_isLoadingMore) return;
+
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    final messages = await _chat.get(olderThan: _messages.first.id);
+
+    setState(() {
+      _messages.insertAll(0, messages);
+      _isLoadingMore = false;
+    });
   }
 
   void _scrollToBottom() {

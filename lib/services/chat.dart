@@ -1,5 +1,6 @@
 import "dart:convert";
 
+import "package:http/http.dart" as http;
 import "package:trilhas_phb/models/message.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:web_socket_channel/io.dart";
@@ -41,6 +42,34 @@ class ChatService {
           break;
       }
     });
+  }
+
+  Future<List<MessageModel>> get({int? olderThan}) async {
+    String? token = await _auth.token;
+    
+    String urlString = "https://trilhas-phb-api.onrender.com/api/v1/chat-messages/";
+    urlString += "?ordering=-registration&page=1&page_size=25";
+    if (olderThan != null) urlString += "&older_than=$olderThan";
+    
+    final url = Uri.parse(urlString);
+
+    final response = await http.get(
+      url,
+      headers: {
+        "Content-type": "application/json",
+        "Accept": "application/json",
+        "Origin": "wss://trilhas-phb-api.onrender.com",
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    final decodedJson = json.decode(response.body) as Map<String, dynamic>;
+    List<MessageModel> recentMessages = (decodedJson["items"] as List)
+      .reversed
+      .map((messageJson) => MessageModel.fromMap(messageJson))
+      .toList();
+
+    return recentMessages;
   }
 
   void send(String message) {
