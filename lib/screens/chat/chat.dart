@@ -24,6 +24,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _chat.connect((data) {
       _handleIncomingData(data);
     });
+    _scrollController.addListener(_onScroll);
   }
 
   @override
@@ -45,6 +46,16 @@ class _ChatScreenState extends State<ChatScreen> {
     } else {
       setState(() => _messages.add(data));
       _scrollToBottom();
+    }
+  }
+
+  void _onScroll() {
+      if (
+        _scrollController.offset >= _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange
+      ) {
+      // User is at the top of the ListView
+      print("Usuario no topo");
     }
   }
 
@@ -123,7 +134,7 @@ class MessageBubbleWidget extends StatelessWidget {
                  : const EdgeInsets.only(left: 10),
              width: 200,
              decoration: BoxDecoration(
-               color: isMe ? AppColors.primary : Colors.black12,
+               color: isMe ? AppColors.primary : Colors.black38,
                borderRadius: BorderRadius.circular(10),
              ),
              child: Column(
