@@ -40,6 +40,17 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.secondary,
+        type: BottomNavigationBarType.fixed,
+        selectedFontSize: 10,
+        unselectedFontSize: 10,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        onTap: (int index) {
+          setState(() => _selectedIndex = index);
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.solidCompass),
@@ -58,17 +69,6 @@ class _MainScreenState extends State<MainScreen> {
             label: "Perfil",
           ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.secondary,
-        type: BottomNavigationBarType.fixed,
-        selectedFontSize: 10,
-        unselectedFontSize: 10,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        onTap: (int index) {
-          setState(() => _selectedIndex = index);
-        },
       ),
     );
   }
