@@ -1,7 +1,11 @@
 import "package:flutter/material.dart";
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import "package:trilhas_phb/screens/auth_check.dart";
 
-void main() => runApp(const MainApp());
+Future<void> main() async {
+  await dotenv.load();
+  runApp(const MainApp());
+}
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});

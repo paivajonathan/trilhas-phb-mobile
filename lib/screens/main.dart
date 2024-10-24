@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
+import "package:trilhas_phb/models/user.dart";
 import "package:trilhas_phb/screens/chat/chat.dart";
 import "package:trilhas_phb/screens/home/home.dart";
 import "package:trilhas_phb/screens/profile/profile.dart";
@@ -9,7 +10,7 @@ import "package:font_awesome_flutter/font_awesome_flutter.dart";
 class MainScreen extends StatefulWidget {
   MainScreen({super.key, required this.userData});
 
-  Map<String, dynamic> userData;
+  UserLoginModel userData;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -24,8 +25,8 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     
-    final userId = widget.userData["id"];
-    final userType = widget.userData["user_type"];
+    final userId = widget.userData.id;
+    final userType = widget.userData.type;
 
     _screens = [
       const HomeScreen(),
@@ -40,6 +41,17 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.secondary,
+        type: BottomNavigationBarType.fixed,
+        selectedFontSize: 10,
+        unselectedFontSize: 10,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        onTap: (int index) {
+          setState(() => _selectedIndex = index);
+        },
         items: const [
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.solidCompass),
@@ -58,17 +70,6 @@ class _MainScreenState extends State<MainScreen> {
             label: "Perfil",
           ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.secondary,
-        type: BottomNavigationBarType.fixed,
-        selectedFontSize: 10,
-        unselectedFontSize: 10,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        onTap: (int index) {
-          setState(() => _selectedIndex = index);
-        },
       ),
     );
   }

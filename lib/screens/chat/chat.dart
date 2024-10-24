@@ -22,9 +22,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    _chat.connect((data) {
-      _handleIncomingData(data);
-    });
+    _chat.connect(_handleIncomingData);
     _scrollController.addListener(_onScroll);
   }
 
@@ -62,16 +60,25 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _loadMoreMessages() async {
     if (_isLoadingMore) return;
 
-    setState(() {
-      _isLoadingMore = true;
-    });
+    setState(() => _isLoadingMore = true);
 
-    final messages = await _chat.get(olderThan: _messages.first.id);
+    final result = await _chat.get(olderThan: _messages.first.id);
 
-    setState(() {
-      _messages.insertAll(0, messages);
-      _isLoadingMore = false;
-    });
+    setState(() => _isLoadingMore = false);
+
+    if (!mounted) return;
+
+    if (result.isError()) {
+      final message = result.exceptionOrNull()!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+      return;
+    }
+
+    final messages = result.getOrNull()!;
+
+    setState(() => _messages.insertAll(0, messages));
   }
 
   void _scrollToBottom() {

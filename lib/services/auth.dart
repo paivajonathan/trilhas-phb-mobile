@@ -1,64 +1,90 @@
 import "dart:convert";
-
-import "package:flutter_secure_storage/flutter_secure_storage.dart";
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import "package:http/http.dart" as http;
 import "package:jwt_decode/jwt_decode.dart";
+import "package:result_dart/result_dart.dart";
+import "package:trilhas_phb/models/user.dart";
+import "package:trilhas_phb/services/storage.dart";
 
 class AuthService {
-  final storage = const FlutterSecureStorage();
-  final apiUrl = "https://trilhas-phb-api.onrender.com/api/v1";
+  final _apiUrl = dotenv.env["API_URL"];
+  final _baseUrl = dotenv.env["BASE_URL"];
   
-  Future<Map<String, dynamic>?> get user async {
-    String? token = await storage.read(key: "jwt");
-    String? user = await storage.read(key: "user");
-      
-    if (token == null || user == null) return null;
+  final _storage = StorageService();
+  
+  Future<UserLoginModel?> get userData async {
+    var (storedUserData, storedToken) = await _storage.loadKeys();
 
-    bool isExpired = Jwt.isExpired(token);
+    if (storedUserData == null || storedToken == null) return null;
 
-    if (isExpired) return null;
+    if (Jwt.isExpired(storedToken)) return null;
 
-    return json.decode(user);
+    final userData = UserLoginModel.fromMap(json.decode(storedUserData));
+
+    return userData;
   }
 
-  Future<String?> get token async {
-    return await storage.read(key: "jwt");
+  Future<String> get token async {
+    var (_, storedToken) = await _storage.loadKeys();
+    return storedToken!;
   }
 
-  Future<http.Response> login(String email, String password) async {
-    final url = Uri.parse("$apiUrl/auth/token/");
-    
+  AsyncResult<UserLoginModel, String> login({
+    required String email,
+    required String password,
+  }) async {
+    final url = Uri.parse("$_apiUrl/auth/token/");
+
     final response = await http.post(
       url,
-      headers: {"Content-Type": "application/json"},
-      body: json.encode({"email": email, "password": password}),
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Origin": _baseUrl!,
+      },
+      body: json.encode({
+        "email": email,
+        "password": password,
+      }),
     );
 
-    if (response.statusCode == 200) {
-      final responseData = json.decode(response.body);
-      await storage.write(key: "jwt", value: responseData["token"]);
-      await storage.write(key: "user", value: jsonEncode(responseData["user"]));
+    final responseStatus = response.statusCode;
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+    if (responseStatus == 200) {
+      final token = responseData["token"];
+      final userData = {
+        "id": responseData["user"]["id"],
+        "type": responseData["user"]["user_type"],
+      };
+
+      await _storage.saveKeys(token, userData);
+
+      return Success(UserLoginModel.fromMap(userData));
     }
 
-    return response;
+    return Failure(responseData["detail"] ?? responseData["message"] ?? "An unexpected error occurred");
   }
 
-  Future<http.Response> register(
+  AsyncResult<String, String> register(
     {
       required String email,
       required String password,
-      
       required String fullName,
       required String birthDate,
       required String cellphone,
       required String neighborhoodName,
     }
   ) async {
-    final url = Uri.parse("$apiUrl/users/");
+    final url = Uri.parse("$_apiUrl/users/");
     
     final response = await http.post(
       url,
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Origin": _baseUrl!,
+      },
       body: json.encode(
         {
           "user": {
@@ -75,11 +101,17 @@ class AuthService {
       ),
     );
 
-    return response;
+    final responseStatus = response.statusCode;
+    final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+    if (responseStatus == 200) {
+      return const Success("Ok");
+    }
+
+    return Failure(responseData["detail"] ?? responseData["message"] ?? "An unexpected error occurred");
   }
 
   Future<void> logout() async {
-    await storage.delete(key: "jwt");
-    await storage.delete(key: "user");
+    await _storage.destroyKeys();
   }
 }
