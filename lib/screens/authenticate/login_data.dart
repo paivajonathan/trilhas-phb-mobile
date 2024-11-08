@@ -193,6 +193,7 @@ class _LoginDataState extends State<LoginData> {
                     isPasswordVisible
                       ? Icons.visibility
                       : Icons.visibility_off,
+                    color: const Color(0xFF8F9098),
                   ),
                   onPressed: onPasswordToggle,
                 )
