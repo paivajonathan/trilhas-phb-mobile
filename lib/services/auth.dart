@@ -1,8 +1,8 @@
+import "dart:async";
 import "dart:convert";
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import "package:http/http.dart" as http;
 import "package:jwt_decode/jwt_decode.dart";
-import "package:result_dart/result_dart.dart";
 import "package:trilhas_phb/models/user.dart";
 import "package:trilhas_phb/services/storage.dart";
 
@@ -29,29 +29,37 @@ class AuthService {
     return storedToken!;
   }
 
-  AsyncResult<UserLoginModel, String> login({
+  Future<UserLoginModel> login({
     required String email,
     required String password,
   }) async {
-    final url = Uri.parse("$_apiUrl/auth/token/");
+    try {
+      final url = Uri.parse("$_apiUrl/auth/token/");
 
-    final response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Origin": _baseUrl!,
-      },
-      body: json.encode({
-        "email": email,
-        "password": password,
-      }),
-    );
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl!,
+        },
+        body: json.encode({
+          "email": email,
+          "password": password,
+        }),
+      ).timeout(const Duration(seconds: 5));
 
-    final responseStatus = response.statusCode;
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
 
-    if (responseStatus == 200) {
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ??
+          responseData["message"] ??
+          "Um erro inesperado ocorreu"
+        );
+      }
+
       final token = responseData["token"];
       final userData = {
         "id": responseData["user"]["id"],
@@ -60,13 +68,15 @@ class AuthService {
 
       await _storage.saveKeys(token, userData);
 
-      return Success(UserLoginModel.fromMap(userData));
+      return UserLoginModel.fromMap(userData);
+    } on TimeoutException catch (_) {
+      throw Exception("Tempo limite da requisição atingido.");
+    } catch (e) {
+      throw Exception(e);
     }
-
-    return Failure(responseData["detail"] ?? responseData["message"] ?? "An unexpected error occurred");
   }
 
-  AsyncResult<String, String> register(
+  Future<void> register(
     {
       required String email,
       required String password,
@@ -76,39 +86,47 @@ class AuthService {
       required String neighborhoodName,
     }
   ) async {
-    final url = Uri.parse("$_apiUrl/users/");
+    try {
+      final url = Uri.parse("$_apiUrl/users/");
     
-    final response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Origin": _baseUrl!,
-      },
-      body: json.encode(
-        {
-          "user": {
-            "email": email,
-            "password": password,
-          },
-          "profile": {
-            "full_name": fullName,
-            "cellphone": cellphone,
-            "birth_date": birthDate,
-            "neighborhood_name": neighborhoodName,
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl!,
+        },
+        body: json.encode(
+          {
+            "user": {
+              "email": email,
+              "password": password,
+            },
+            "profile": {
+              "full_name": fullName,
+              "cellphone": cellphone,
+              "birth_date": birthDate,
+              "neighborhood_name": neighborhoodName,
+            }
           }
-        }
-      ),
-    );
+        ),
+      ).timeout(const Duration(seconds: 5));
 
-    final responseStatus = response.statusCode;
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
 
-    if (responseStatus == 200) {
-      return const Success("Ok");
-    }
-
-    return Failure(responseData["detail"] ?? responseData["message"] ?? "An unexpected error occurred");
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ??
+          responseData["message"] ??
+          "Um erro inesperado ocorreu"
+        );
+      }
+    } on TimeoutException catch (_) {
+      throw Exception("Tempo limite da requisição atingido.");
+    } catch (e) {
+      throw Exception(e);
+    }    
   }
 
   Future<void> logout() async {

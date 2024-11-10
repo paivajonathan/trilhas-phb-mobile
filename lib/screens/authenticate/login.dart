@@ -26,28 +26,26 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _login(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => loading = true);
-    
-    final result = await _auth.login(email: email, password: password);
-
-    setState(() => loading = false);
+    try {
+      setState(() => loading = true);
       
-    if (!context.mounted) return;
+      final userData = await _auth.login(email: email, password: password);
 
-    if (result.isError()) {
-      final message = result.exceptionOrNull()!;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
+      setState(() => loading = false);
+        
+      if (!context.mounted) return;
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => MainScreen(userData: userData)),
+        (Route<dynamic> route) => false,
       );
-      return;
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+      );
+    } finally {
+      setState(() => loading = false);
     }
-
-    final userData = result.getOrNull()!;
-    print(userData);
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => MainScreen(userData: userData)),
-      (Route<dynamic> route) => false,
-    );
   }
 
   String? _validateEmail(String? value) {

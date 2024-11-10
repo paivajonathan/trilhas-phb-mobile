@@ -15,29 +15,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(10),
+    return Center(
       child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            margin: const EdgeInsets.only(top: 50),
-            padding: const EdgeInsets.all(10),
-            width: double.infinity,
-            child: GestureDetector(
-              child: const Text(
-                "Sair",
-                textAlign: TextAlign.center,
-              ),
-              onTap: () async {
-                await _auth.logout();
-                if (!context.mounted) return;
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (Route<dynamic> route) => false,
-                );
-              },
+          const Text(
+            "Perfil",
+            style: TextStyle(fontSize: 35),
+          ),
+          GestureDetector(
+            child: const Text(
+              "Sair",
+              style: TextStyle(fontSize: 25),
             ),
+            onTap: () async {
+              await _auth.logout();
+              
+              if (!context.mounted) return;
+              
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                (Route<dynamic> route) => false,
+              );
+            },
           )
         ],
       ),

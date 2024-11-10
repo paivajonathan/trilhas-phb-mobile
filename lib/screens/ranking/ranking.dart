@@ -5,6 +5,11 @@ class RankingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Ranking Screen"));
+    return const Center(
+      child: Text(
+        "Classificação",
+        style: TextStyle(fontSize: 35),
+      ),
+    );
   }
 }

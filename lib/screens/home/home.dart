@@ -5,12 +5,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(10),
-      child: Column(
-        children: [
-          
-        ],
+    return const Center(
+      child: Text(
+        "Explorar",
+        style: TextStyle(fontSize: 35),
       ),
     );
   }
