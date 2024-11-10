@@ -16,6 +16,8 @@ dependencies:
   jwt_decode: ^0.3.1
   provider: ^6.1.2
   web_socket_channel: ^3.0.1
+  flutter_masked_text2: ^0.9.1
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:

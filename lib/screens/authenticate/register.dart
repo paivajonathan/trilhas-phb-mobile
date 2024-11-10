@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/services/auth.dart";
+import "package:trilhas_phb/screens/authenticate/personal_data.dart";
 
 class RegisterScreen extends StatefulWidget {  
   const RegisterScreen({super.key});
@@ -72,7 +73,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    print("Hello World!");
+                    // Verificar se o formulário é válido
+                    if (_formKey.currentState!.validate()) {
+                      // Navegar para a próxima tela (Cadastro) e passar os dados de email e senha
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PersonalData(
+                            email: email,
+                            password: password,
+                          ),
+                        ),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -92,7 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       )
                     : const Text(
-                        "Cadastrar-se",
+                        "Continuar",
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                 )
