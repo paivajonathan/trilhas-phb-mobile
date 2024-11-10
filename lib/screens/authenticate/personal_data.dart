@@ -2,7 +2,6 @@ import "package:flutter/material.dart";
 import "package:flutter_masked_text2/flutter_masked_text2.dart";
 import "package:google_fonts/google_fonts.dart";
 import "package:trilhas_phb/services/auth.dart";
-import 'package:trilhas_phb/screens/main.dart';
 
 class PersonalData extends StatefulWidget {
   final String email;
