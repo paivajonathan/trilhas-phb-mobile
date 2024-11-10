@@ -2,6 +2,7 @@ import "dart:convert";
 
 import "package:flutter/material.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
+import "package:trilhas_phb/screens/authenticate/login_data.dart";
 import "package:trilhas_phb/screens/authenticate/register.dart";
 import "package:trilhas_phb/screens/main.dart";
 import "package:trilhas_phb/services/auth.dart";
@@ -27,23 +28,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => loading = true);
     
-    final response = await _auth.login(email, password);
-    int status = response.statusCode;
-    Map<String, dynamic> data = json.decode(response.body);
+    final result = await _auth.login(email: email, password: password);
 
     setState(() => loading = false);
       
     if (!context.mounted) return;
 
-    if (status != 200) {
-      String message = data["detail"];    
+    if (result.isError()) {
+      final message = result.exceptionOrNull()!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
       return;
     }
-  
-    Map<String, dynamic> userData = data["user"];
+
+    final userData = result.getOrNull()!;
+    print(userData);
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => MainScreen(userData: userData)),
       (Route<dynamic> route) => false,
@@ -193,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const RegisterScreen()
+                            builder: (context) => const LoginData()
                           ),
                         );
                       },

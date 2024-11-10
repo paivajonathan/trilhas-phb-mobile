@@ -1,7 +1,18 @@
-class UserModel {
-  final String uid;
+class UserLoginModel {
+  final int id;
+  final String type;
 
-  UserModel({
-    required this.uid,
-  });
+  UserLoginModel(
+    {
+      required this.id,
+      required this.type,
+    }
+  );
+
+  factory UserLoginModel.fromMap(Map<String, dynamic> map) {
+    return UserLoginModel(
+      id: map["id"],
+      type: map["type"],
+    );
+  }
 }

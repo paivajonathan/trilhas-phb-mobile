@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
+import "package:trilhas_phb/models/user.dart";
 import "package:trilhas_phb/screens/authenticate/login.dart";
 import "package:trilhas_phb/screens/main.dart";
 import "package:trilhas_phb/services/auth.dart";
@@ -14,18 +15,18 @@ class AuthCheckScreen extends StatefulWidget {
 class _AuthCheckScreenState extends State<AuthCheckScreen> {
   final authService = AuthService();
 
-  late Future<Map<String, dynamic>?> _user;
+  late Future<UserLoginModel?> _userData;
 
   @override
   void initState() {
     super.initState();
-    _user = authService.user;
+    _userData = authService.userData;
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _user,
+      future: _userData,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(

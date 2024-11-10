@@ -9,12 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_dotenv: ^5.2.1
   flutter_native_splash: ^2.4.1
   flutter_secure_storage: ^9.2.2
   font_awesome_flutter: ^10.7.0
   http: ^1.2.2
   jwt_decode: ^0.3.1
   provider: ^6.1.2
+  result_dart: ^1.1.1
   web_socket_channel: ^3.0.1
   flutter_masked_text2: ^0.9.1
   google_fonts: ^6.2.1
@@ -28,3 +30,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - .env
