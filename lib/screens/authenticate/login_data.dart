@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/screens/authenticate/personal_data.dart";
-import "package:trilhas_phb/services/auth.dart";
 
 class LoginData extends StatefulWidget{
   const LoginData({
@@ -16,15 +15,8 @@ class LoginData extends StatefulWidget{
 }
 
 class _LoginDataState extends State<LoginData> {
-  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
-  // String email = "";
-  // String password = "";
-  // String confirmPassword = "";
-  String error = "";
-
-  bool loading = false;
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
@@ -40,7 +32,7 @@ class _LoginDataState extends State<LoginData> {
           icon: SizedBox(
             height: 20,
             width: 20,
-            child: Image.asset('assets/icon_voltar.png'),
+            child: Image.asset("assets/icon_voltar.png"),
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -48,14 +40,19 @@ class _LoginDataState extends State<LoginData> {
         ),
       ),
       body: Padding(
-          padding: const EdgeInsets.only(top: 8.0, left: 25.0, right: 25.0, bottom: 25.0),
+          padding: const EdgeInsets.only(
+            top: 8.0,
+            left: 25.0,
+            right: 25.0,
+            bottom: 25.0,
+          ),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Dados de Login',
+                  "Dados de Login",
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -64,7 +61,7 @@ class _LoginDataState extends State<LoginData> {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'Insira seus dados de login abaixo',
+                  "Insira seus dados de login abaixo",
                   style: TextStyle(
                     fontSize: 16,
                     color: Color(0xFF71727A),
@@ -72,7 +69,7 @@ class _LoginDataState extends State<LoginData> {
                 ),
                 const SizedBox(height: 30),
                 _buildTextField(
-                  label: 'Email',
+                  label: "Email",
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Digite um email.";
@@ -87,7 +84,7 @@ class _LoginDataState extends State<LoginData> {
                 ),
                 const SizedBox(height: 16),
                 _buildTextField(
-                  label: 'Senha',
+                  label: "Senha",
                   isPassword: true,
                   isPasswordVisible: _isPasswordVisible,
                   onPasswordToggle: () {
@@ -112,7 +109,7 @@ class _LoginDataState extends State<LoginData> {
                 ),
                 const SizedBox(height: 16),
                 _buildTextField(
-                  label: 'Confirme a senha',
+                  label: "Confirme a senha",
                   isPassword: true,
                   isPasswordVisible: _isConfirmPasswordVisible,
                   onPasswordToggle: () {
@@ -161,7 +158,7 @@ class _LoginDataState extends State<LoginData> {
                     child: const Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Text(
-                        'Continuar',
+                        "Continuar",
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white,
@@ -203,7 +200,7 @@ class _LoginDataState extends State<LoginData> {
           validator: validator,
           onChanged: onChanged,
           decoration: InputDecoration(
-            hintText: 'Digite aqui',
+            hintText: "Digite aqui",
             hintStyle: const TextStyle(
               color: Color.fromARGB(255, 194, 194, 194),
             ),

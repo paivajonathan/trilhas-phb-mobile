@@ -5,6 +5,7 @@ import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/screens/authenticate/login.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:intl/intl.dart";
+import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
 
 class PersonalData extends StatefulWidget {
   const PersonalData({
@@ -24,16 +25,6 @@ class _PersonalDataScreenState extends State<PersonalData> {
   
   final _formKey = GlobalKey<FormState>();
 
-  final FocusNode _fullNameFocusNode = FocusNode();
-  final FocusNode _birthDateFocusNode = FocusNode();
-  final FocusNode _phoneFocusNode = FocusNode();
-  final FocusNode _districtFocusNode = FocusNode();
-
-  Color _fullNameBorderColor = Colors.grey;
-  Color _birthDateBorderColor = Colors.grey;
-  Color _phoneBorderColor = Colors.grey;
-  Color _districtBorderColor = Colors.grey;
-
   late MaskedTextController _dateController;
   late MaskedTextController _phoneController;
 
@@ -52,46 +43,10 @@ class _PersonalDataScreenState extends State<PersonalData> {
       text: widget._sharedData["phone"],
       mask: "(00) 0 0000-0000",
     );
-
-    _fullNameFocusNode.addListener(() {
-      setState(() {
-        _fullNameBorderColor = _fullNameFocusNode.hasFocus
-          ?Colors.green
-          : const Color.fromARGB(255, 194, 194, 194);
-      });
-    });
-
-    _birthDateFocusNode.addListener(() {
-      setState(() {
-        _birthDateBorderColor = _birthDateFocusNode.hasFocus
-          ? Colors.green
-          : const Color.fromARGB(255, 194, 194, 194);
-      });
-    });
-
-    _phoneFocusNode.addListener(() {
-      setState(() {
-        _phoneBorderColor = _phoneFocusNode.hasFocus
-          ? Colors.green
-          : const Color.fromARGB(255, 194, 194, 194);
-      });
-    });
-
-    _districtFocusNode.addListener(() {
-      setState(() {
-        _districtBorderColor = _districtFocusNode.hasFocus
-          ? Colors.green
-          : const Color.fromARGB(255, 194, 194, 194);
-      });
-    });
   }
 
   @override
   void dispose() {
-    _fullNameFocusNode.dispose();
-    _birthDateFocusNode.dispose();
-    _phoneFocusNode.dispose();
-    _districtFocusNode.dispose();
     super.dispose();
   }
 
@@ -155,8 +110,6 @@ class _PersonalDataScreenState extends State<PersonalData> {
               ),
               const SizedBox(height: 8),
               DecoratedTextFormField(
-                focusNode: _fullNameFocusNode,
-                borderColor: _fullNameBorderColor,
                 initialValue: widget._sharedData["fullName"],
                 hintText: "Digite aqui",
                 onChanged: (value) {
@@ -182,8 +135,6 @@ class _PersonalDataScreenState extends State<PersonalData> {
               ),
               const SizedBox(height: 8),
               DecoratedTextFormField(
-                focusNode: _birthDateFocusNode,
-                borderColor: _birthDateBorderColor,
                 hintText: "DD/MM/AAAA",
                 controller: _dateController,
                 onChanged: (value) {
@@ -209,8 +160,6 @@ class _PersonalDataScreenState extends State<PersonalData> {
               ),
               const SizedBox(height: 8),
               DecoratedTextFormField(
-                focusNode: _phoneFocusNode,
-                borderColor: _phoneBorderColor,
                 hintText: "Digite aqui",
                 controller: _phoneController,
                 validator: (value) {
@@ -237,8 +186,6 @@ class _PersonalDataScreenState extends State<PersonalData> {
               ),
               const SizedBox(height: 8),
               DecoratedTextFormField(
-                focusNode: _districtFocusNode,
-                borderColor: _districtBorderColor,
                 initialValue: widget._sharedData["neighborhoodName"],
                 hintText: "Digite aqui",
                 validator: (value) => null,
@@ -259,9 +206,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                     DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(widget._sharedData["birthDate"]);
                     String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
 
-                    setState(() {
-                      _isLoading = true;
-                    });
+                    setState(() => _isLoading = true);
 
                     await _auth.register(
                       email: widget._sharedData["email"],
@@ -272,9 +217,9 @@ class _PersonalDataScreenState extends State<PersonalData> {
                       neighborhoodName: widget._sharedData["neighborhoodName"],
                     );
 
-                    setState(() {
-                      _isLoading = false;
-                    });
+                    setState(() => _isLoading = false);
+                    
+                    if (!context.mounted) return;
                   
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Cadastro realizado com sucesso!")),
@@ -289,9 +234,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                       SnackBar(content: Text("Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}")),
                     );
                   } finally {
-                    setState(() {
-                      _isLoading = false;
-                    });
+                    setState(() => _isLoading = false);
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -325,71 +268,6 @@ class _PersonalDataScreenState extends State<PersonalData> {
                     ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class DecoratedTextFormField extends StatelessWidget {
-  const DecoratedTextFormField({
-    super.key,
-    
-    required FocusNode focusNode,
-    required Color borderColor,
-    
-    String? initialValue,
-    String? hintText,
-    TextEditingController? controller,
-    String? Function(String?)? validator,
-    void Function(String)? onChanged,
-  }) :
-    _focusNode = focusNode,
-    _borderColor = borderColor,
-    _initialValue = initialValue,
-    _hintText = hintText,
-    _controller = controller,
-    _validator = validator,
-    _onChanged = onChanged;
-
-  final FocusNode _focusNode;
-  final Color _borderColor;
-  
-  final String? _initialValue;
-  final String? _hintText;
-  final TextEditingController? _controller;
-  final String? Function(String?)? _validator;
-  final void Function(String)? _onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      cursorColor: Colors.green,
-      focusNode: _focusNode,
-      controller: _controller,
-      validator: _validator,
-      onChanged: _onChanged,
-      initialValue: _initialValue,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white,
-        hintText: _hintText,
-        hintStyle: const TextStyle(
-          color: Color.fromARGB(255, 194, 194, 194),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: _borderColor,
-            width: 1,
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: _borderColor,
-            width: 2,
           ),
         ),
       ),

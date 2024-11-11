@@ -83,7 +83,7 @@ class AuthService {
       required String fullName,
       required String birthDate,
       required String cellphone,
-      required String neighborhoodName,
+      required String? neighborhoodName,
     }
   ) async {
     try {

@@ -18,20 +18,22 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
-  String email = "";
-  String password = "";
-  String error = "";
-  bool loading = false;
+  String _email = "";
+  String _password = "";
+  bool _isLoading = false;
 
   Future<void> _login(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      setState(() => loading = true);
+      setState(() => _isLoading = true);
       
-      final userData = await _auth.login(email: email, password: password);
+      final userData = await _auth.login(
+        email: _email,
+        password: _password,
+      );
 
-      setState(() => loading = false);
+      setState(() => _isLoading = false);
         
       if (!context.mounted) return;
 
@@ -41,10 +43,10 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } on Exception catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+        SnackBar(content: Text("Erro no login: ${e.toString().replaceAll("Exception: ", "")}")),
       );
     } finally {
-      setState(() => loading = false);
+      setState(() => _isLoading = false);
     }
   }
 
@@ -105,55 +107,60 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
+                    cursorColor: AppColors.primary,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       hintText: "Email",
                       hintStyle: const TextStyle(fontSize: 16),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 138, 138, 138),
+                          color: Colors.grey,
+                          width: 1,
                         ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 138, 138, 138),
+                          color: AppColors.primary, // Cor da borda quando o campo está em foco
+                          width: 2,
                         ),
                       ),
                     ),
                     validator: _validateEmail,
                     onChanged: (value) {
-                      setState(() => email = value);
+                      setState(() => _email = value);
                     },
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
+                    cursorColor: AppColors.primary,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
                       hintText: "Senha",
                       hintStyle: const TextStyle(fontSize: 16),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 138, 138, 138),
+                          color: Colors.grey,
+                          width: 1,
                         ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 138, 138, 138),
+                          color: AppColors.primary, // Cor da borda quando o campo está em foco
+                          width: 2,
                         ),
                       ),
                     ),
                     validator: _validatePassword,
                     onChanged: (value) {
-                      setState(() => password = value);
+                      setState(() => _password = value);
                     },
                     obscureText: true,
-                    obscuringCharacter: "*",
                   ),
                   const SizedBox(height: 20),
                   Container(
@@ -167,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: loading 
+                      child: _isLoading 
                         ? const SizedBox(
                             height: 23.0,
                             width: 23.0,
@@ -212,11 +219,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    error,
-                    style: const TextStyle(color: Colors.red, fontSize: 20),
-                  )
                 ],
               ),
             ),

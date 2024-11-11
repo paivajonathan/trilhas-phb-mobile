@@ -29,8 +29,14 @@ class _AuthCheckScreenState extends State<AuthCheckScreen> {
       future: _userData,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary)
+          return Container(
+            color: Colors.white,
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
+                value: 1,
+              )
+            ),
           );
         }
 
