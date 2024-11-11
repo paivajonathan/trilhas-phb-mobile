@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
+import "package:trilhas_phb/screens/authenticate/personal_data.dart";
 import "package:trilhas_phb/services/auth.dart";
 
 class LoginData extends StatefulWidget{
@@ -134,9 +135,15 @@ class _LoginDataState extends State<LoginData> {
                       ),
                     ),
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        // Ação para autenticação ou próximo passo
-                      }
+                      if (!_formKey.currentState!.validate()) return;
+                      
+                      if (!context.mounted) return;
+
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PersonalData(email: email, password: password)
+                        ),
+                      );
                     },
                     child: const Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -185,7 +192,21 @@ class _LoginDataState extends State<LoginData> {
           decoration: InputDecoration(
             hintText: 'Digite aqui',
             hintStyle: const TextStyle(
-              color: Color(0xFF8F9098)
+              color: Color.fromARGB(255, 194, 194, 194),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: Colors.grey,
+                width: 1,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: AppColors.primary, // Cor da borda quando o campo está em foco
+                width: 2,
+              ),
             ),
             suffixIcon: isPassword 
               ? IconButton(
@@ -198,21 +219,6 @@ class _LoginDataState extends State<LoginData> {
                   onPressed: onPasswordToggle,
                 )
               : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Colors.grey,
-                width: 1,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: AppColors.primary, // Cor da borda quando o campo está em foco
-              width: 2,
-            ),
-          ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
         ),
       ],
