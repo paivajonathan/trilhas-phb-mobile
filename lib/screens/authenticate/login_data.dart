@@ -4,7 +4,12 @@ import "package:trilhas_phb/screens/authenticate/personal_data.dart";
 import "package:trilhas_phb/services/auth.dart";
 
 class LoginData extends StatefulWidget{
-  const LoginData({super.key});
+  const LoginData({
+    super.key,
+    required Map<String, dynamic> sharedData
+  }) : _sharedData = sharedData;
+
+  final Map<String, dynamic> _sharedData;
 
   @override
   State<LoginData> createState() => _LoginDataState();
@@ -14,9 +19,9 @@ class _LoginDataState extends State<LoginData> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
-  String email = "";
-  String password = "";
-  String confirmPassword = "";
+  // String email = "";
+  // String password = "";
+  // String confirmPassword = "";
   String error = "";
 
   bool loading = false;
@@ -75,7 +80,9 @@ class _LoginDataState extends State<LoginData> {
                     return null;
                   },
                   onChanged: (value) {
-                    setState(() => email = value);
+                    setState(() {
+                      widget._sharedData["email"] = value;
+                    });
                   },
                 ),
                 const SizedBox(height: 16),
@@ -98,7 +105,9 @@ class _LoginDataState extends State<LoginData> {
                     return null;
                   },
                   onChanged: (value) {
-                    setState(() => password = value);
+                    setState(() {
+                      widget._sharedData["password"] = value;
+                    });
                   },
                 ),
                 const SizedBox(height: 16),
@@ -115,25 +124,21 @@ class _LoginDataState extends State<LoginData> {
                     if (value == null || value.isEmpty) {
                       return "Confirme sua senha.";
                     }
-                    if (value != password) {
+                    if (value != widget._sharedData["password"]) {
                       return "As senhas não coincidem.";
                     }
                     return null;
                   },
                   onChanged: (value) {
-                    setState(() => confirmPassword = value);
+                    setState(() {
+                      widget._sharedData["confirmPassword"] = value;
+                    });
                   },
                 ),
                 const Spacer(),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
                     onPressed: () {
                       if (!_formKey.currentState!.validate()) return;
                       
@@ -141,10 +146,18 @@ class _LoginDataState extends State<LoginData> {
 
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => PersonalData(email: email, password: password)
+                          builder: (context) => PersonalData(
+                            sharedData: widget._sharedData,
+                          )
                         ),
                       );
                     },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
                     child: const Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Text(

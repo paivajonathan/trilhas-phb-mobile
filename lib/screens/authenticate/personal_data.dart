@@ -1,39 +1,29 @@
 import "package:flutter/material.dart";
 import "package:flutter_masked_text2/flutter_masked_text2.dart";
 import "package:google_fonts/google_fonts.dart";
+import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/screens/authenticate/login.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:intl/intl.dart";
 
 class PersonalData extends StatefulWidget {
-  final String email;
-  final String password;
-
-  // Construtor para receber email e senha
   const PersonalData({
-    Key? key,
-    required this.email,
-    required this.password,
-  }) : super(key: key);
+    super.key,
+    required Map<String, dynamic> sharedData,
+  }) : _sharedData = sharedData;
+
+  final Map<String, dynamic> _sharedData;
 
   @override
   State<PersonalData> createState() => _PersonalDataScreenState();
 }
 
 class _PersonalDataScreenState extends State<PersonalData> {
+  // Instância do AuthService
   final AuthService _auth = AuthService();
+  
   final _formKey = GlobalKey<FormState>();
 
-  String fullName = "";
-  String birthDate = "";
-  String phone = "";
-  String district = "";
-
-  // Variáveis para email e senha
-  late String email;
-  late String password;
-
-  // Instância do AuthService
   final FocusNode _fullNameFocusNode = FocusNode();
   final FocusNode _birthDateFocusNode = FocusNode();
   final FocusNode _phoneFocusNode = FocusNode();
@@ -44,16 +34,22 @@ class _PersonalDataScreenState extends State<PersonalData> {
   Color _phoneBorderColor = Colors.grey;
   Color _districtBorderColor = Colors.grey;
 
-  final MaskedTextController _dateController = MaskedTextController(mask: "00/00/0000");
-  final MaskedTextController _phoneController = MaskedTextController(mask: "(00)00000-0000");
+  late MaskedTextController _dateController;
+  late MaskedTextController _phoneController;
 
   @override
   void initState() {
     super.initState();
-    
-    // Inicializar email e senha com os valores recebidos
-    email = widget.email;
-    password = widget.password;
+
+    _dateController = MaskedTextController(
+      text: widget._sharedData["birthDate"],
+      mask: "00/00/0000",
+    );
+
+    _phoneController = MaskedTextController(
+      text: widget._sharedData["phone"],
+      mask: "(00) 0 0000-0000",
+    );
 
     _fullNameFocusNode.addListener(() {
       setState(() {
@@ -159,8 +155,11 @@ class _PersonalDataScreenState extends State<PersonalData> {
               DecoratedTextFormField(
                 focusNode: _fullNameFocusNode,
                 borderColor: _fullNameBorderColor,
+                initialValue: widget._sharedData["fullName"],
                 hintText: "Digite aqui",
-                onChanged: (value) => fullName = value,
+                onChanged: (value) {
+                  widget._sharedData["fullName"] = value;
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Digite seu nome";
@@ -185,7 +184,9 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 borderColor: _birthDateBorderColor,
                 hintText: "DD/MM/AAAA",
                 controller: _dateController,
-                onChanged: (value) => birthDate = value,
+                onChanged: (value) {
+                  widget._sharedData["birthDate"] = value;
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Digite sua data de aniversário";
@@ -208,8 +209,8 @@ class _PersonalDataScreenState extends State<PersonalData> {
               DecoratedTextFormField(
                 focusNode: _phoneFocusNode,
                 borderColor: _phoneBorderColor,
-                controller: _phoneController,
                 hintText: "Digite aqui",
+                controller: _phoneController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Digite seu número";
@@ -217,7 +218,9 @@ class _PersonalDataScreenState extends State<PersonalData> {
 
                   return null;
                 },
-                onChanged: (value) => phone = value,
+                onChanged: (value) {
+                  widget._sharedData["phone"] = value;
+                },
               ),
               const SizedBox(height: 16),
               
@@ -234,9 +237,12 @@ class _PersonalDataScreenState extends State<PersonalData> {
               DecoratedTextFormField(
                 focusNode: _districtFocusNode,
                 borderColor: _districtBorderColor,
+                initialValue: widget._sharedData["neighborhoodName"],
                 hintText: "Digite aqui",
                 validator: (value) => null,
-                onChanged: (value) => district = value,
+                onChanged: (value) {
+                  widget._sharedData["neighborhoodName"] = value;
+                },
               ),
               
               const Spacer(), // Empurra o botão "Continuar" para o fundo
@@ -249,24 +255,26 @@ class _PersonalDataScreenState extends State<PersonalData> {
                     const SnackBar(content: Text("Processando cadastro...")),
                   );
 
-                  String unmaskedPhone = phone.replaceAll(RegExp(r"[^0-9]"), "");
+                  String unmaskedPhone = widget._sharedData["phone"].replaceAll(RegExp(r"[^0-9]"), "");
                   
-                  DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(birthDate);
+                  DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(widget._sharedData["birthDate"]);
                   String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
                   
                   try {
                     await _auth.register(
-                      email: email,
-                      password: password,
-                      fullName: fullName,
+                      email: widget._sharedData["email"],
+                      password: widget._sharedData["password"],
+                      fullName: widget._sharedData["fullName"],
                       birthDate: formattedDate,
                       cellphone: unmaskedPhone,
-                      neighborhoodName: district,
+                      neighborhoodName: widget._sharedData["neighborhoodName"],
                     );
                   
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Cadastro realizado com sucesso!")),
                     );
+
+                    Future.delayed(const Duration(milliseconds: 300));
 
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -279,14 +287,21 @@ class _PersonalDataScreenState extends State<PersonalData> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  backgroundColor: const Color.fromARGB(255, 3, 204, 107),
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.primary,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text("Continuar"),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  child: Text(
+                    "Cadastrar-se",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
@@ -303,6 +318,7 @@ class DecoratedTextFormField extends StatelessWidget {
     required FocusNode focusNode,
     required Color borderColor,
     
+    String? initialValue,
     String? hintText,
     TextEditingController? controller,
     String? Function(String?)? validator,
@@ -310,6 +326,7 @@ class DecoratedTextFormField extends StatelessWidget {
   }) :
     _focusNode = focusNode,
     _borderColor = borderColor,
+    _initialValue = initialValue,
     _hintText = hintText,
     _controller = controller,
     _validator = validator,
@@ -318,6 +335,7 @@ class DecoratedTextFormField extends StatelessWidget {
   final FocusNode _focusNode;
   final Color _borderColor;
   
+  final String? _initialValue;
   final String? _hintText;
   final TextEditingController? _controller;
   final String? Function(String?)? _validator;
@@ -331,6 +349,7 @@ class DecoratedTextFormField extends StatelessWidget {
       controller: _controller,
       validator: _validator,
       onChanged: _onChanged,
+      initialValue: _initialValue,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
