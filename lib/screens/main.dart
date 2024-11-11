@@ -8,9 +8,9 @@ import "package:trilhas_phb/screens/ranking/ranking.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 
 class MainScreen extends StatefulWidget {
-  MainScreen({super.key, required this.userData});
+  const MainScreen({super.key, required this.userData});
 
-  UserLoginModel userData;
+  final UserLoginModel userData;
 
   @override
   State<MainScreen> createState() => _MainScreenState();

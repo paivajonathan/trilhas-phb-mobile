@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:flutter_masked_text2/flutter_masked_text2.dart";
-import "package:google_fonts/google_fonts.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/screens/authenticate/login.dart";
 import "package:trilhas_phb/services/auth.dart";
