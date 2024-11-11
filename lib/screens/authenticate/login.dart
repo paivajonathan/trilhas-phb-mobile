@@ -3,6 +3,8 @@ import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/screens/authenticate/register.dart";
 import "package:trilhas_phb/screens/main.dart";
 import "package:trilhas_phb/services/auth.dart";
+import "package:trilhas_phb/widgets/decorated_button.dart";
+import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -103,118 +105,43 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  TextFormField(
-                    cursorColor: AppColors.primary,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: "Email",
-                      hintStyle: const TextStyle(fontSize: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Colors.grey,
-                          width: 1,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: AppColors.primary, // Cor da borda quando o campo está em foco
-                          width: 2,
-                        ),
-                      ),
-                    ),
+                  DecoratedTextFormField(
+                    hintText: "Email",
                     validator: _validateEmail,
                     onChanged: (value) {
                       setState(() => _email = value);
                     },
+                    isHintTextLabel: true,
                   ),
                   const SizedBox(height: 20),
-                  TextFormField(
-                    cursorColor: AppColors.primary,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: "Senha",
-                      hintStyle: const TextStyle(fontSize: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Colors.grey,
-                          width: 1,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: AppColors.primary, // Cor da borda quando o campo está em foco
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                    validator: _validatePassword,
+                  DecoratedTextFormField(
+                    hintText: "Senha",
                     onChanged: (value) {
                       setState(() => _password = value);
                     },
+                    validator: _validatePassword,
                     obscureText: true,
+                    isHintTextLabel: true,
                   ),
                   const SizedBox(height: 20),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => _login(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: _isLoading 
-                        ? const SizedBox(
-                            height: 23.0,
-                            width: 23.0,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white)
-                              )
-                            ),
-                          )
-                        : const Text(
-                            "Login",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                    ),
+                  DecoratedButton(
+                    text: "Login",
+                    primary: true,
+                    isLoading: _isLoading,
+                    onPressed: () => _login(context),
                   ),
                   const SizedBox(height: 20),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Register()
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  DecoratedButton(
+                    text: "Criar Conta",
+                    primary: false,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Register()
                         ),
-                        side: const BorderSide(
-                          width: 1,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      child: const Text(
-                        "Criar conta",
-                        style: TextStyle(color: AppColors.primary, fontSize: 16),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),

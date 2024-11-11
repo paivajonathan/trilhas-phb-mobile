@@ -5,6 +5,8 @@ class DecoratedTextFormField extends StatelessWidget {
   const DecoratedTextFormField({
     super.key,
     
+    bool obscureText = false,
+    bool isHintTextLabel = false,
     String? initialValue,
     String? hintText,
     TextInputType? textInputType,
@@ -12,6 +14,8 @@ class DecoratedTextFormField extends StatelessWidget {
     String? Function(String?)? validator,
     void Function(String)? onChanged,
   }) :
+    _isHintTextLabel = isHintTextLabel,
+    _obscureText = obscureText,
     _initialValue = initialValue,
     _hintText = hintText,
     _textInputType = textInputType,
@@ -19,6 +23,8 @@ class DecoratedTextFormField extends StatelessWidget {
     _validator = validator,
     _onChanged = onChanged;
   
+  final bool _isHintTextLabel;
+  final bool _obscureText;
   final String? _initialValue;
   final String? _hintText;
   final TextInputType? _textInputType;
@@ -35,13 +41,14 @@ class DecoratedTextFormField extends StatelessWidget {
       onChanged: _onChanged,
       initialValue: _initialValue,
       keyboardType: _textInputType,
+      obscureText: _obscureText,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
         hintText: _hintText,
-        hintStyle: const TextStyle(
-          color: Color.fromARGB(255, 194, 194, 194),
-        ),
+        hintStyle: _isHintTextLabel
+          ? const TextStyle(fontSize: 16)
+          : const TextStyle(fontSize: 16, color: Color.fromARGB(255, 194, 194, 194)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(
