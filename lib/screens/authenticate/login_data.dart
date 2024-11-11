@@ -151,18 +151,16 @@ class _LoginDataState extends State<LoginData> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      child: Text(
-                        "Continuar",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
+                    child: const Text(
+                      "Continuar",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
                       ),
                     ),
                   ),

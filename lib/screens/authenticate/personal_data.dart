@@ -239,33 +239,28 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: _isLoading
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      child: Center(
-                        child: SizedBox(
-                          width: 23,
-                          height: 23,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    )
-                  : const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16.0),
-                      child: Text(
-                        "Cadastrar-se",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
+                  ? const Center(
+                    child: SizedBox(
+                      width: 23,
+                      height: 23,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
                       ),
                     ),
+                  )
+                  : const Text(
+                    "Cadastrar-se",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
               ),
             ],
           ),

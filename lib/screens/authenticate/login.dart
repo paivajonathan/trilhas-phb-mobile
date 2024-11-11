@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         backgroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: _isLoading 
@@ -206,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         backgroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         side: const BorderSide(
                           width: 1,
@@ -215,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: const Text(
                         "Criar conta",
-                        style: TextStyle(color: AppColors.primary),
+                        style: TextStyle(color: AppColors.primary, fontSize: 16),
                       ),
                     ),
                   ),
