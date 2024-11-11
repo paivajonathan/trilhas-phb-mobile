@@ -136,6 +136,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
               DecoratedTextFormField(
                 hintText: "DD/MM/AAAA",
                 controller: _dateController,
+                textInputType: TextInputType.number,
                 onChanged: (value) {
                   widget._sharedData["birthDate"] = value;
                 },
@@ -161,6 +162,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
               DecoratedTextFormField(
                 hintText: "Digite aqui",
                 controller: _phoneController,
+                textInputType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Digite seu número";

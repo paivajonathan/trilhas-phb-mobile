@@ -70,6 +70,7 @@ class _LoginDataState extends State<LoginData> {
                 const SizedBox(height: 30),
                 _buildTextField(
                   label: "Email",
+                  textInputType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Digite um email.";
@@ -176,6 +177,7 @@ class _LoginDataState extends State<LoginData> {
     required String label,
     bool isPassword = false,
     bool isPasswordVisible = false,
+    TextInputType? textInputType,
     Function()? onPasswordToggle,
     String? Function(String?)? validator,
     Function(String)? onChanged,
@@ -197,6 +199,7 @@ class _LoginDataState extends State<LoginData> {
           obscureText: isPassword && !isPasswordVisible,
           validator: validator,
           onChanged: onChanged,
+          keyboardType: textInputType,
           decoration: InputDecoration(
             hintText: "Digite aqui",
             hintStyle: const TextStyle(

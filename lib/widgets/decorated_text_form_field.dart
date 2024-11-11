@@ -7,18 +7,21 @@ class DecoratedTextFormField extends StatelessWidget {
     
     String? initialValue,
     String? hintText,
+    TextInputType? textInputType,
     TextEditingController? controller,
     String? Function(String?)? validator,
     void Function(String)? onChanged,
   }) :
     _initialValue = initialValue,
     _hintText = hintText,
+    _textInputType = textInputType,
     _controller = controller,
     _validator = validator,
     _onChanged = onChanged;
   
   final String? _initialValue;
   final String? _hintText;
+  final TextInputType? _textInputType;
   final TextEditingController? _controller;
   final String? Function(String?)? _validator;
   final void Function(String)? _onChanged;
@@ -31,6 +34,7 @@ class DecoratedTextFormField extends StatelessWidget {
       validator: _validator,
       onChanged: _onChanged,
       initialValue: _initialValue,
+      keyboardType: _textInputType,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
