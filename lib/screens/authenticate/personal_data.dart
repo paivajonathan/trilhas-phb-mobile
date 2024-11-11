@@ -37,6 +37,8 @@ class _PersonalDataScreenState extends State<PersonalData> {
   late MaskedTextController _dateController;
   late MaskedTextController _phoneController;
 
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -250,17 +252,17 @@ class _PersonalDataScreenState extends State<PersonalData> {
               ElevatedButton(
                 onPressed: () async {
                   if (!_formKey.currentState!.validate()) return;
-                  
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Processando cadastro...")),
-                  );
 
-                  String unmaskedPhone = widget._sharedData["phone"].replaceAll(RegExp(r"[^0-9]"), "");
-                  
-                  DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(widget._sharedData["birthDate"]);
-                  String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
-                  
                   try {
+                    String unmaskedPhone = widget._sharedData["phone"].replaceAll(RegExp(r"[^0-9]"), "");
+                    
+                    DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(widget._sharedData["birthDate"]);
+                    String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
+
+                    setState(() {
+                      _isLoading = true;
+                    });
+
                     await _auth.register(
                       email: widget._sharedData["email"],
                       password: widget._sharedData["password"],
@@ -269,12 +271,14 @@ class _PersonalDataScreenState extends State<PersonalData> {
                       cellphone: unmaskedPhone,
                       neighborhoodName: widget._sharedData["neighborhoodName"],
                     );
+
+                    setState(() {
+                      _isLoading = false;
+                    });
                   
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Cadastro realizado com sucesso!")),
                     );
-
-                    Future.delayed(const Duration(milliseconds: 300));
 
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -284,6 +288,10 @@ class _PersonalDataScreenState extends State<PersonalData> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text("Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}")),
                     );
+                  } finally {
+                    setState(() {
+                      _isLoading = false;
+                    });
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -292,16 +300,29 @@ class _PersonalDataScreenState extends State<PersonalData> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                  child: Text(
-                    "Cadastrar-se",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
+                child: _isLoading
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
+                      child: Center(
+                        child: SizedBox(
+                          width: 23,
+                          height: 23,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    )
+                  : const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.0),
+                      child: Text(
+                        "Cadastrar-se",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
               ),
             ],
           ),
