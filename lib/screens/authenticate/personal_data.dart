@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_masked_text2/flutter_masked_text2.dart";
 import "package:google_fonts/google_fonts.dart";
+import "package:trilhas_phb/screens/authenticate/login.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:intl/intl.dart";
 
@@ -265,6 +266,11 @@ class _PersonalDataScreenState extends State<PersonalData> {
                   
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Cadastro realizado com sucesso!")),
+                    );
+
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      (Route<dynamic> route) => false,
                     );
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
