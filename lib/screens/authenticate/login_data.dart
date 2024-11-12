@@ -22,6 +22,52 @@ class _LoginDataState extends State<LoginData> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite um email.";
+    }
+    
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite uma senha.";
+    }
+    
+    if (value.length < 6) {
+      return "Digite uma senha maior do que 6 caracteres";
+    }
+
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Confirme sua senha.";
+    }
+
+    if (value != widget._sharedData["password"]) {
+      return "As senhas não coincidem.";
+    }
+
+    return null;
+  }
+
+  void _navigateToPersonalData(BuildContext context) {
+    if (!_formKey.currentState!.validate()) return;
+    
+    if (!context.mounted) return;
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PersonalData(
+          sharedData: widget._sharedData,
+        )
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,16 +123,9 @@ class _LoginDataState extends State<LoginData> {
                 DecoratedTextFormField(
                   hintText: "Digite aqui",
                   textInputType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Digite um email.";
-                    }
-                    return null;
-                  },
+                  validator: _validateEmail,
                   onChanged: (value) {
-                    setState(() {
-                      widget._sharedData["email"] = value;
-                    });
+                    setState(() => widget._sharedData["email"] = value);
                   },
                 ),
                 const SizedBox(height: 16),
@@ -104,15 +143,7 @@ class _LoginDataState extends State<LoginData> {
                   onChanged: (value) {
                     setState(() => widget._sharedData["password"] = value);
                   },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Digite uma senha.";
-                    }
-                    if (value.length < 6) {
-                      return "Digite uma senha maior do que 6 caracteres";
-                    }
-                    return null;
-                  }
+                  validator: _validatePassword,
                 ),
                 const SizedBox(height: 16),
 
@@ -129,15 +160,7 @@ class _LoginDataState extends State<LoginData> {
                   onChanged: (value) {
                     setState(() => widget._sharedData["confirmPassword"] = value);
                   },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Confirme sua senha.";
-                    }
-                    if (value != widget._sharedData["password"]) {
-                      return "As senhas não coincidem.";
-                    }
-                    return null;
-                  }
+                  validator: _validateConfirmPassword,
                 ),
                 
                 // Para jogar botão no final da tela
@@ -146,19 +169,7 @@ class _LoginDataState extends State<LoginData> {
                 DecoratedButton(
                   primary: true,
                   text: "Continuar",
-                  onPressed: () {
-                    if (!_formKey.currentState!.validate()) return;
-                    
-                    if (!context.mounted) return;
-
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => PersonalData(
-                          sharedData: widget._sharedData,
-                        )
-                      ),
-                    );
-                  },
+                  onPressed: () => _navigateToPersonalData(context),
                 ),
               ],
             ),
