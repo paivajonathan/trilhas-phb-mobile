@@ -1,8 +1,8 @@
+import "dart:async";
 import "dart:convert";
 
 import "package:flutter_dotenv/flutter_dotenv.dart";
 import "package:http/http.dart" as http;
-import "package:result_dart/result_dart.dart";
 import "package:trilhas_phb/models/message.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:web_socket_channel/io.dart";
@@ -51,7 +51,7 @@ class ChatService {
     });
   }
 
-  AsyncResult<List<MessageModel>, String> get({int? olderThan}) async {
+  Future<List<MessageModel>> get({int? olderThan}) async {
     String token = await _auth.token;
     
     String urlString = "$_apiUrl/chat-messages/";
@@ -62,29 +62,39 @@ class ChatService {
     
     final url = Uri.parse(urlString);
 
-    final response = await http.get(
-      url,
-      headers: {
-        "Content-type": "application/json",
-        "Accept": "application/json",
-        "Origin": _baseUrl,
-        "Authorization": "Bearer $token",
-      },
-    );
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          "Content-type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl,
+          "Authorization": "Bearer $token",
+        },
+      ).timeout(const Duration(seconds: 5));
 
-    final responseStatus = response.statusCode;
-    final responseData = json.decode(response.body) as Map<String, dynamic>;
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
 
-    if (responseStatus == 200) {
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ??
+          responseData["message"] ??
+          "Um erro inesperado ocorreu"
+        );
+      }
+
       List<MessageModel> recentMessages = (responseData["items"] as List)
         .reversed
         .map((messageJson) => MessageModel.fromMap(messageJson))
         .toList();
 
-      return Success(recentMessages);
+      return recentMessages;
+    } on TimeoutException catch (_) {
+      throw Exception("Tempo limite da requisição atingido.");
+    } catch (e) {
+      throw Exception(e);
     }
-
-    return Failure(responseData["detail"] ?? responseData["message"] ?? "An unexpected error occurred");
   }
 
   void send(String message) {
