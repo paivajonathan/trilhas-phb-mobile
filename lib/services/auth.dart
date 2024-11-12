@@ -7,9 +7,7 @@ import "package:trilhas_phb/models/user.dart";
 import "package:trilhas_phb/services/storage.dart";
 
 class AuthService {
-  final _apiUrl = dotenv.env["API_URL"];
   final _baseUrl = dotenv.env["BASE_URL"];
-  
   final _storage = StorageService();
   
   Future<UserLoginModel?> get userData async {
@@ -29,12 +27,16 @@ class AuthService {
     return storedToken!;
   }
 
+  Future<void> logout() async {
+    await _storage.destroyKeys();
+  }
+
   Future<UserLoginModel> login({
     required String email,
     required String password,
   }) async {
     try {
-      final url = Uri.parse("$_apiUrl/auth/token/");
+      final url = Uri.parse("$_baseUrl/api/v1/auth/token/");
 
       final response = await http.post(
         url,
@@ -54,9 +56,7 @@ class AuthService {
 
       if (![200, 201].contains(responseStatus)) {
         throw Exception(
-          responseData["detail"] ??
-          responseData["message"] ??
-          "Um erro inesperado ocorreu"
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
         );
       }
 
@@ -87,7 +87,7 @@ class AuthService {
     }
   ) async {
     try {
-      final url = Uri.parse("$_apiUrl/users/");
+      final url = Uri.parse("$_baseUrl/api/v1/users/");
     
       final response = await http.post(
         url,
@@ -117,9 +117,7 @@ class AuthService {
 
       if (![200, 201].contains(responseStatus)) {
         throw Exception(
-          responseData["detail"] ??
-          responseData["message"] ??
-          "Um erro inesperado ocorreu"
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
         );
       }
     } on TimeoutException catch (_) {
@@ -129,7 +127,126 @@ class AuthService {
     }    
   }
 
-  Future<void> logout() async {
-    await _storage.destroyKeys();
+  Future<String> sendConfirmationCode(
+    {
+      required String email,
+    }
+  ) async {
+    try {
+      final url = Uri.parse("$_baseUrl/api/v1/auth/send-confirmation-code/");
+    
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl!,
+        },
+        body: json.encode(
+          {
+            "email": email,
+          }
+        ),
+      ).timeout(const Duration(seconds: 5));
+
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
+        );
+      }
+
+      return responseData["message"];
+    } on TimeoutException catch (_) {
+      throw Exception("Tempo limite da requisição atingido.");
+    } catch (e) {
+      throw Exception(e);
+    }    
+  }
+
+  Future<String> checkConfirmationCode(
+    {
+      required String email,
+      required String confirmationCode,
+    }
+  ) async {
+    try {
+      final url = Uri.parse("$_baseUrl/api/v1/auth/check-confirmation-code/");
+    
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl!,
+        },
+        body: json.encode(
+          {
+            "email": email,
+            "confirmation_code": confirmationCode,
+          }
+        ),
+      ).timeout(const Duration(seconds: 5));
+
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
+        );
+      }
+
+      return responseData["message"];
+    } on TimeoutException catch (_) {
+      throw Exception("Tempo limite da requisição atingido.");
+    } catch (e) {
+      throw Exception(e);
+    }    
+  }
+
+  Future<String> changePassword(
+    {
+      required String email,
+      required String confirmationCode,
+      required String newPassword,
+    }
+  ) async {
+    try {
+      final url = Uri.parse("$_baseUrl/api/v1/auth/change-password/");
+    
+      final response = await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl!,
+        },
+        body: json.encode(
+          {
+            "email": email,
+            "confirmation_code": confirmationCode,
+            "password": newPassword,
+          }
+        ),
+      ).timeout(const Duration(seconds: 5));
+
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
+        );
+      }
+
+      return responseData["message"];
+    } on TimeoutException catch (_) {
+      throw Exception("Tempo limite da requisição atingido.");
+    } catch (e) {
+      throw Exception(e);
+    }    
   }
 }

@@ -1,12 +1,16 @@
 import "package:flutter/material.dart";
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import "package:trilhas_phb/screens/auth_check.dart";
-import "package:trilhas_phb/services/hike.dart";
+import "package:trilhas_phb/services/auth.dart";
 
 Future<void> main() async {
   await dotenv.load();
-  final result = await HikeService().getOne(1);
-  print(result.toMap());
+  final result = await AuthService().changePassword(
+    email: "jonathanapaiva@gmail.com",
+    confirmationCode: "296470",
+    newPassword: "Teste@123"
+  );
+  print(result);
   runApp(const MainApp());
 }
 
