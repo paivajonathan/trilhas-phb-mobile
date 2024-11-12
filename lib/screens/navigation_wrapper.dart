@@ -7,16 +7,16 @@ import "package:trilhas_phb/screens/profile/profile.dart";
 import "package:trilhas_phb/screens/ranking/ranking.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required this.userData});
+class NavigationWrapper extends StatefulWidget {
+  const NavigationWrapper({super.key, required this.userData});
 
   final UserLoginModel userData;
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<NavigationWrapper> createState() => _NavigationWrapperState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _NavigationWrapperState extends State<NavigationWrapper> {
   int _selectedIndex = 0;
 
   late List<Widget> _screens;

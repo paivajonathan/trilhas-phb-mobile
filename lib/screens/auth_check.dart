@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/models/user.dart";
 import "package:trilhas_phb/screens/authenticate/login.dart";
-import "package:trilhas_phb/screens/main.dart";
+import "package:trilhas_phb/screens/navigation_wrapper.dart";
 import "package:trilhas_phb/services/auth.dart";
 
 class AuthCheckScreen extends StatefulWidget {
@@ -41,7 +41,7 @@ class _AuthCheckScreenState extends State<AuthCheckScreen> {
         }
 
         if (snapshot.data != null) {
-          return MainScreen(userData: snapshot.data!);
+          return NavigationWrapper(userData: snapshot.data!);
         }
 
         return const LoginScreen();

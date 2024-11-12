@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:trilhas_phb/screens/authenticate/register.dart";
-import "package:trilhas_phb/screens/main.dart";
+import "package:trilhas_phb/screens/navigation_wrapper.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!context.mounted) return;
 
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => MainScreen(userData: userData)),
+        MaterialPageRoute(builder: (context) => NavigationWrapper(userData: userData)),
         (Route<dynamic> route) => false,
       );
     } on Exception catch (e) {
