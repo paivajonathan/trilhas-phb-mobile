@@ -1,9 +1,9 @@
 import "package:flutter/material.dart";
 import "package:flutter_masked_text2/flutter_masked_text2.dart";
-import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/screens/authenticate/login.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:intl/intl.dart";
+import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
 
 class PersonalData extends StatefulWidget {
@@ -47,6 +47,47 @@ class _PersonalDataScreenState extends State<PersonalData> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<void> _register(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      String unmaskedPhone = widget._sharedData["phone"].replaceAll(RegExp(r"[^0-9]"), "");
+      
+      DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(widget._sharedData["birthDate"]);
+      String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
+
+      setState(() => _isLoading = true);
+
+      await _auth.register(
+        email: widget._sharedData["email"],
+        password: widget._sharedData["password"],
+        fullName: widget._sharedData["fullName"],
+        birthDate: formattedDate,
+        cellphone: unmaskedPhone,
+        neighborhoodName: widget._sharedData["neighborhoodName"],
+      );
+
+      setState(() => _isLoading = false);
+      
+      if (!context.mounted) return;
+    
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Cadastro realizado com sucesso!")),
+      );
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}")),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -195,73 +236,14 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 },
               ),
               
-              const Spacer(), // Empurra o botão "Continuar" para o fundo
-              
-              ElevatedButton(
-                onPressed: () async {
-                  if (!_formKey.currentState!.validate()) return;
+              // Empurra o botão "Continuar" para o fundo
+              const Spacer(),
 
-                  try {
-                    String unmaskedPhone = widget._sharedData["phone"].replaceAll(RegExp(r"[^0-9]"), "");
-                    
-                    DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(widget._sharedData["birthDate"]);
-                    String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
-
-                    setState(() => _isLoading = true);
-
-                    await _auth.register(
-                      email: widget._sharedData["email"],
-                      password: widget._sharedData["password"],
-                      fullName: widget._sharedData["fullName"],
-                      birthDate: formattedDate,
-                      cellphone: unmaskedPhone,
-                      neighborhoodName: widget._sharedData["neighborhoodName"],
-                    );
-
-                    setState(() => _isLoading = false);
-                    
-                    if (!context.mounted) return;
-                  
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Cadastro realizado com sucesso!")),
-                    );
-
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
-                      (Route<dynamic> route) => false,
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}")),
-                    );
-                  } finally {
-                    setState(() => _isLoading = false);
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: _isLoading
-                  ? const Center(
-                    child: SizedBox(
-                      width: 23,
-                      height: 23,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                  : const Text(
-                    "Cadastrar-se",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                    ),
-                  ),
+              DecoratedButton(
+                primary: true,
+                text: "Cadastrar-se",
+                isLoading: _isLoading,
+                onPressed: () => _register(context),
               ),
             ],
           ),

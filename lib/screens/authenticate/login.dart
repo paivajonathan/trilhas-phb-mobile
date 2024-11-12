@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  Container(
+                  const SizedBox(
                     width: double.infinity,
                     child: const Text(
                       "Bem Vindo(a)!",
