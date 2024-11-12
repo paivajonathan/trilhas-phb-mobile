@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
-import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/screens/authenticate/personal_data.dart";
+import "package:trilhas_phb/widgets/decorated_button.dart";
+import "package:trilhas_phb/widgets/decorated_label.dart";
+import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
 
 class LoginData extends StatefulWidget{
   const LoginData({
@@ -68,8 +70,12 @@ class _LoginDataState extends State<LoginData> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                _buildTextField(
-                  label: "Email",
+                
+                // Campo de email
+                const DecoratedLabel(content: "Email"),
+                const SizedBox(height: 8),
+                DecoratedTextFormField(
+                  hintText: "Digite aqui",
                   textInputType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -84,14 +90,19 @@ class _LoginDataState extends State<LoginData> {
                   },
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(
-                  label: "Senha",
+
+                // Campo de senha
+                const DecoratedLabel(content: "Senha"),
+                const SizedBox(height: 8),
+                DecoratedTextFormField(
+                  hintText: "Digite aqui",
                   isPassword: true,
                   isPasswordVisible: _isPasswordVisible,
                   onPasswordToggle: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
+                    setState(() => _isPasswordVisible = !_isPasswordVisible);
+                  },
+                  onChanged: (value) {
+                    setState(() => widget._sharedData["password"] = value);
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -101,22 +112,22 @@ class _LoginDataState extends State<LoginData> {
                       return "Digite uma senha maior do que 6 caracteres";
                     }
                     return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      widget._sharedData["password"] = value;
-                    });
-                  },
+                  }
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(
-                  label: "Confirme a senha",
+
+                // Campo de confirmar a senha
+                const DecoratedLabel(content: "Confirme a senha"),
+                const SizedBox(height: 8),
+                DecoratedTextFormField(
+                  hintText: "Digite aqui",
                   isPassword: true,
                   isPasswordVisible: _isConfirmPasswordVisible,
                   onPasswordToggle: () {
-                    setState(() {
-                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                    });
+                    setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible);
+                  },
+                  onChanged: (value) {
+                    setState(() => widget._sharedData["confirmPassword"] = value);
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -126,113 +137,33 @@ class _LoginDataState extends State<LoginData> {
                       return "As senhas não coincidem.";
                     }
                     return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      widget._sharedData["confirmPassword"] = value;
-                    });
-                  },
+                  }
                 ),
+                
+                // Para jogar botão no final da tela
                 const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (!_formKey.currentState!.validate()) return;
-                      
-                      if (!context.mounted) return;
+                
+                DecoratedButton(
+                  primary: true,
+                  text: "Continuar",
+                  onPressed: () {
+                    if (!_formKey.currentState!.validate()) return;
+                    
+                    if (!context.mounted) return;
 
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => PersonalData(
-                            sharedData: widget._sharedData,
-                          )
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => PersonalData(
+                          sharedData: widget._sharedData,
+                        )
                       ),
-                    ),
-                    child: const Text(
-                      "Continuar",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ],
             ),
           ),
       ),
-    );
-  }
-
-  Widget _buildTextField({
-    required String label,
-    bool isPassword = false,
-    bool isPasswordVisible = false,
-    TextInputType? textInputType,
-    Function()? onPasswordToggle,
-    String? Function(String?)? validator,
-    Function(String)? onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          cursorColor: AppColors.primary,
-          obscureText: isPassword && !isPasswordVisible,
-          validator: validator,
-          onChanged: onChanged,
-          keyboardType: textInputType,
-          decoration: InputDecoration(
-            hintText: "Digite aqui",
-            hintStyle: const TextStyle(
-              color: Color.fromARGB(255, 194, 194, 194),
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Colors.grey,
-                width: 1,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: AppColors.primary, // Cor da borda quando o campo está em foco
-                width: 2,
-              ),
-            ),
-            suffixIcon: isPassword 
-              ? IconButton(
-                  icon: Icon(
-                    isPasswordVisible
-                      ? Icons.visibility
-                      : Icons.visibility_off,
-                    color: const Color(0xFF8F9098),
-                  ),
-                  onPressed: onPasswordToggle,
-                )
-              : null,
-          ),
-        ),
-      ],
     );
   }
 }

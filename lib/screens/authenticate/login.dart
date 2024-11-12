@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       setState(() => _password = value);
                     },
                     validator: _validatePassword,
-                    obscureText: true,
+                    isPassword: true,
                     isHintTextLabel: true,
                   ),
                   const SizedBox(height: 20),

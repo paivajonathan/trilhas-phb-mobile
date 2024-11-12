@@ -5,30 +5,36 @@ class DecoratedTextFormField extends StatelessWidget {
   const DecoratedTextFormField({
     super.key,
     
-    bool obscureText = false,
+    bool isPassword = false,
+    bool isPasswordVisible = false,
     bool isHintTextLabel = false,
     String? initialValue,
     String? hintText,
     TextInputType? textInputType,
     TextEditingController? controller,
+    Function()? onPasswordToggle,
     String? Function(String?)? validator,
     void Function(String)? onChanged,
   }) :
     _isHintTextLabel = isHintTextLabel,
-    _obscureText = obscureText,
+    _isPasswordVisible = isPasswordVisible,
+    _isPassword = isPassword,
     _initialValue = initialValue,
     _hintText = hintText,
     _textInputType = textInputType,
     _controller = controller,
+    _onPasswordToggle = onPasswordToggle,
     _validator = validator,
     _onChanged = onChanged;
   
   final bool _isHintTextLabel;
-  final bool _obscureText;
+  final bool _isPassword;
+  final bool _isPasswordVisible;
   final String? _initialValue;
   final String? _hintText;
   final TextInputType? _textInputType;
   final TextEditingController? _controller;
+  final void Function()? _onPasswordToggle;
   final String? Function(String?)? _validator;
   final void Function(String)? _onChanged;
 
@@ -41,7 +47,7 @@ class DecoratedTextFormField extends StatelessWidget {
       onChanged: _onChanged,
       initialValue: _initialValue,
       keyboardType: _textInputType,
-      obscureText: _obscureText,
+      obscureText: _isPassword && !_isPasswordVisible,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -63,6 +69,17 @@ class DecoratedTextFormField extends StatelessWidget {
             width: 2,
           ),
         ),
+        suffixIcon: _isPassword 
+          ? IconButton(
+              icon: Icon(
+                _isPasswordVisible
+                  ? Icons.visibility
+                  : Icons.visibility_off,
+                color: const Color(0xFF8F9098),
+              ),
+              onPressed: _onPasswordToggle,
+            )
+          : null,
       ),
     );
   }
