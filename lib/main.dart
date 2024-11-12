@@ -5,10 +5,8 @@ import "package:trilhas_phb/services/hike.dart";
 
 Future<void> main() async {
   await dotenv.load();
-  final result = await HikeService().get();
-  for (final i in result) {
-    print(i.name);
-  }
+  final result = await HikeService().getOne(1);
+  print(result.toMap());
   runApp(const MainApp());
 }
 
