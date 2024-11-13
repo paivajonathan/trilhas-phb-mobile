@@ -44,7 +44,7 @@ class HikeService {
       }
 
       List<HikeModel> hikes = (responseData["items"] as List)
-        .map((messageJson) => HikeModel.fromMap(messageJson))
+        .map((messageJson) => HikeModel.fromMap(messageJson, _baseUrl))
         .toList();
 
       return hikes;
@@ -80,7 +80,7 @@ class HikeService {
         );
       }
 
-      HikeModel hike = HikeModel.fromMap(responseData);
+      HikeModel hike = HikeModel.fromMap(responseData, _baseUrl);
 
       return hike;
     } on TimeoutException catch (_) {
