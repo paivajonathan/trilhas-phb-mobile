@@ -65,7 +65,7 @@ class HikeService {
     }
   }
 
-  Future<void> create(
+  Future<HikeModel> create(
     {
       required String name,
       required String description,
@@ -110,19 +110,24 @@ class HikeService {
     });
 
     try {
-      final response = await request.send();
+      final response = await request.send().timeout(const Duration(seconds: 5));
+      final responseBody = await response.stream.bytesToString();
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Upload successful");
-        final responseData = await response.stream.bytesToString();
-        print("Response data: $responseData");
-      } else {
-        print("Failed to upload. Status code: ${response.statusCode}");
-        final errorData = await response.stream.bytesToString();
-        print("Error: $errorData");
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(responseBody) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
+        );
       }
+
+      HikeModel hike = HikeModel.fromMap(responseData, _baseUrl);
+      return hike;
+    } on TimeoutException catch (_) {
+      throw Exception("Tempo limite da requisição atingido.");
     } catch (e) {
-      print("An error occurred: $e");
+      throw Exception(e);
     }
   }
 }
