@@ -2,17 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/models/hike.dart';
 import "package:http/http.dart" as http;
 import 'package:trilhas_phb/services/auth.dart';
 
-class HikeService {
+class AppointmentService {
   final _baseUrl = dotenv.env["BASE_URL"]!;
   final _auth = AuthService();
 
-  Future<List<HikeModel>> getAll(
+  Future<List<AppointmentModel>> getAll(
     {
-      bool? hasActiveAppointments,
+      bool? isPresent,
     }
   ) async {
     String token = await _auth.token;
@@ -21,11 +22,11 @@ class HikeService {
       "ordering": "-id",
     };
 
-    if (hasActiveAppointments != null) {
-      queryParameters["has_active_appointmentes"] = hasActiveAppointments.toString();
+    if (isPresent != null) {
+      queryParameters["is_present"] = isPresent.toString();
     }
     
-    final uri = Uri.parse("$_baseUrl/api/v1/hikes/").replace(
+    final uri = Uri.parse("$_baseUrl/api/v1/appointments/").replace(
       queryParameters: queryParameters
     );
 
@@ -49,11 +50,11 @@ class HikeService {
         );
       }
 
-      List<HikeModel> hikes = (responseData["items"] as List)
-        .map((messageJson) => HikeModel.fromMap(messageJson, _baseUrl))
+      List<AppointmentModel> appointments = (responseData["items"] as List)
+        .map((messageJson) => AppointmentModel.fromMap(messageJson, _baseUrl))
         .toList();
 
-      return hikes;
+      return appointments;
     } on TimeoutException catch (_) {
       throw Exception("Tempo limite da requisição atingido.");
     } catch (e) {

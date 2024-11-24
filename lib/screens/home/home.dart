@@ -116,7 +116,7 @@ class HikeCard extends StatelessWidget {
             decoration: BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.fill,
-                image: NetworkImage(_hike.mainImage),
+                image: NetworkImage(_hike.images[0]),
               ),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),

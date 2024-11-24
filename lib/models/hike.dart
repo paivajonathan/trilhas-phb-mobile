@@ -1,12 +1,4 @@
 class HikeModel {
-  final int id;
-  final String name;
-  final String description;
-  final String difficulty;
-  final double length;
-  String gpxFile;
-  String mainImage;
-
   HikeModel({
     required this.id,
     required this.name,
@@ -14,8 +6,16 @@ class HikeModel {
     required this.difficulty,
     required this.length,
     required this.gpxFile,
-    required this.mainImage,
+    required this.images,
   });
+
+  final int id;
+  final String name;
+  final String description;
+  final String difficulty;
+  final double length;
+  String gpxFile;
+  List<String> images;
 
   factory HikeModel.fromMap(Map<String, dynamic> map, String url) {
     return HikeModel(
@@ -25,19 +25,7 @@ class HikeModel {
       difficulty: map["difficulty"],
       length: double.parse(map["length"]),
       gpxFile: "$url/${map["gpx_file"]}",
-      mainImage: "$url/${map["image"]}",
+      images: map["images"].map((imageMap) => "$url/${imageMap["image"]}").toList(),
     );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      "id": id,
-      "name": name,
-      "description": description,
-      "difficulty": difficulty,
-      "length": length,
-      "gpxFile": gpxFile,
-      "mainImage": mainImage,
-    };
   }
 }
