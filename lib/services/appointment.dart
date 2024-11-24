@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:trilhas_phb/models/appointment.dart';
-import 'package:trilhas_phb/models/hike.dart';
 import "package:http/http.dart" as http;
 import 'package:trilhas_phb/services/auth.dart';
 
