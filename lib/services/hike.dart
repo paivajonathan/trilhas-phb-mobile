@@ -92,7 +92,7 @@ class HikeService {
       ));
 
     for (var image in images) {
-      final imageMimeType = lookupMimeType(image.filename) ?? 'application/octet-stream';
+      final imageMimeType = lookupMimeType(image.filename) ?? "application/octet-stream";
 
       request.files.add(http.MultipartFile.fromBytes(
         "images",
@@ -102,19 +102,16 @@ class HikeService {
       ));
     }
 
-    // Add the JSON payload
-    request.fields['payload'] = jsonEncode({
-      'name': name,
-      'description': description,
-      'difficulty': difficulty,
-      'length': length,
+    request.fields["payload"] = jsonEncode({
+      "name": name,
+      "description": description,
+      "difficulty": difficulty,
+      "length": length,
     });
 
     try {
-      // Send the request
       final response = await request.send();
 
-      // Parse the response
       if (response.statusCode == 200 || response.statusCode == 201) {
         print("Upload successful");
         final responseData = await response.stream.bytesToString();
