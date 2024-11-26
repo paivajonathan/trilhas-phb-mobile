@@ -15,37 +15,43 @@ class AuthCheckScreen extends StatefulWidget {
 class _AuthCheckScreenState extends State<AuthCheckScreen> {
   final authService = AuthService();
 
-  late Future<UserLoginModel?> _userData;
+  late UserLoginModel? _userData;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _userData = authService.userData;
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    setState(() => _isLoading = true);
+    _userData = await authService.userData;
+    setState(() => _isLoading = false);
+  }
+
+  Widget _getLoadingScreen() {
+    return Container(
+      color: Colors.white,
+      child: const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primary,
+          value: 1,
+        )
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _userData,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            color: Colors.white,
-            child: const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
-                value: 1,
-              )
-            ),
-          );
-        }
+    if (_isLoading) {
+      return _getLoadingScreen();
+    }
 
-        if (snapshot.data != null) {
-          return NavigationWrapper(userData: snapshot.data!);
-        }
-
-        return const LoginScreen();
-      }
-    );
+    if (_userData != null) {
+      return NavigationWrapper(userData: _userData!);
+    }
+    
+    return const LoginScreen();
   }
 }
