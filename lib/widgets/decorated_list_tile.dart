@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:trilhas_phb/models/appointment.dart';
+import 'package:trilhas_phb/models/hike.dart';
+
 class DecoratedListTile extends StatelessWidget {
   const DecoratedListTile({
     super.key,

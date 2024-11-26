@@ -84,8 +84,14 @@ class DecoratedCard extends StatelessWidget {
                   ),
                   child: Text(
                     difficulty,
+                    maxLines: 1,
                     style: GoogleFonts.inter(
-                      textStyle: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
+                      textStyle: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 ),
@@ -105,8 +111,10 @@ class DecoratedCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
+                    maxLines: 1,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
+                      overflow: TextOverflow.ellipsis,
                       color: isPrimary
                         ? Colors.black
                         : const Color(0xFFF9F8FE)
@@ -114,7 +122,9 @@ class DecoratedCard extends StatelessWidget {
                   ),
                   Text(
                     subtitle,
+                    maxLines: 1,
                     style: TextStyle(
+                      overflow: TextOverflow.ellipsis,
                       color: isPrimary
                         ? Colors.black
                         : const Color(0xFFF9F8FE)
@@ -137,7 +147,14 @@ class DecoratedCard extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(actionText, style: const TextStyle(color: Color(0xFF00BF63))),
+                    child: Text(
+                      actionText,
+                      maxLines: 1,
+                      style: const TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: Color(0xFF00BF63),
+                      )
+                    ),
                   )
                 ],
               )
