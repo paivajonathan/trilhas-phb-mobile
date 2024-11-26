@@ -1,11 +1,12 @@
 import "package:flutter/material.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
+import "package:trilhas_phb/constants/user_type.dart";
 import "package:trilhas_phb/models/user.dart";
-import "package:trilhas_phb/screens/chat/chat.dart";
-import "package:trilhas_phb/screens/home/home.dart";
-import "package:trilhas_phb/screens/profile/profile.dart";
-import "package:trilhas_phb/screens/ranking/ranking.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
+import "package:trilhas_phb/screens/hiker/chat.dart" as hiker;
+import "package:trilhas_phb/screens/hiker/explore.dart" as hiker;
+import "package:trilhas_phb/screens/hiker/profile.dart" as hiker;
+import "package:trilhas_phb/screens/hiker/ranking.dart" as hiker;
 
 class NavigationWrapper extends StatefulWidget {
   const NavigationWrapper({super.key, required this.userData});
@@ -18,7 +19,6 @@ class NavigationWrapper extends StatefulWidget {
 
 class _NavigationWrapperState extends State<NavigationWrapper> {
   int _selectedIndex = 0;
-
   late List<Widget> _screens;
 
   @override
@@ -28,12 +28,18 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
     final userId = widget.userData.id;
     final userType = widget.userData.type;
 
-    _screens = [
-      const HomeScreen(),
-      ChatScreen(userId: userId),
-      const RankingScreen(),
-      const ProfileScreen()
-    ];
+    if (userType == UserType.hiker) {
+      _screens = [
+        const hiker.ExploreScreen(),
+        hiker.ChatScreen(userId: userId),
+        const hiker.RankingScreen(),
+        const hiker.ProfileScreen()
+      ];
+    } else if (userType == UserType.administrator) {
+      _screens = [
+        
+      ];
+    }
   }
 
   @override

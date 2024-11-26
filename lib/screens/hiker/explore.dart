@@ -3,14 +3,14 @@ import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/models/hike.dart";
 import "package:trilhas_phb/services/hike.dart";
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class ExploreScreen extends StatefulWidget {
+  const ExploreScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<ExploreScreen> createState() => _ExploreScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _ExploreScreenState extends State<ExploreScreen> {
   final _hikeService = HikeService();
   final _hikes = <HikeModel>[];
   bool _isLoading = false;
