@@ -26,7 +26,7 @@ class HikeService {
     };
 
     if (hasActiveAppointments != null) {
-      queryParameters["has_active_appointmentes"] = hasActiveAppointments.toString();
+      queryParameters["has_active_appointments"] = hasActiveAppointments.toString();
     }
     
     final uri = Uri.parse("$_baseUrl/api/v1/hikes/").replace(

@@ -25,7 +25,9 @@ class HikeModel {
       difficulty: map["difficulty"],
       length: double.parse(map["length"]),
       gpxFile: "$url/${map["gpx_file"]}",
-      images: map["images"].map((imageMap) => "$url/${imageMap["image"]}").toList(),
+      images: (map["images"] as List<dynamic>)
+        .map((imageMap) => "$url/${imageMap["image"] as String}")
+        .toList(),
     );
   }
 }
