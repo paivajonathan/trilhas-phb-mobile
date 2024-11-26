@@ -7,12 +7,14 @@ class DecoratedCard extends StatelessWidget {
     super.key,
     required this.appointment,
     required this.actionText,
+    required this.onTap,
     this.isPrimary = true,
   });
 
   final AppointmentModel appointment;
   final String actionText;
   final bool isPrimary;
+  final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -131,29 +133,32 @@ class DecoratedCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Container(
-                    alignment: Alignment.center,
-                    width: double.infinity,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: isPrimary
-                        ? null
-                        : const Color(0xFFF9F8FE),
-                      border: Border.all(
-                        width: 1,
+                  GestureDetector(
+                    onTap: onTap,
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: double.infinity,
+                      height: 40,
+                      decoration: BoxDecoration(
                         color: isPrimary
-                        ? const Color(0xFF00BF63)
-                        : const Color(0xFFF9F8FE),
+                          ? null
+                          : const Color(0xFFF9F8FE),
+                        border: Border.all(
+                          width: 1,
+                          color: isPrimary
+                          ? const Color(0xFF00BF63)
+                          : const Color(0xFFF9F8FE),
+                        ),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      actionText,
-                      maxLines: 1,
-                      style: const TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        color: Color(0xFF00BF63),
-                      )
+                      child: Text(
+                        actionText,
+                        maxLines: 1,
+                        style: const TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: Color(0xFF00BF63),
+                        )
+                      ),
                     ),
                   )
                 ],

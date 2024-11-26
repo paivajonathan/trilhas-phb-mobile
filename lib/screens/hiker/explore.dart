@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/models/appointment.dart";
+import "package:trilhas_phb/screens/hiker/appointment_details.dart";
 import "package:trilhas_phb/services/appointment.dart";
 import "package:trilhas_phb/widgets/decorated_card.dart";
 
@@ -64,7 +65,17 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     itemCount: _appointments.length,
                     itemBuilder: (context, index) {
                       final appointment = _appointments[index];
-                      return DecoratedCard(appointment: appointment, actionText: "Participar");
+                      return DecoratedCard(
+                        appointment: appointment,
+                        actionText: "Participar",
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => AppointmentDetailsScreen(appointment: appointment),
+                            ),
+                          );
+                        },
+                      );
                     },
                   ),
             ),
