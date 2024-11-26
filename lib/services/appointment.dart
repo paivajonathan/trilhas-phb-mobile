@@ -60,4 +60,45 @@ class AppointmentService {
       throw Exception(e);
     }
   }
+
+  Future<void> create(
+    {
+      required int hikeId,
+      required String date,
+      required String time,
+    }
+  ) async {
+    try {
+      final url = Uri.parse("$_baseUrl/api/v1/appointments/");
+    
+      final response = await http.post(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl,
+        },
+        body: json.encode(
+          {
+            "hike_id": hikeId,
+            "date": date,
+            "time": time,
+          }
+        ),
+      ).timeout(const Duration(seconds: 5));
+
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
+        );
+      }
+    } on TimeoutException catch (_) {
+      throw Exception("Tempo limite da requisição atingido.");
+    } catch (e) {
+      throw Exception(e);
+    }    
+  }
 }
