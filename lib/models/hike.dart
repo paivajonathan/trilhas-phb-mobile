@@ -5,6 +5,8 @@ class HikeModel {
     required this.description,
     required this.difficulty,
     required this.length,
+    required this.isActive,
+    required this.hasActiveAppointments,
     required this.gpxFile,
     required this.images,
   });
@@ -14,6 +16,8 @@ class HikeModel {
   final String description;
   final String difficulty;
   final double length;
+  final bool isActive;
+  final bool hasActiveAppointments;
   String gpxFile;
   List<String> images;
 
@@ -24,6 +28,8 @@ class HikeModel {
       description: map["description"],
       difficulty: map["difficulty"],
       length: double.parse(map["length"]),
+      isActive: map["is_active"],
+      hasActiveAppointments: map["has_active_appointments"],
       gpxFile: "$url/${map["gpx_file"]}",
       images: (map["images"] as List<dynamic>)
         .map((imageMap) => "$url/${imageMap["image"] as String}")

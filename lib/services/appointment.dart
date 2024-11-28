@@ -12,22 +12,19 @@ class AppointmentService {
 
   Future<List<AppointmentModel>> getAll(
     {
-      bool? isPresent,
+      bool? isActive,
+      bool? isAvailable,
+      bool? hasUserParticipation,
     }
   ) async {
     String token = await _auth.token;
-  
-    final queryParameters = {
-      "ordering": "-id",
-    };
+    final queryParameters = {"ordering": "-id"};
 
-    if (isPresent != null) {
-      queryParameters["is_present"] = isPresent.toString();
-    }
+    if (hasUserParticipation != null) queryParameters["has_user_participation"] = hasUserParticipation.toString();
+    if (isActive != null) queryParameters["is_active"] = isActive.toString();
+    if (isAvailable != null) queryParameters["is_available"] = isAvailable.toString();
     
-    final uri = Uri.parse("$_baseUrl/api/v1/appointments/").replace(
-      queryParameters: queryParameters
-    );
+    final uri = Uri.parse("$_baseUrl/api/v1/appointments/").replace(queryParameters: queryParameters);
 
     try {
       final response = await http.get(
