@@ -20,18 +20,11 @@ class HikeService {
     }
   ) async {
     String token = await _auth.token;
-  
-    final queryParameters = {
-      "ordering": "-id",
-    };
+    final queryParameters = {"ordering": "-id"};
 
-    if (hasActiveAppointments != null) {
-      queryParameters["has_active_appointmentes"] = hasActiveAppointments.toString();
-    }
+    if (hasActiveAppointments != null) queryParameters["has_active_appointments"] = hasActiveAppointments.toString();
     
-    final uri = Uri.parse("$_baseUrl/api/v1/hikes/").replace(
-      queryParameters: queryParameters
-    );
+    final uri = Uri.parse("$_baseUrl/api/v1/hikes/").replace(queryParameters: queryParameters);
 
     try {
       final response = await http.get(
