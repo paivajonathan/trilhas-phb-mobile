@@ -5,6 +5,7 @@ import "package:trilhas_phb/screens/hiker/appointment_details.dart";
 import "package:trilhas_phb/services/appointment.dart";
 import "package:trilhas_phb/widgets/decorated_card.dart";
 import "package:trilhas_phb/widgets/decorated_list_tile.dart";
+import "package:trilhas_phb/widgets/tab_navigation.dart";
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -21,12 +22,12 @@ class _ExploreScreenState extends State<ExploreScreen> with SingleTickerProvider
   bool _isAppointmentsLoading = false;
 
   late TabController _tabController;
-  int _tabIndex = 0;
+  final _tabsTitles = ["TODAS", "INSCRIÇÕES", "PARTICIPAR"];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: _tabsTitles.length, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((timestamp) {
       _loadAppointments();
     });
@@ -57,41 +58,6 @@ class _ExploreScreenState extends State<ExploreScreen> with SingleTickerProvider
         _isAppointmentsLoading = false;
       });
     }
-  }
-
-  AppBar _getAppBar() {
-    return AppBar(
-        toolbarHeight: 25,
-        bottom: TabBar(
-          controller: _tabController,
-          onTap: (index) => setState(() => _tabIndex = index),
-          indicatorColor: Colors.transparent,
-          dividerColor: Colors.transparent,
-          splashFactory: NoSplash.splashFactory,
-          overlayColor: WidgetStateProperty.resolveWith<Color?>(
-            (Set<WidgetState> states) => states.contains(WidgetState.focused)
-              ? null
-              : Colors.transparent
-          ),
-          tabs: [
-            Tab(
-              tabController: _tabController,
-              index: 0,
-              title: "TODAS",
-            ),
-            Tab(
-              tabController: _tabController,
-              index: 1,
-              title: "PARTICIPAR",
-            ),
-            Tab(
-              tabController: _tabController,
-              index: 2,
-              title: "INSCRIÇÕES",
-            ),
-          ],
-        ),
-      );
   }
 
   Widget _getOnlyUserAppointments() {
@@ -193,44 +159,18 @@ class _ExploreScreenState extends State<ExploreScreen> with SingleTickerProvider
     };
 
     return Scaffold(
-      appBar: _getAppBar(),
+      appBar: TabNavigation(
+        tabController: _tabController,
+        tabsTitles: _tabsTitles,
+        onTap: (index) {
+          setState(() {
+            _tabController.index = index;
+          });
+        },
+      ),
       body: _isAppointmentsLoading
         ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
         : currentView
-    );
-  }
-}
-
-class Tab extends StatelessWidget {
-  const Tab({
-    super.key,
-    required String title,
-    required int index,
-    required TabController tabController,
-  }) : _tabController = tabController, _index = index, _title = title;
-
-  final String _title;
-  final TabController _tabController;
-  final int _index;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: _tabController.index == _index
-          ? AppColors.primary
-          : const Color(0xFFEAF2FF),
-      ),
-      child: Text(
-        _title,
-        style: TextStyle(
-          color: _tabController.index == _index
-            ? const Color(0xFFEAF2FF)
-            : AppColors.primary
-        ),
-      ),
     );
   }
 }
