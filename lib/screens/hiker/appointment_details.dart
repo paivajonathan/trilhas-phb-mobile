@@ -21,9 +21,6 @@ class AppointmentDetailsScreen extends StatefulWidget {
 class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
   List<LatLng> _routePoints = [];
   bool _isMapLoading = false;
-  double _sheetHeight = 0.5;
-  final double _minHeight = 0.115;
-  final double _maxHeight = 0.5;
 
   @override
   initState() {
@@ -79,7 +76,9 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
     late Widget mapView;
 
     if (_isMapLoading) {
-      mapView = const Center(child: CircularProgressIndicator(color: AppColors.primary));
+      mapView = const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      );
     } else {
       mapView = FlutterMap(
         options: MapOptions(
@@ -100,73 +99,89 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
                 ),
               ],
             )
-        ]
+        ],
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Informações", style: TextStyle(fontWeight: FontWeight.bold))
+        title: const Text(
+          "Informações",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: Stack(
         children: [
           mapView,
-          DraggableScrollableSheet(
-            initialChildSize: _sheetHeight, // Começa com o modal meio aberto
-            minChildSize: _minHeight, // A altura mínima (pontinha visível)
-            maxChildSize: _maxHeight, // A altura máxima do modal
-            builder: (context, scrollController) {
-              return Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _sheetHeight = _sheetHeight == _minHeight ? _maxHeight : _minHeight;
-                        });
-                      },
-                      child: Container(
-                        height: 75,
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          margin: const EdgeInsets.all(10),
-                          width: MediaQuery.of(context).size.width * 0.5,
-                          height: 15,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: scrollController,
-                        child: const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Column(
-                            children: [
-                              Text('Conteúdo do Modal'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+          const BottomDrawer(),
         ],
-      )
+      ),
+    );
+  }
+}
+
+class BottomDrawer extends StatelessWidget {
+  const BottomDrawer({
+    super.key,
+  });
+
+  final double _maxHeight = 0.5;
+  final double _minHeight = 0.1;
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      minChildSize: _minHeight,
+      maxChildSize: _maxHeight,
+      initialChildSize: _maxHeight,
+      snapSizes: [_minHeight, _maxHeight],
+      snap: true,
+      builder: (_, controller) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(50),
+              topRight: Radius.circular(50),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 24, left: 12, right: 12),
+            child: SingleChildScrollView(
+              controller: controller,
+              child: Column(
+                children: [
+                  Container(
+                    height: 50,
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: Container(
+                      width: 100.0,
+                      height: 10.0,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(24.0),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: 50,
+                        physics: const ClampingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return ListTile(title: Text('Item $index'));
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

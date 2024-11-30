@@ -14,6 +14,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: "Trilhas PHB",
+      debugShowCheckedModeBanner: false,
       home: AuthCheckScreen(),
     );
   }
