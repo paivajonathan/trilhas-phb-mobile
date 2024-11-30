@@ -99,7 +99,7 @@ class _ExploreAllScreenState extends State<ExploreAllScreen> {
     return Column(
       children: [
         Container(
-          height: 300,
+          height: 250,
           alignment: Alignment.center,
           child: _isAvailableAppointmentsLoading
             ? const Loader()
@@ -112,17 +112,19 @@ class _ExploreAllScreenState extends State<ExploreAllScreen> {
                   itemCount: _availableAppointments.length,
                   itemBuilder: (context, index) {
                     final appointment = _availableAppointments[index];
-                    return DecoratedCard(
-                      appointment: appointment,
-                      actionText: "Participar",
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => AppointmentDetailsScreen(
-                                appointment: appointment),
-                          ),
-                        );
-                      },
+                    return Container(
+                      alignment: Alignment.center,
+                      child: DecoratedCard(
+                        appointment: appointment,
+                        actionText: "Participar",
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => AppointmentDetailsScreen(appointment: appointment),
+                            ),
+                          );
+                        },
+                      ),
                     );
                   },
                 ),
