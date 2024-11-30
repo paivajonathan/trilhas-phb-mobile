@@ -22,7 +22,7 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
   List<LatLng> _routePoints = [];
   bool _isMapLoading = false;
   double _sheetHeight = 0.5;
-  final double _minHeight = 0.05;
+  final double _minHeight = 0.115;
   final double _maxHeight = 0.5;
 
   @override
@@ -69,7 +69,7 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
     }
 
     final avgLat = totalLat / points.length;
-    final avgLng = totalLng / points.length;
+    final avgLng = (totalLng / points.length);
 
     return LatLng(avgLat, avgLng);
   }
@@ -116,46 +116,51 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
             minChildSize: _minHeight, // A altura mínima (pontinha visível)
             maxChildSize: _maxHeight, // A altura máxima do modal
             builder: (context, scrollController) {
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _sheetHeight = _sheetHeight == _minHeight ? _maxHeight : _minHeight;
-                  });
-                },
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
+              return Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
-                  child: Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _sheetHeight = _sheetHeight == _minHeight ? _maxHeight : _minHeight;
+                        });
+                      },
+                      child: Container(
+                        height: 75,
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          margin: const EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          height: 15,
                         ),
-                        margin: const EdgeInsets.all(10),
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        height: 15,
                       ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          controller: scrollController,
-                          child: const Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Column(
-                              children: [
-                                Text('Conteúdo do Modal'),
-                              ],
-                            ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Text('Conteúdo do Modal'),
+                            ],
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               );
             },
