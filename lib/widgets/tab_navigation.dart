@@ -22,7 +22,7 @@ class _TabsNavigationState extends State<TabNavigation> {
   Widget build(BuildContext context) {
     return AppBar(
       elevation: 0,
-      title: TabBar(
+      bottom: TabBar(
         unselectedLabelColor: AppColors.primary,
         indicatorSize: TabBarIndicatorSize.label,
         labelColor: Colors.white,
