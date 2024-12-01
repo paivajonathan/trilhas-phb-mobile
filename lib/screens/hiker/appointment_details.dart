@@ -86,8 +86,8 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
     } else {
       mapView = FlutterMap(
         options: MapOptions(
-          initialCenter: calculateRouteCenter(_routePoints),
-          initialZoom: 11.5,
+          initialCenter: _routePoints.last,
+          initialZoom: 15.0,
         ),
         children: [
           TileLayer(
@@ -136,6 +136,27 @@ class BottomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late String name;
+    late String length;
+    late String difficulty;
+    late String date;
+    late String time;
+    late String description;
+
+    if (_appointment != null) {
+      name = _appointment.hike.name;
+      length = _appointment.hike.length.toString();
+      difficulty = switch(_appointment.hike.difficulty) {
+        "H" => "DIFÍCIL",
+        "M" => "MÉDIO",
+        "E" => "FÁCIL",
+        _ => "INVÁLIDO",
+      };
+      date = "${_appointment.datetime.day}/${_appointment.datetime.month.toString().padLeft(2, '0')}/${_appointment.datetime.year}";
+      time = "${_appointment.datetime.hour.toString()}:${_appointment.datetime.minute.toString()}";
+      description = _appointment.hike.description;
+    }
+
     return DraggableScrollableSheet(
       minChildSize: _minHeight,
       maxChildSize: _maxHeight,
@@ -144,11 +165,12 @@ class BottomDrawer extends StatelessWidget {
       snap: true,
       builder: (_, controller) {
         return Container(
+          clipBehavior: Clip.hardEdge,
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(50),
-              topRight: Radius.circular(50),
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
             ),
           ),
           child: SingleChildScrollView(
@@ -156,49 +178,64 @@ class BottomDrawer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 50,
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  child: Container(
-                    width: 100.0,
-                    height: 10.0,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(24.0),
+                Stack(
+                  children: [
+                    Container(
+                      height: 250,
+                      child: PageView.builder(
+                        itemCount: _appointment.hike.images.length,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return Image.network(_appointment.hike.images[index],
+                              fit: BoxFit.cover);
+                        },
+                      ),
                     ),
-                  ),
+                    Container(
+                      height: 50,
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      child: Container(
+                        width: 100.0,
+                        height: 10.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24.0),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                  padding: EdgeInsets.all(24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _appointment.hike.name,
+                        name,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 25),
-                      Text("DISTÂNCIA: ${_appointment.hike.length.toString()}"),
-                      Text("DIFICULDADE: ${_appointment.hike.difficulty}"),
-                      Text("DATA: ${_appointment.datetime.day}"),
-                      Text("HORÁRIO: ${_appointment.datetime.hour}"),
+                      Text("DISTÂNCIA: $length"),
+                      Text("DIFICULDADE: $difficulty"),
+                      Text("DATA: $date"),
+                      Text("HORÁRIO: $time"),
                       const SizedBox(height: 25),
-                      Text("Sobre"),
-                      Text(_appointment.hike.description),
-                      const SizedBox(height: 25,),
-                      DecoratedButton(
-                        primary: _appointment.hasUserParticipation
-                          ? false
-                          : true,
-                        text: _appointment.hasUserParticipation
-                          ? "CANCELAR INSCRIÇÃO"
-                          : "PARTICIPAR",
-                        onPressed: () {
-                          print("Testando");
-                        },
-                      )
+                      const Text("Sobre"),
+                      Text(description),
                     ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(24),
+                  child: DecoratedButton(
+                    primary: _appointment.hasUserParticipation ? false : true,
+                    text: _appointment.hasUserParticipation
+                        ? "CANCELAR INSCRIÇÃO"
+                        : "PARTICIPAR",
+                    onPressed: () {
+                      print("Testando");
+                    },
                   ),
                 )
               ],
