@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/models/appointment.dart';
+import 'package:trilhas_phb/widgets/decorated_button.dart';
 import 'package:xml/xml.dart';
 
 class AppointmentDetailsScreen extends StatefulWidget {
@@ -15,7 +16,8 @@ class AppointmentDetailsScreen extends StatefulWidget {
   final AppointmentModel appointment;
 
   @override
-  State<AppointmentDetailsScreen> createState() => _AppointmentDetailsScreenState();
+  State<AppointmentDetailsScreen> createState() =>
+      _AppointmentDetailsScreenState();
 }
 
 class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
@@ -31,13 +33,15 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
   Future<void> _loadGpx() async {
     try {
       setState(() => _isMapLoading = true);
-      final response = await http.get(Uri.parse(widget.appointment.hike.gpxFile));
+      final response =
+          await http.get(Uri.parse(widget.appointment.hike.gpxFile));
 
       if (response.statusCode == 200) {
         final gpxData = response.body;
 
         final XmlDocument gpx = XmlDocument.parse(gpxData);
-        final List<XmlElement> trackPoints = gpx.findAllElements('trkpt').toList();
+        final List<XmlElement> trackPoints =
+            gpx.findAllElements('trkpt').toList();
         final List<LatLng> points = trackPoints.map((trkpt) {
           final double lat = double.parse(trkpt.getAttribute('lat')!);
           final double lon = double.parse(trkpt.getAttribute('lon')!);
@@ -113,7 +117,7 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
       body: Stack(
         children: [
           mapView,
-          const BottomDrawer(),
+          BottomDrawer(appointment: widget.appointment),
         ],
       ),
     );
@@ -123,10 +127,12 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
 class BottomDrawer extends StatelessWidget {
   const BottomDrawer({
     super.key,
-  });
+    required AppointmentModel appointment,
+  }) : _appointment = appointment;
 
+  final AppointmentModel _appointment;
   final double _maxHeight = 0.7;
-  final double _minHeight = 0.1;
+  final double _minHeight = 0.075;
 
   @override
   Widget build(BuildContext context) {
@@ -145,39 +151,57 @@ class BottomDrawer extends StatelessWidget {
               topRight: Radius.circular(50),
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 24, left: 12, right: 12),
-            child: SingleChildScrollView(
-              controller: controller,
-              child: Column(
-                children: [
-                  Container(
-                    height: 50,
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    child: Container(
-                      width: 100.0,
-                      height: 10.0,
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(24.0),
-                      ),
+          child: SingleChildScrollView(
+            controller: controller,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 50,
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 100.0,
+                    height: 10.0,
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(24.0),
                     ),
                   ),
-                  Column(
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: 50,
-                        physics: const ClampingScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return ListTile(title: Text('Item $index'));
-                        },
+                      Text(
+                        _appointment.hike.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
+                      const SizedBox(height: 25),
+                      Text("DISTÂNCIA: ${_appointment.hike.length.toString()}"),
+                      Text("DIFICULDADE: ${_appointment.hike.difficulty}"),
+                      Text("DATA: ${_appointment.datetime.day}"),
+                      Text("HORÁRIO: ${_appointment.datetime.hour}"),
+                      const SizedBox(height: 25),
+                      Text("Sobre"),
+                      Text(_appointment.hike.description),
+                      const SizedBox(height: 25,),
+                      DecoratedButton(
+                        primary: _appointment.hasUserParticipation
+                          ? false
+                          : true,
+                        text: _appointment.hasUserParticipation
+                          ? "CANCELAR INSCRIÇÃO"
+                          : "PARTICIPAR",
+                        onPressed: () {
+                          print("Testando");
+                        },
+                      )
                     ],
                   ),
-                ],
-              ),
+                )
+              ],
             ),
           ),
         );
