@@ -28,7 +28,7 @@ class _ExploreAllScreenState extends State<ExploreAvailableScreen> {
 
   @override
   void setState(fn) {
-    if(mounted) {
+    if (mounted) {
       super.setState(fn);
     }
   }
@@ -62,34 +62,53 @@ class _ExploreAllScreenState extends State<ExploreAvailableScreen> {
 
   @override
   Widget build(BuildContext context) {
+    late Widget appointmentsView;
+
     if (_isAvailableAppointmentsLoading) {
-      return const Loader();
+      appointmentsView = const Loader();
+    } else if (_availableAppointments.isEmpty) {
+      appointmentsView = const Center(
+        child: Text("Os agendamentos aparecerão aqui."),
+      );
+    } else {
+      appointmentsView = ListView.separated(
+        scrollDirection: Axis.vertical,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        separatorBuilder: (context, value) => const SizedBox(width: 20),
+        itemCount: _availableAppointments.length,
+        itemBuilder: (context, index) {
+          final appointment = _availableAppointments[index];
+          return DecoratedCard(
+            appointment: appointment,
+            actionText: "Participar",
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      AppointmentDetailsScreen(appointment: appointment),
+                ),
+              );
+            },
+          );
+        },
+      );
     }
 
-    if (_availableAppointments.isEmpty) {
-      return const Center(child: Text("Os agendamentos aparecerão aqui."));
-    }
-
-    return ListView.separated(
-      scrollDirection: Axis.vertical,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      separatorBuilder: (context, value) => const SizedBox(width: 20),
-      itemCount: _availableAppointments.length,
-      itemBuilder: (context, index) {
-        final appointment = _availableAppointments[index];
-        return DecoratedCard(
-          appointment: appointment,
-          actionText: "Participar",
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => AppointmentDetailsScreen(
-                    appointment: appointment),
-              ),
-            );
-          },
-        );
-      },
+    return Column(
+      children: [
+        Container(
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: const Text(
+            "Trilhas agendadas",
+            textAlign: TextAlign.left,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          child: appointmentsView,
+        ),
+      ],
     );
   }
 }

@@ -125,7 +125,7 @@ class BottomDrawer extends StatelessWidget {
     super.key,
   });
 
-  final double _maxHeight = 0.5;
+  final double _maxHeight = 0.7;
   final double _minHeight = 0.1;
 
   @override

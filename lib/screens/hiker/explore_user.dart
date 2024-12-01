@@ -28,7 +28,7 @@ class _ExploreAllScreenState extends State<ExploreUserScreen> {
 
   @override
   void setState(fn) {
-    if(mounted) {
+    if (mounted) {
       super.setState(fn);
     }
   }
@@ -62,35 +62,54 @@ class _ExploreAllScreenState extends State<ExploreUserScreen> {
 
   @override
   Widget build(BuildContext context) {
+    late Widget appointmentsView;
+
     if (_isUserAppointmentsLoading) {
-      return const Loader();
+      appointmentsView = const Loader();
+    } else if (_userAppointments.isEmpty) {
+      appointmentsView = const Center(
+        child: Text("Suas trilhas aparecerão aqui."),
+      );
+    } else {
+      appointmentsView = ListView.separated(
+        scrollDirection: Axis.vertical,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        separatorBuilder: (context, value) => const SizedBox(width: 20),
+        itemCount: _userAppointments.length,
+        itemBuilder: (context, index) {
+          final appointment = _userAppointments[index];
+          return DecoratedCard(
+            isPrimary: false,
+            appointment: appointment,
+            actionText: "Informações",
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      AppointmentDetailsScreen(appointment: appointment),
+                ),
+              );
+            },
+          );
+        },
+      );
     }
 
-    if (_userAppointments.isEmpty) {
-      return const Center(child: Text("Suas trilhas aparecerão aqui."));
-    }
-
-    return ListView.separated(
-      scrollDirection: Axis.vertical,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      separatorBuilder: (context, value) => const SizedBox(width: 20),
-      itemCount: _userAppointments.length,
-      itemBuilder: (context, index) {
-        final appointment = _userAppointments[index];
-        return DecoratedCard(
-          isPrimary: false,
-          appointment: appointment,
-          actionText: "Informações",
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => AppointmentDetailsScreen(
-                    appointment: appointment),
-              ),
-            );
-          },
-        );
-      },
+    return Column(
+      children: [
+        Container(
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: const Text(
+            "Suas trilhas",
+            textAlign: TextAlign.left,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          child: appointmentsView,
+        ),
+      ],
     );
   }
 }
