@@ -9,12 +9,10 @@ class DecoratedListTile extends StatelessWidget {
     required this.onTap,
     this.appointment,
     this.hike,
-  }) : 
-    assert(
-      (appointment != null && hike == null) ||
-      (appointment == null && hike != null),
-      "É necessário um Agendamento ou uma Trilha para esse Widget."
-    );
+  }) : assert(
+            (appointment != null && hike == null) ||
+                (appointment == null && hike != null),
+            "É necessário um Agendamento ou uma Trilha para esse Widget.");
 
   final void Function() onTap;
   final AppointmentModel? appointment;
@@ -48,7 +46,8 @@ class DecoratedListTile extends StatelessWidget {
         child: Text(
           hike!.readableDifficulty,
           style: GoogleFonts.inter(
-            textStyle: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
+            textStyle: const TextStyle(
+                color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
           ),
         ),
       );
@@ -63,11 +62,20 @@ class DecoratedListTile extends StatelessWidget {
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
         child: Row(
           children: [
-            Image.network(
-              imageUrl,
-              width: 80,
+            FadeInImage.assetNetwork(
+              placeholder: "assets/loading.gif",
+              image: imageUrl,
               height: double.infinity,
+              width: 80,
               fit: BoxFit.cover,
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  "assets/placeholder.png",
+                  height: double.infinity,
+                  width: 80,
+                  fit: BoxFit.cover,
+                );
+              },
             ),
             Expanded(
               child: Container(
@@ -80,14 +88,12 @@ class DecoratedListTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            title,
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          ),
+                          Text(title,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis,
+                              )),
                           Text(
                             subtitle,
                             maxLines: 1,

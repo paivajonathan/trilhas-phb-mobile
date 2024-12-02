@@ -29,113 +29,112 @@ class DecoratedCard extends StatelessWidget {
       height: 250,
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              Image.network(
-                imageUrl,
-                height: 125,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-              Container(
-                padding: const EdgeInsets.all(10),
-                width: double.infinity,
-                height: 125,
-                alignment: Alignment.topRight,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                  width: 64,
-                  height: 24,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Color(difficultyColor),
-                  ),
-                  child: Text(
-                    difficulty,
-                    maxLines: 1,
-                    style: GoogleFonts.inter(
-                      textStyle: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+      child: Column(children: [
+        Stack(
+          children: [
+            FadeInImage.assetNetwork(
+              placeholder: "assets/loading.gif",
+              image: imageUrl,
+              height: 125,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  "assets/placeholder.png",
+                  height: 125,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                );
+              },
+            ),
+            Container(
+              padding: const EdgeInsets.all(10),
+              width: double.infinity,
+              height: 125,
+              alignment: Alignment.topRight,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                width: 64,
+                height: 24,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Color(difficultyColor),
+                ),
+                child: Text(
+                  difficulty,
+                  maxLines: 1,
+                  style: GoogleFonts.inter(
+                    textStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
-              )
-            ],
-          ),
-          Container(
+              ),
+            )
+          ],
+        ),
+        Container(
             width: double.infinity,
             height: 125,
-            color: isPrimary
-              ? const Color(0xFFF9F8FE)
-              : const Color(0xFF00BF63),
+            color:
+                isPrimary ? const Color(0xFFF9F8FE) : const Color(0xFF00BF63),
             child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      overflow: TextOverflow.ellipsis,
-                      color: isPrimary
-                        ? Colors.black
-                        : const Color(0xFFF9F8FE)
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    maxLines: 1,
-                    style: TextStyle(
-                      overflow: TextOverflow.ellipsis,
-                      color: isPrimary
-                        ? Colors.black
-                        : const Color(0xFFF9F8FE)
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: onTap,
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: double.infinity,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: isPrimary
-                          ? null
-                          : const Color(0xFFF9F8FE),
-                        border: Border.all(
-                          width: 1,
-                          color: isPrimary
-                          ? const Color(0xFF00BF63)
-                          : const Color(0xFFF9F8FE),
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        actionText,
-                        maxLines: 1,
-                        style: const TextStyle(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 1,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
                           overflow: TextOverflow.ellipsis,
-                          color: Color(0xFF00BF63),
-                        )
-                      ),
+                          color: isPrimary
+                              ? Colors.black
+                              : const Color(0xFFF9F8FE)),
                     ),
-                  )
-                ],
-              )
-            )
-          ),
-        ]
-      ),
+                    Text(
+                      subtitle,
+                      maxLines: 1,
+                      style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: isPrimary
+                              ? Colors.black
+                              : const Color(0xFFF9F8FE)),
+                    ),
+                    const SizedBox(height: 10),
+                    GestureDetector(
+                      onTap: onTap,
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: double.infinity,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: isPrimary ? null : const Color(0xFFF9F8FE),
+                          border: Border.all(
+                            width: 1,
+                            color: isPrimary
+                                ? const Color(0xFF00BF63)
+                                : const Color(0xFFF9F8FE),
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(actionText,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                              color: Color(0xFF00BF63),
+                            )),
+                      ),
+                    )
+                  ],
+                ))),
+      ]),
     );
   }
 }
