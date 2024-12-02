@@ -66,6 +66,7 @@ class AppointmentService {
     }
   ) async {
     try {
+      String token = await _auth.token;
       final url = Uri.parse("$_baseUrl/api/v1/appointments/");
     
       final response = await http.post(
@@ -74,13 +75,14 @@ class AppointmentService {
           "Content-Type": "application/json",
           "Accept": "application/json",
           "Origin": _baseUrl,
+          "Authorization": "Bearer $token",
         },
         body: json.encode(
           {
             "hike_id": hikeId,
             "date": date,
             "time": time,
-          }
+          },
         ),
       ).timeout(const Duration(seconds: 5));
 
