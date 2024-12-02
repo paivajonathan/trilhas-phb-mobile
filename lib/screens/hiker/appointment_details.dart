@@ -7,6 +7,18 @@ import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/services/participation.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
 import 'package:xml/xml.dart';
+import 'package:flutter/foundation.dart';
+
+List<LatLng> parseGpx(String gpxData) {
+  final XmlDocument gpx = XmlDocument.parse(gpxData);
+  final List<XmlElement> trackPoints = gpx.findAllElements('trkpt').toList();
+
+  return trackPoints.map((trkpt) {
+    final double lat = double.parse(trkpt.getAttribute('lat')!);
+    final double lon = double.parse(trkpt.getAttribute('lon')!);
+    return LatLng(lat, lon);
+  }).toList();
+}
 
 class AppointmentDetailsScreen extends StatefulWidget {
   const AppointmentDetailsScreen({
@@ -25,13 +37,13 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
   bool _isMapLoading = false;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     _loadGpx();
   }
 
   @override
-  setState(void Function() fn) {
+  void setState(VoidCallback fn) {
     if (mounted) {
       super.setState(fn);
     }
@@ -40,46 +52,23 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
   Future<void> _loadGpx() async {
     try {
       setState(() => _isMapLoading = true);
-      final response =
-          await http.get(Uri.parse(widget.appointment.hike.gpxFile));
+      
+      final response = await http.get(Uri.parse(widget.appointment.hike.gpxFile));
 
       if (response.statusCode == 200) {
         final gpxData = response.body;
 
-        final XmlDocument gpx = XmlDocument.parse(gpxData);
-        final List<XmlElement> trackPoints =
-            gpx.findAllElements('trkpt').toList();
-        final List<LatLng> points = trackPoints.map((trkpt) {
-          final double lat = double.parse(trkpt.getAttribute('lat')!);
-          final double lon = double.parse(trkpt.getAttribute('lon')!);
-          return LatLng(lat, lon);
-        }).toList();
+        final points = await compute(parseGpx, gpxData);
 
-        setState(() {
-          _routePoints = points;
-          _isMapLoading = false;
-        });
+        setState(() => _routePoints = points);
       } else {
         print("Ocorreu um erro no servidor.");
       }
     } catch (e) {
       print("Ocorreu um erro inesperado.");
+    } finally {
+      setState(() => _isMapLoading = false);
     }
-  }
-
-  LatLng calculateRouteCenter(List<LatLng> points) {
-    double totalLat = 0;
-    double totalLng = 0;
-
-    for (var point in points) {
-      totalLat += point.latitude;
-      totalLng += point.longitude;
-    }
-
-    final avgLat = totalLat / points.length;
-    final avgLng = (totalLng / points.length);
-
-    return LatLng(avgLat, avgLng);
   }
 
   @override
@@ -93,7 +82,9 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
     } else {
       mapView = FlutterMap(
         options: MapOptions(
-          initialCenter: _routePoints.last,
+          initialCenter: _routePoints.isNotEmpty
+            ? _routePoints.last
+            : const LatLng(0, 0), // Fallback to a default location
           initialZoom: 15.0,
         ),
         children: [
