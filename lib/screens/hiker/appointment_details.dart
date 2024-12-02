@@ -20,6 +20,32 @@ List<LatLng> parseGpx(String gpxData) {
   }).toList();
 }
 
+LatLngBounds calculateBounds(List<LatLng> points) {
+  if (points.isEmpty) {
+    return LatLngBounds(
+      const LatLng(-90.0, -180.0),
+      const LatLng(90.0, 180.0),
+    );
+  }
+
+  double minLat = points.first.latitude;
+  double maxLat = points.first.latitude;
+  double minLng = points.first.longitude;
+  double maxLng = points.first.longitude;
+
+  for (var point in points) {
+    minLat = point.latitude < minLat ? point.latitude : minLat;
+    maxLat = point.latitude > maxLat ? point.latitude : maxLat;
+    minLng = point.longitude < minLng ? point.longitude : minLng;
+    maxLng = point.longitude > maxLng ? point.longitude : maxLng;
+  }
+
+  return LatLngBounds(
+    LatLng(minLat, minLng),
+    LatLng(maxLat, maxLng),
+  );
+}
+
 class AppointmentDetailsScreen extends StatefulWidget {
   const AppointmentDetailsScreen({
     super.key,
@@ -84,8 +110,11 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
         options: MapOptions(
           initialCenter: _routePoints.isNotEmpty
             ? _routePoints.last
-            : const LatLng(0, 0), // Fallback to a default location
+            : const LatLng(0, 0),
           initialZoom: 15.0,
+          maxZoom: 20.0,
+          minZoom: 15.0,
+          cameraConstraint: CameraConstraint.containCenter(bounds: calculateBounds(_routePoints))
         ),
         children: [
           TileLayer(
