@@ -30,6 +30,13 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
     _loadGpx();
   }
 
+  @override
+  setState(void Function() fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
   Future<void> _loadGpx() async {
     try {
       setState(() => _isMapLoading = true);

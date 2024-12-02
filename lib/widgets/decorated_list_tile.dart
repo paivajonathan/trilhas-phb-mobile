@@ -6,6 +6,7 @@ import 'package:trilhas_phb/models/hike.dart';
 class DecoratedListTile extends StatelessWidget {
   const DecoratedListTile({
     super.key,
+    required this.onTap,
     this.appointment,
     this.hike,
   }) : 
@@ -15,6 +16,7 @@ class DecoratedListTile extends StatelessWidget {
       "É necessário um Agendamento ou uma Trilha para esse Widget."
     );
 
+  final void Function() onTap;
   final AppointmentModel? appointment;
   final HikeModel? hike;
 
@@ -82,55 +84,58 @@ class DecoratedListTile extends StatelessWidget {
       );
     }
 
-    return Container(
-      width: double.infinity,
-      height: 80,
-      clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-      child: Row(
-        children: [
-          Image.network(
-            imageUrl,
-            width: 80,
-            height: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              color: const Color(0xFFF9F8FE),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          title,
-                          maxLines: 1,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            overflow: TextOverflow.ellipsis,
-                          )
-                        ),
-                        Text(
-                          subtitle,
-                          maxLines: 1,
-                          style: const TextStyle(
-                            overflow: TextOverflow.ellipsis,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: 80,
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+        child: Row(
+          children: [
+            Image.network(
+              imageUrl,
+              width: 80,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                color: const Color(0xFFF9F8FE),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            title,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              overflow: TextOverflow.ellipsis,
+                            )
                           ),
-                        ),
-                      ],
+                          Text(
+                            subtitle,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  trailing,
-                ],
+                    const SizedBox(width: 10),
+                    trailing,
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
