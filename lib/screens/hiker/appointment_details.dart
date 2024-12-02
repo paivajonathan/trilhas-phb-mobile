@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/models/appointment.dart';
+import 'package:trilhas_phb/services/participation.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
 import 'package:xml/xml.dart';
 
@@ -16,8 +17,7 @@ class AppointmentDetailsScreen extends StatefulWidget {
   final AppointmentModel appointment;
 
   @override
-  State<AppointmentDetailsScreen> createState() =>
-      _AppointmentDetailsScreenState();
+  State<AppointmentDetailsScreen> createState() => _AppointmentDetailsScreenState();
 }
 
 class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
@@ -131,33 +131,70 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
   }
 }
 
-class BottomDrawer extends StatelessWidget {
+class BottomDrawer extends StatefulWidget {
   const BottomDrawer({
     super.key,
     required AppointmentModel appointment,
   }) : _appointment = appointment;
 
   final AppointmentModel _appointment;
+
+  @override
+  State<BottomDrawer> createState() => _BottomDrawerState();
+}
+
+class _BottomDrawerState extends State<BottomDrawer> {
+  final _participationService = ParticipationService();
+  late bool _doesUserParticipate = widget._appointment.hasUserParticipation;
+  bool _isButtonLoading = false;
+
   final double _maxHeight = 0.7;
   final double _minHeight = 0.075;
 
   @override
-  Widget build(BuildContext context) {
-    late String name;
-    late String length;
-    late String difficulty;
-    late String date;
-    late String time;
-    late String description;
-
-    if (_appointment != null) {
-      name = _appointment.hike.name;
-      length = _appointment.hike.length.toString();
-      difficulty = _appointment.hike.readableDifficulty;
-      date = _appointment.readableDate;
-      time = _appointment.readableTime;
-      description = _appointment.hike.description;
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
     }
+  }
+
+  Future<void> _handleParticipation(BuildContext context) async {
+    try {
+      setState(() => _isButtonLoading = true);
+
+      if (_doesUserParticipate) {
+        await _participationService.cancel(appointmentId: widget._appointment.id);
+        setState(() => _doesUserParticipate = false);
+      } else {
+        await _participationService.create(appointmentId: widget._appointment.id);
+        setState(() => _doesUserParticipate = true);
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      print(e.toString());
+      
+      late String message = _doesUserParticipate
+        ? "Ocorreu um erro ao tentar cancelar a sua participação na trilha."
+        : "Ocorreu um erro ao tentar fixar sua participação na trilha.";
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("$message: ${e.toString()}")),
+      );
+    } finally {
+      setState(() => _isButtonLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String name = widget._appointment.hike.name;
+    String length = widget._appointment.hike.length.toString();
+    String difficulty = widget._appointment.hike.readableDifficulty;
+    String date = widget._appointment.readableDate;
+    String time = widget._appointment.readableTime;
+    String description = widget._appointment.hike.description;
 
     return DraggableScrollableSheet(
       minChildSize: _minHeight,
@@ -185,10 +222,10 @@ class BottomDrawer extends StatelessWidget {
                     Container(
                       height: 250,
                       child: PageView.builder(
-                        itemCount: _appointment.hike.images.length,
+                        itemCount: widget._appointment.hike.images.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          return Image.network(_appointment.hike.images[index],
+                          return Image.network(widget._appointment.hike.images[index],
                               fit: BoxFit.cover);
                         },
                       ),
@@ -209,7 +246,7 @@ class BottomDrawer extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -229,15 +266,12 @@ class BottomDrawer extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(24),
                   child: DecoratedButton(
-                    primary: _appointment.hasUserParticipation ? false : true,
-                    text: _appointment.hasUserParticipation
-                        ? "CANCELAR INSCRIÇÃO"
-                        : "PARTICIPAR",
-                    onPressed: () {
-                      print("Testando");
-                    },
+                    primary: _doesUserParticipate ? false : true,
+                    text: _doesUserParticipate ? "CANCELAR INSCRIÇÃO" : "PARTICIPAR",
+                    onPressed: () => _handleParticipation(context),
+                    isLoading: _isButtonLoading,
                   ),
                 )
               ],
