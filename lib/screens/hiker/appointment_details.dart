@@ -1,141 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
+import 'package:trilhas_phb/helpers/map.dart';
 import 'package:trilhas_phb/models/appointment.dart';
+import 'package:trilhas_phb/services/hike.dart';
 import 'package:trilhas_phb/services/participation.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
-import 'package:xml/xml.dart';
-import 'package:flutter/foundation.dart';
-
-List<LatLng> parseGpx(String gpxData) {
-  final XmlDocument gpx = XmlDocument.parse(gpxData);
-  final List<XmlElement> trackPoints = gpx.findAllElements('trkpt').toList();
-
-  return trackPoints.map((trkpt) {
-    final double lat = double.parse(trkpt.getAttribute('lat')!);
-    final double lon = double.parse(trkpt.getAttribute('lon')!);
-    return LatLng(lat, lon);
-  }).toList();
-}
-
-LatLngBounds calculateBounds(List<LatLng> points) {
-  if (points.isEmpty) {
-    return LatLngBounds(
-      const LatLng(-90.0, -180.0),
-      const LatLng(90.0, 180.0),
-    );
-  }
-
-  double minLat = points.first.latitude;
-  double maxLat = points.first.latitude;
-  double minLng = points.first.longitude;
-  double maxLng = points.first.longitude;
-
-  for (var point in points) {
-    minLat = point.latitude < minLat ? point.latitude : minLat;
-    maxLat = point.latitude > maxLat ? point.latitude : maxLat;
-    minLng = point.longitude < minLng ? point.longitude : minLng;
-    maxLng = point.longitude > maxLng ? point.longitude : maxLng;
-  }
-
-  return LatLngBounds(
-    LatLng(minLat, minLng),
-    LatLng(maxLat, maxLng),
-  );
-}
 
 class AppointmentDetailsScreen extends StatefulWidget {
   const AppointmentDetailsScreen({
     super.key,
-    required this.appointment,
-  });
+    required AppointmentModel appointment,
+  }) : _appointment = appointment;
 
-  final AppointmentModel appointment;
+  final AppointmentModel _appointment;
 
   @override
-  State<AppointmentDetailsScreen> createState() => _AppointmentDetailsScreenState();
+  State<AppointmentDetailsScreen> createState() =>
+      _AppointmentDetailsScreenState();
 }
 
 class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
-  List<LatLng> _routePoints = [];
-  bool _isMapLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadGpx();
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
-
-  Future<void> _loadGpx() async {
-    try {
-      setState(() => _isMapLoading = true);
-      
-      final response = await http.get(Uri.parse(widget.appointment.hike.gpxFile));
-
-      if (response.statusCode == 200) {
-        final gpxData = response.body;
-
-        final points = await compute(parseGpx, gpxData);
-
-        setState(() => _routePoints = points);
-      } else {
-        print("Ocorreu um erro no servidor.");
-      }
-    } catch (e) {
-      print("Ocorreu um erro inesperado.");
-    } finally {
-      setState(() => _isMapLoading = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    late Widget mapView;
-
-    if (_isMapLoading) {
-      mapView = const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
-      );
-    } else {
-      mapView = FlutterMap(
-        options: MapOptions(
-          initialCenter: _routePoints.isNotEmpty
-            ? _routePoints.last
-            : const LatLng(0, 0),
-          initialZoom: 15.0,
-          maxZoom: 20.0,
-          minZoom: 15.0,
-          cameraConstraint: CameraConstraint.containCenter(bounds: calculateBounds(_routePoints))
-        ),
-        children: [
-          TileLayer(
-            urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-          ),
-          if (_routePoints.isNotEmpty)
-            PolylineLayer(
-              polylines: [
-                Polyline(
-                  points: _routePoints,
-                  color: AppColors.primary,
-                  strokeWidth: 4.0,
-                ),
-              ],
-            )
-        ],
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
         title: const Text(
           "Informações",
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -143,10 +34,73 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
       ),
       body: Stack(
         children: [
-          mapView,
-          BottomDrawer(appointment: widget.appointment),
+          MapView(appointment: widget._appointment),
+          BottomDrawer(appointment: widget._appointment),
         ],
       ),
+    );
+  }
+}
+
+class MapView extends StatelessWidget {
+  MapView({
+    super.key,
+    required AppointmentModel appointment,
+  }) : _appointment = appointment;
+
+  final AppointmentModel _appointment;
+
+  final _hikeService = HikeService();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _hikeService.loadGpx(gpxFile: _appointment.hike.gpxFile),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error!.toString()),
+          );
+        }
+
+        if (snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text("Não há dados para mostrar."),
+          );
+        }
+
+        return FlutterMap(
+          options: MapOptions(
+            initialCenter: snapshot.data!.last,
+            initialZoom: 15.0,
+            minZoom: 15.0,
+            maxZoom: 20.0,
+            cameraConstraint: CameraConstraint.containCenter(
+              bounds: calculateBounds(snapshot.data!),
+            ),
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+            ),
+            PolylineLayer(
+              polylines: [
+                Polyline(
+                  points: snapshot.data!,
+                  color: AppColors.primary,
+                  strokeWidth: 4.0,
+                ),
+              ],
+            )
+          ],
+        );
+      },
     );
   }
 }
@@ -183,20 +137,24 @@ class _BottomDrawerState extends State<BottomDrawer> {
       setState(() => _isButtonLoading = true);
 
       if (_doesUserParticipate) {
-        await _participationService.cancel(appointmentId: widget._appointment.id);
+        await _participationService.cancel(
+          appointmentId: widget._appointment.id,
+        );
         setState(() => _doesUserParticipate = false);
       } else {
-        await _participationService.create(appointmentId: widget._appointment.id);
+        await _participationService.create(
+          appointmentId: widget._appointment.id,
+        );
         setState(() => _doesUserParticipate = true);
       }
     } catch (e) {
       if (!mounted) return;
 
       print(e.toString());
-      
+
       late String message = _doesUserParticipate
-        ? "Ocorreu um erro ao tentar cancelar a sua participação na trilha."
-        : "Ocorreu um erro ao tentar fixar sua participação na trilha.";
+          ? "Ocorreu um erro ao tentar cancelar a sua participação na trilha."
+          : "Ocorreu um erro ao tentar fixar sua participação na trilha.";
 
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -245,8 +203,10 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         itemCount: widget._appointment.hike.images.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          return Image.network(widget._appointment.hike.images[index],
-                              fit: BoxFit.cover);
+                          return Image.network(
+                            widget._appointment.hike.images[index],
+                            fit: BoxFit.cover,
+                          );
                         },
                       ),
                     ),
@@ -289,7 +249,9 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   padding: const EdgeInsets.all(24),
                   child: DecoratedButton(
                     primary: _doesUserParticipate ? false : true,
-                    text: _doesUserParticipate ? "CANCELAR INSCRIÇÃO" : "PARTICIPAR",
+                    text: _doesUserParticipate
+                        ? "CANCELAR INSCRIÇÃO"
+                        : "PARTICIPAR",
                     onPressed: () => _handleParticipation(context),
                     isLoading: _isButtonLoading,
                   ),
