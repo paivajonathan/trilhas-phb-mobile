@@ -19,41 +19,10 @@ class DecoratedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String imageUrl = appointment.hike.images[0];
-    
-    String difficulty = switch(appointment.hike.difficulty) {
-      "H" => "DIFÍCIL",
-      "M" => "MÉDIO",
-      "E" => "FÁCIL",
-      _ => "INVÁLIDO",
-    };
-    Color difficultyColor = switch(appointment.hike.difficulty) {
-      "H" => Colors.red,
-      "M" => Colors.yellow,
-      "E" => const Color(0xFF00BF63),
-      _ => Colors.blue,
-    };
-    
+    String difficulty = appointment.hike.readableDifficulty;
+    int difficultyColor = appointment.hike.difficultyColor;
     String title = appointment.hike.name;
-
-    String day = appointment.datetime.day.toString();
-    String month = switch(appointment.datetime.month) {
-      DateTime.january => "Janeiro",
-      DateTime.february => "Fevereiro",
-      DateTime.march => "Março",
-      DateTime.april => "Abril",
-      DateTime.may => "Maio",
-      DateTime.june => "Junho",
-      DateTime.july => "Julho",
-      DateTime.august => "Agosto",
-      DateTime.september => "Setembro",
-      DateTime.october => "Outubro",
-      DateTime.november => "Novembro",
-      DateTime.december => "Dezembro",
-      _ => "Inválido",
-    };
-    String time = "${appointment.datetime.hour}:${appointment.datetime.hour}";
-
-    String subtitle = "$day de $month, às $time";
+    String subtitle = appointment.fullReadableTime;
 
     return Container(
       width: 250,
@@ -82,7 +51,7 @@ class DecoratedCard extends StatelessWidget {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: difficultyColor,
+                    color: Color(difficultyColor),
                   ),
                   child: Text(
                     difficulty,

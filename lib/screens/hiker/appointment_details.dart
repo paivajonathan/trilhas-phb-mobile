@@ -153,14 +153,9 @@ class BottomDrawer extends StatelessWidget {
     if (_appointment != null) {
       name = _appointment.hike.name;
       length = _appointment.hike.length.toString();
-      difficulty = switch(_appointment.hike.difficulty) {
-        "H" => "DIFÍCIL",
-        "M" => "MÉDIO",
-        "E" => "FÁCIL",
-        _ => "INVÁLIDO",
-      };
-      date = "${_appointment.datetime.day}/${_appointment.datetime.month.toString().padLeft(2, '0')}/${_appointment.datetime.year}";
-      time = "${_appointment.datetime.hour.toString()}:${_appointment.datetime.minute.toString()}";
+      difficulty = _appointment.hike.readableDifficulty;
+      date = _appointment.readableDate;
+      time = _appointment.readableTime;
       description = _appointment.hike.description;
     }
 
