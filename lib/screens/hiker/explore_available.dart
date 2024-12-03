@@ -20,7 +20,7 @@ class _ExploreAvailableScreenState extends State<ExploreAvailableScreen> {
       children: [
         Container(
           alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          padding: const EdgeInsets.all(20),
           child: const Text(
             "Trilhas agendadas",
             textAlign: TextAlign.left,
