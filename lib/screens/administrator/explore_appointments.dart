@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:trilhas_phb/screens/hiker/appointment_details.dart';
+import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/decorated_card.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
 
-class ExploreAvailableScreen extends StatefulWidget {
-  const ExploreAvailableScreen({super.key});
+class ExploreAppointmentsScreen extends StatefulWidget {
+  const ExploreAppointmentsScreen({super.key});
 
   @override
-  State<ExploreAvailableScreen> createState() => _ExploreAvailableScreenState();
+  State<ExploreAppointmentsScreen> createState() =>
+      _ExploreAppointmentsScreenState();
 }
 
-class _ExploreAvailableScreenState extends State<ExploreAvailableScreen> {
+class _ExploreAppointmentsScreenState extends State<ExploreAppointmentsScreen> {
   final _appointmentService = AppointmentService();
 
   @override
@@ -19,12 +20,29 @@ class _ExploreAvailableScreenState extends State<ExploreAvailableScreen> {
     return Column(
       children: [
         Container(
-          alignment: Alignment.centerLeft,
           padding: const EdgeInsets.all(20),
-          child: const Text(
-            "Trilhas agendadas",
-            textAlign: TextAlign.left,
-            style: TextStyle(fontWeight: FontWeight.bold),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Trilhas agendadas",
+                textAlign: TextAlign.left,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              GestureDetector(
+                onTap: () {
+                  print("Navegando para a tela de agendar trilhas...");
+                },
+                child: const Text(
+                  "Agendar trilha",
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         Expanded(
@@ -32,7 +50,6 @@ class _ExploreAvailableScreenState extends State<ExploreAvailableScreen> {
             future: _appointmentService.getAll(
               isActive: true,
               isAvailable: true,
-              hasUserParticipation: false,
             ),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -54,23 +71,17 @@ class _ExploreAvailableScreenState extends State<ExploreAvailableScreen> {
               return ListView.separated(
                 scrollDirection: Axis.vertical,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                separatorBuilder: (context, value) => const SizedBox(height: 10),
                 itemCount: snapshot.data!.length,
+                separatorBuilder: (context, value) {
+                  return const SizedBox(height: 10);
+                },
                 itemBuilder: (context, index) {
                   final appointment = snapshot.data![index];
                   return DecoratedCard(
                     appointment: appointment,
-                    actionText: "Participar",
+                    actionText: "Editar",
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return AppointmentDetailsScreen(
-                              appointment: appointment,
-                            );
-                          },
-                        ),
-                      ).then((value) => setState(() {}));
+                      print("Navegando para a tela de editar...");
                     },
                   );
                 },

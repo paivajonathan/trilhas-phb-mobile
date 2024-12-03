@@ -7,6 +7,13 @@ import "package:trilhas_phb/screens/hiker/chat.dart" as hiker;
 import "package:trilhas_phb/screens/hiker/explore.dart" as hiker;
 import "package:trilhas_phb/screens/hiker/profile.dart" as hiker;
 import "package:trilhas_phb/screens/hiker/ranking.dart" as hiker;
+import "package:trilhas_phb/screens/administrator/chat.dart" as administrator;
+import "package:trilhas_phb/screens/administrator/explore.dart"
+    as administrator;
+import "package:trilhas_phb/screens/administrator/profile.dart"
+    as administrator;
+import "package:trilhas_phb/screens/administrator/ranking.dart"
+    as administrator;
 
 class NavigationWrapper extends StatefulWidget {
   const NavigationWrapper({super.key, required this.userData});
@@ -24,20 +31,23 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
   @override
   void initState() {
     super.initState();
-    
+
     final userId = widget.userData.id;
     final userType = widget.userData.type;
 
-    if (userType == UserType.hiker) {
+    if (userType == UserType.administrator) {
+      _screens = [
+        const administrator.ExploreScreen(),
+        administrator.ChatScreen(userId: userId),
+        const administrator.RankingScreen(),
+        const administrator.ProfileScreen(),
+      ];
+    } else {
       _screens = [
         const hiker.ExploreScreen(),
         hiker.ChatScreen(userId: userId),
         const hiker.RankingScreen(),
         const hiker.ProfileScreen()
-      ];
-    } else if (userType == UserType.administrator) {
-      _screens = [
-        
       ];
     }
   }

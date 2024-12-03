@@ -20,7 +20,7 @@ class _ExploreUserScreenState extends State<ExploreUserScreen> {
       children: [
         Container(
           alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          padding: const EdgeInsets.all(20),
           child: const Text(
             "Suas trilhas",
             textAlign: TextAlign.left,
