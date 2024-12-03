@@ -24,7 +24,37 @@ class AppointmentModel {
       isActive: map["is_active"],
       isAvailable: map["is_available"],
       hasUserParticipation: map["has_user_participation"],
-      hike: HikeModel.fromMap(map["hike"], url)
+      hike: HikeModel.fromMap(map["hike"], url),
     );
+  }
+
+  String get readableDate {
+    return "${datetime.day.toString().padLeft(2, '0')}/${datetime.month.toString().padLeft(2, '0')}/${datetime.year}";
+  }
+
+  String get readableTime {
+    return "${datetime.hour.toString().padLeft(2, '0')}:${datetime.minute.toString().padLeft(2, '0')}";
+  }
+
+  String get fullReadableTime {
+    String day = datetime.day.toString().padLeft(2, '0');
+    String month = switch(datetime.month) {
+      DateTime.january => "Janeiro",
+      DateTime.february => "Fevereiro",
+      DateTime.march => "Março",
+      DateTime.april => "Abril",
+      DateTime.may => "Maio",
+      DateTime.june => "Junho",
+      DateTime.july => "Julho",
+      DateTime.august => "Agosto",
+      DateTime.september => "Setembro",
+      DateTime.october => "Outubro",
+      DateTime.november => "Novembro",
+      DateTime.december => "Dezembro",
+      _ => "Inválido",
+    };
+    String time = readableTime;
+
+    return "$day de $month, às $time";
   }
 }

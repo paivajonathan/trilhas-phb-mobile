@@ -31,7 +31,27 @@ class HikeModel {
       isActive: map["is_active"],
       hasActiveAppointments: map["has_active_appointments"],
       gpxFile: "$url/${map["gpx_file"]}",
-      images: map["images"].map((imageMap) => "$url/${imageMap["image"]}").toList(),
+      images: (map["images"] as List<dynamic>)
+          .map((imageMap) => "$url/${imageMap["image"] as String}")
+          .toList(),
     );
+  }
+
+  String get readableDifficulty {
+    return switch (difficulty) {
+      "H" => "DIFÍCIL",
+      "M" => "MÉDIO",
+      "E" => "FÁCIL",
+      _ => "INVÁLIDO",
+    };
+  }
+
+  int get difficultyColor {
+    return switch(difficulty) {
+      "H" => 0xFFFF0000,
+      "M" => 0xFF00FFFF,
+      "E" => 0xFF00BF63,
+      _ => 0xFF000000,
+    };
   }
 }
