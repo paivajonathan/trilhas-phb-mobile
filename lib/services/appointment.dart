@@ -35,7 +35,7 @@ class AppointmentService {
           "Origin": _baseUrl,
           "Authorization": "Bearer $token",
         },
-      ).timeout(const Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 10));
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
