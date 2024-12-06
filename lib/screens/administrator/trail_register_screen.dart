@@ -3,17 +3,35 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:trilhas_phb/services/hike.dart';
 
 class CadastroScreen extends StatefulWidget {
   @override
   _CadastroScreenState createState() => _CadastroScreenState();
 }
 
+//Classe adquirida do service
+class HikeService {
+  Future<void> saveTrail({
+    required String name,
+    required String distance,
+    required String description,
+    required String difficulty,
+    List<PlatformFile>? images,
+    PlatformFile? gpxFile,
+  }) async {
+    print('Trilha salva: $name, $distance, $description, $difficulty');
+  }
+}
+
 class _CadastroScreenState extends State<CadastroScreen> {
+  final HikeService _hikeService = HikeService();
+
   final _formKey = GlobalKey<FormState>();
   String nome = ''; //Nome da Trilha
   String distancia = '';
   String sobre = '';
+  String difficulty = '';
 
   final FocusNode _nomeFocusNode = FocusNode();
   final FocusNode _distanciaFocusNode = FocusNode();
@@ -95,29 +113,29 @@ class _CadastroScreenState extends State<CadastroScreen> {
     FilePickerResult? result = await FilePicker.platform.pickFiles( //Select image
       allowMultiple: true,
       type: FileType.image,
-      );
-     if (result != null) { //Se a imagem for adicionada
-    setState(() {
-      _selectedFiles.addAll(result.files);  // Adiciona os novos arquivos à lista existente
+    );
+    if (result != null) { //Se a imagem for adicionada
+      setState(() {
+        _selectedFiles.addAll(result.files);  // Adiciona os novos arquivos à lista existente
 
-      _selectedImagesCount = _selectedFiles.length;
-    });
+        _selectedImagesCount = _selectedFiles.length;
+      });
 
-    result.files.forEach((file) {
-      print("Arquivo selecionado: ${file.name}");
-    });
+      result.files.forEach((file) {
+        print("Arquivo selecionado: ${file.name}");
+      });
 
-    } else {
-      print("Nenhum arquivo selecionado");
+      } else {
+        print("Nenhum arquivo selecionado");
+      }
     }
-  }
 
-  void _removeImage(int index){ //Remove image
-    setState(() {
-      _selectedFiles.removeAt(index);
-      _selectedImagesCount -- ;
-    });
-  }
+    void _removeImage(int index){ //Remove image
+      setState(() {
+        _selectedFiles.removeAt(index);
+        _selectedImagesCount -- ;
+      });
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -557,12 +575,50 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 ),
                 const SizedBox (height:20),
 
+
+                //Botão - salvar
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Cadastro realizado!')),
-                      );
+                      // Determinar o nível de dificuldade selecionado
+                      String difficulty = '';
+                      if (_isFacilSelected) difficulty = 'Fácil';
+                      if (_isMedioSelected) difficulty = 'Médio';
+                      if (_isDificilSelected) difficulty = 'Difícil';
+
+                      try {
+                        await _hikeService.saveTrail(
+                          name: nome,
+                          distance: distancia,
+                          description: sobre,
+                          difficulty: difficulty,
+                          images: _selectedFiles.isNotEmpty ? _selectedFiles : null,
+                          gpxFile: _isGpxAdded ? null : null, // Substituir com o arquivo real
+                        );
+
+                        // Mensagem de sucesso
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Trilha cadastrada com sucesso!')),
+                        );
+
+                        // Limpar os campos após o envio bem-sucedido
+                        setState(() {
+                          nome = '';
+                          distancia = '';
+                          sobre = '';
+                          _isFacilSelected = false;
+                          _isMedioSelected = false;
+                          _isDificilSelected = false;
+                          _selectedFiles.clear();
+                          _isGpxAdded = false;
+                        });
+
+                      } catch (e) {
+                        // Mensagem de erro
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Erro ao cadastrar trilha: $e')),
+                        );
+                      }
                     }
                   },
                   child: Text("Salvar"),
