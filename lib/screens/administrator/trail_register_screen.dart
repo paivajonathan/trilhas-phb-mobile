@@ -1,27 +1,15 @@
 
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:trilhas_phb/services/hike.dart';
+import 'package:trilhas_phb/models/file.dart';
 
 class CadastroScreen extends StatefulWidget {
   @override
   _CadastroScreenState createState() => _CadastroScreenState();
-}
-
-//Classe adquirida do service
-class HikeService {
-  Future<void> saveTrail({
-    required String name,
-    required String distance,
-    required String description,
-    required String difficulty,
-    List<PlatformFile>? images,
-    PlatformFile? gpxFile,
-  }) async {
-    print('Trilha salva: $name, $distance, $description, $difficulty');
-  }
 }
 
 class _CadastroScreenState extends State<CadastroScreen> {
@@ -29,7 +17,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
 
   final _formKey = GlobalKey<FormState>();
   String nome = ''; //Nome da Trilha
-  String distancia = '';
+  double distancia = (0.0);
   String sobre = '';
   String difficulty = '';
 
@@ -46,6 +34,8 @@ class _CadastroScreenState extends State<CadastroScreen> {
   bool _isDificilSelected = false;
 
   bool _isGpxAdded = false;
+  FilePickerResult? _gpxResult; //Armazenamento do arquivo gpx
+
 
   List<PlatformFile> _selectedFiles = []; // Lista de imagens upadas
   int _selectedImagesCount = 0; // incrementa a medida que as imagens são selecionadas
@@ -93,6 +83,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
       if (result != null) {
         setState(() {
           _isGpxAdded = true;
+          _gpxResult = result;  
           print("Arquivo GPX adicionado: ${result.files.first.name}");
         });
       } else {
@@ -102,6 +93,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
       // Quando o botão está no modo "Excluir"
       setState(() {
         _isGpxAdded = false;
+        _gpxResult = null;
         print("Arquivo GPX removido");
       });
     }
@@ -173,7 +165,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 1), // Ajuste inicial
-                // Campo Nome Completo
+                // Campo Nome da trilha
                 Text(
                   'Nome da trilha',
                   style: GoogleFonts.inter(
@@ -213,7 +205,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Campo Data de Aniversário
+                // Campo Distância percorrida
                 Text(
                   'Distância Percorrida',
                   style: GoogleFonts.inter(
@@ -224,6 +216,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                 ),
                 const SizedBox(height: 8),
                 TextFormField(
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   cursorColor: Colors.green,
                   focusNode: _distanciaFocusNode,
                   decoration: InputDecoration(
@@ -249,7 +242,9 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     }
                     return null;
                   },
-                  onChanged: (value) => distancia = value,
+                  onChanged: (value) {
+                    distancia = double.tryParse(value) ?? 0.0;
+                  },
                 ),
                 const SizedBox(height: 20),
 
@@ -587,13 +582,13 @@ class _CadastroScreenState extends State<CadastroScreen> {
                       if (_isDificilSelected) difficulty = 'Difícil';
 
                       try {
-                        await _hikeService.saveTrail(
+                        await _hikeService.create(
                           name: nome,
-                          distance: distancia,
+                          length: distancia,
                           description: sobre,
                           difficulty: difficulty,
-                          images: _selectedFiles.isNotEmpty ? _selectedFiles : null,
-                          gpxFile: _isGpxAdded ? null : null, // Substituir com o arquivo real
+                          images: _selectedFiles.isNotEmpty ? _selectedFiles.map((file) => FileModel(bytes: file.bytes!, filename: file.name)).toList() : [], 
+                          gpxFile: _isGpxAdded && _gpxResult != null ? FileModel(bytes: Uint8List.fromList(_gpxResult!.files.first.bytes!),filename: _gpxResult!.files.first.name): FileModel(bytes: Uint8List(0), filename: ''), // Passa um FileModel vazio caso não tenha arquivo
                         );
 
                         // Mensagem de sucesso
@@ -604,7 +599,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
                         // Limpar os campos após o envio bem-sucedido
                         setState(() {
                           nome = '';
-                          distancia = '';
+                          distancia = (0.0);
                           sobre = '';
                           _isFacilSelected = false;
                           _isMedioSelected = false;
