@@ -32,7 +32,8 @@ class _InsertEmailState extends State<InsertEmail> {
 
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => ConfirmationCodeScreen(email: _emailController.text),
+          builder: (context) =>
+              ConfirmationCodeScreen(email: _emailController.text),
         ),
       );
     } catch (e) {
@@ -120,14 +121,7 @@ class _InsertEmailState extends State<InsertEmail> {
                 text: "Continuar",
                 onPressed: () {
                   if (_formKey.currentState?.validate() ?? false) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ConfirmationCodeScreen(
-                          email: _emailController.text,
-                        ),
-                      ),
-                    );
+                    _handleSubmit(context);
                   }
                 },
                 isLoading: _isLoading,

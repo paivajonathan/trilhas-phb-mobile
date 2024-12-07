@@ -51,29 +51,15 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 4),
-                RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    children: [
-                      const TextSpan(
-                        text:
-                            "Um código de confirmação foi enviado para o email ",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Color(0xFF71727A),
-                        ),
-                      ),
-                      TextSpan(
-                        text: widget.email,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
+                Text(
+                  "Um código de confirmação foi enviado para o email ${widget.email}",
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xFF71727A),
                   ),
+                  textAlign: TextAlign.center,
                 ),
+                
                 const SizedBox(height: 40),
                 OtpTextField(
                   numberOfFields: 6,
@@ -100,13 +86,14 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                   }, // end onSubmit
                   inputFormatters: [LengthLimitingTextInputFormatter(1)],
                 ),
+
                 const Spacer(),
+
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => ConfirmationCodeScreen(
-                            email: _emailController.text),
+                        builder: (context) => ConfirmationCodeScreen(email: _emailController.text),
                       ),
                     );
                   },
