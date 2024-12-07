@@ -1,13 +1,18 @@
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
 import 'package:trilhas_phb/screens/authenticate/reset_password/create_new_password.dart';
+import 'package:trilhas_phb/screens/authenticate/reset_password/insert_email.dart';
 
 class ConfirmationCodeScreen extends StatefulWidget {
   const ConfirmationCodeScreen({
     super.key,
+    required this.email,
   });
+
+  final String email;
 
   @override
   State<ConfirmationCodeScreen> createState() => _ConfirmationCodeScreenState();
@@ -15,6 +20,8 @@ class ConfirmationCodeScreen extends StatefulWidget {
 
 class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
   final _formKey = GlobalKey<FormState>();
+
+  final _emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -44,13 +51,28 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  "Um código de confirmação foi enviado para o email josevitor@gmail.com",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF71727A),
-                  ),
+                RichText(
                   textAlign: TextAlign.center,
+                  text: TextSpan(
+                    children: [
+                      const TextSpan(
+                        text:
+                            "Um código de confirmação foi enviado para o email ",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Color(0xFF71727A),
+                        ),
+                      ),
+                      TextSpan(
+                        text: widget.email,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 40),
                 OtpTextField(
@@ -73,17 +95,18 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                             title: const Text("Código de Verificação"),
                             content:
                                 Text('O código digitado foi $verificationCode'),
-                          ); 
+                          );
                         });
                   }, // end onSubmit
+                  inputFormatters: [LengthLimitingTextInputFormatter(1)],
                 ),
                 const Spacer(),
-
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const ConfirmationCodeScreen(),
+                        builder: (context) => ConfirmationCodeScreen(
+                            email: _emailController.text),
                       ),
                     );
                   },
@@ -100,7 +123,6 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-
                 DecoratedButton(
                     primary: true,
                     text: "Continuar",
@@ -109,8 +131,7 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const CreateNewPassword()),
+                            builder: (context) => const CreateNewPassword()),
                       );
                     }
                     //isLoading: _isLoading,

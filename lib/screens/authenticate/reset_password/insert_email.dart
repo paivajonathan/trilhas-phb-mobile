@@ -18,7 +18,7 @@ class _InsertEmailState extends State<InsertEmail> {
   bool _isLoading = false;
 
   final _formKey = GlobalKey<FormState>();
-  
+
   final _authService = AuthService();
 
   final _emailController = TextEditingController();
@@ -32,7 +32,7 @@ class _InsertEmailState extends State<InsertEmail> {
 
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => const ConfirmationCodeScreen(),
+          builder: (context) => ConfirmationCodeScreen(email: _emailController.text),
         ),
       );
     } catch (e) {
@@ -46,7 +46,7 @@ class _InsertEmailState extends State<InsertEmail> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,8 +102,14 @@ class _InsertEmailState extends State<InsertEmail> {
               DecoratedTextFormField(
                 hintText: "Digite aqui",
                 textInputType: TextInputType.emailAddress,
-                // validator: _validateEmail,
-                //controller: _emailController,
+                //validator: _validateEmail,
+                controller: _emailController,
+                validator: (value) {
+                  if (value == null || value.isEmpty || !value.contains("@")) {
+                    return "Insira um e-mail válido";
+                  }
+                  return null;
+                },
               ),
 
               // Para jogar botão no final da tela
@@ -113,15 +119,18 @@ class _InsertEmailState extends State<InsertEmail> {
                 primary: true,
                 text: "Continuar",
                 onPressed: () {
-                  //=> _handleSubmit(context),
-                  Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ConfirmationCodeScreen()
+                  if (_formKey.currentState?.validate() ?? false) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ConfirmationCodeScreen(
+                          email: _emailController.text,
                         ),
-                      );
-                }
-                //isLoading: _isLoading,
+                      ),
+                    );
+                  }
+                },
+                isLoading: _isLoading,
               ),
             ],
           ),
