@@ -68,7 +68,10 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
       // Navigate to the next screen on successful validation
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const CreateNewPassword()),
+        MaterialPageRoute(builder: (context) => CreateNewPassword(
+          email: widget.email,
+          confirmationCode: code,
+        )),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).clearSnackBars();

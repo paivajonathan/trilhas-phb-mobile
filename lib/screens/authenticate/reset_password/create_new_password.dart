@@ -2,20 +2,77 @@ import "package:flutter/material.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
+import 'package:trilhas_phb/services/auth.dart';
 
 class CreateNewPassword extends StatefulWidget {
   const CreateNewPassword({
     super.key,
+    required this.email,
+    required this.confirmationCode,
   });
+
+  final String email;
+  final String confirmationCode;
 
   @override
   State<CreateNewPassword> createState() => _CreateNewPasswordState();
 }
 
 class _CreateNewPasswordState extends State<CreateNewPassword> {
-  // bool _isLoading = false;
+  bool _isLoading = false;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   final _formKey = GlobalKey<FormState>();
+  final _authService = AuthService();
+  final _passwordController = TextEditingController();
+
+  Future<void> _changePassword() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final message = await _authService.changePassword(
+        email: widget.email,
+        confirmationCode: widget.confirmationCode,
+        newPassword: _passwordController.text,
+      );
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+
+      Navigator.pop(context); // Retorna para a tela anterior
+    } catch (e) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return "A senha não pode estar vazia";
+    }
+    if (value.length < 6) {
+      return "A senha deve ter pelo menos 6 caracteres";
+    }
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value != _passwordController.text) {
+      return "As senhas não correspondem";
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,16 +129,11 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
               DecoratedTextFormField(
                 hintText: "Digite aqui",
                 isPassword: true,
-                /*
                 isPasswordVisible: _isPasswordVisible,
                 onPasswordToggle: () {
                   setState(() => _isPasswordVisible = !_isPasswordVisible);
                 },
-                onChanged: (value) {
-                  setState(() => widget._sharedData["password"] = value);
-                },
                 validator: _validatePassword,
-                */
               ),
               const SizedBox(height: 16),
 
@@ -91,17 +143,12 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
               DecoratedTextFormField(
                 hintText: "Digite aqui",
                 isPassword: true,
-                /*
                 isPasswordVisible: _isConfirmPasswordVisible,
                 onPasswordToggle: () {
                   setState(() =>
                       _isConfirmPasswordVisible = !_isConfirmPasswordVisible);
                 },
-                onChanged: (value) {
-                  setState(() => widget._sharedData["confirmPassword"] = value);
-                },
                 validator: _validateConfirmPassword,
-                */
               ),
 
               // Para jogar botão no final da tela
@@ -110,15 +157,7 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
               DecoratedButton(
                 primary: true,
                 text: "Continuar",
-                onPressed: () {
-                  //=> _navigateToPersonalData(context),
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CreateNewPassword()
-                    ),
-                  );
-                }
+                onPressed: _isLoading ? null : _changePassword,
               ),
             ],
           ),
