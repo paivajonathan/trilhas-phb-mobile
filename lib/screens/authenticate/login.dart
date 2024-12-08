@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
+import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/screens/authenticate/register.dart";
 import "package:trilhas_phb/screens/navigation_wrapper.dart";
+import "package:trilhas_phb/screens/authenticate/reset_password/insert_email.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
@@ -94,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 20),
                   const SizedBox(
                     width: double.infinity,
-                    child: const Text(
+                    child: Text(
                       "Bem Vindo(a)!",
                       textAlign: TextAlign.left,
                       style: TextStyle(
@@ -122,6 +124,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     isPassword: true,
                     isHintTextLabel: true,
                   ),
+                  const SizedBox(height: 12),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const InsertEmail(),
+                        ),
+                      );
+                    },
+                    child: const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Esqueceu a senha?",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   DecoratedButton(
                     text: "Login",
@@ -145,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
-          ),
+          ), 
         ],
       ),
     );
