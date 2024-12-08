@@ -47,7 +47,10 @@ class DecoratedListTile extends StatelessWidget {
           hike!.readableDifficulty,
           style: GoogleFonts.inter(
             textStyle: const TextStyle(
-                color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       );
@@ -88,12 +91,14 @@ class DecoratedListTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(title,
-                              maxLines: 1,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                overflow: TextOverflow.ellipsis,
-                              )),
+                          Text(
+                            title,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                           Text(
                             subtitle,
                             maxLines: 1,
