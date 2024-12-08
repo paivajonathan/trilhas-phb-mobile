@@ -3,6 +3,7 @@ import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
 import 'package:trilhas_phb/services/auth.dart';
+import 'package:trilhas_phb/screens/authenticate/login.dart';
 
 class CreateNewPassword extends StatefulWidget {
   const CreateNewPassword({
@@ -44,7 +45,11 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 
-      Navigator.pop(context); // Retorna para a tela anterior
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (Route<dynamic> route) => false,
+      );
+      
     } catch (e) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -134,6 +139,7 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
                   setState(() => _isPasswordVisible = !_isPasswordVisible);
                 },
                 validator: _validatePassword,
+                controller: _passwordController,
               ),
               const SizedBox(height: 16),
 

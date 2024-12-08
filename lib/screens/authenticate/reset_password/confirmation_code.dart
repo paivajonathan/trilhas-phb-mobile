@@ -68,10 +68,11 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
       // Navigate to the next screen on successful validation
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => CreateNewPassword(
-          email: widget.email,
-          confirmationCode: code,
-        )),
+        MaterialPageRoute(
+            builder: (context) => CreateNewPassword(
+                  email: widget.email,
+                  confirmationCode: code,
+                )),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -127,13 +128,26 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  "Um código de confirmação foi enviado para o email ${widget.email}",
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF71727A),
-                  ),
+                RichText(
                   textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Color(0xFF71727A),
+                    ),
+                    children: [
+                      const TextSpan(
+                        text:
+                            "Um código de confirmação foi enviado para o email ",
+                      ),
+                      TextSpan(
+                        text: widget.email,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold, // Aplica o negrito
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 40),
                 OtpTextField(
@@ -184,7 +198,8 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text("Insira o código e pressione Continuar."),
+                          content:
+                              Text("Insira o código e pressione Continuar."),
                         ),
                       );
                     }
