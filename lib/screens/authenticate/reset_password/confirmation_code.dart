@@ -4,7 +4,7 @@ import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
 import 'package:trilhas_phb/screens/authenticate/reset_password/create_new_password.dart';
-import 'package:trilhas_phb/screens/authenticate/reset_password/insert_email.dart';
+import 'package:trilhas_phb/services/auth.dart';
 
 class ConfirmationCodeScreen extends StatefulWidget {
   const ConfirmationCodeScreen({
@@ -19,18 +19,91 @@ class ConfirmationCodeScreen extends StatefulWidget {
 }
 
 class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
+  bool _isLoading = false;
+
   final _formKey = GlobalKey<FormState>();
 
-  final _emailController = TextEditingController();
+  final _authService = AuthService();
+
+  Future<void> _handleSubmit(BuildContext context) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      // Use o email passado para a tela ao invés do controlador
+      await _authService.sendConfirmationCode(email: widget.email);
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Código reenviado com sucesso.")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _validateCode(String code, BuildContext context) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final message = await _authService.checkConfirmationCode(
+        email: widget.email,
+        confirmationCode: code,
+      );
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+
+      // Navigate to the next screen on successful validation
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CreateNewPassword()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: SizedBox(
+            height: 20,
+            width: 20,
+            child: Image.asset("assets/icon_voltar.png"),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.only(
-          top: 100.0,
+          top: 30.0,
           left: 25.0,
           right: 25.0,
           bottom: 25.0,
@@ -59,7 +132,6 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                
                 const SizedBox(height: 40),
                 OtpTextField(
                   numberOfFields: 6,
@@ -74,6 +146,7 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                   },
                   //runs when every textfield is filled
                   onSubmit: (String verificationCode) {
+                    _validateCode(verificationCode, context);
                     showDialog(
                         context: context,
                         builder: (context) {
@@ -86,17 +159,9 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                   }, // end onSubmit
                   inputFormatters: [LengthLimitingTextInputFormatter(1)],
                 ),
-
                 const Spacer(),
-
                 InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ConfirmationCodeScreen(email: _emailController.text),
-                      ),
-                    );
-                  },
+                  onTap: () => _handleSubmit(context),
                   child: const Align(
                     alignment: Alignment.center,
                     child: Text(
@@ -114,11 +179,10 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                     primary: true,
                     text: "Continuar",
                     onPressed: () {
-                      //=> _handleSubmit(context),
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const CreateNewPassword()),
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Insira o código e pressione Continuar."),
+                        ),
                       );
                     }
                     //isLoading: _isLoading,

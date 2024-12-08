@@ -24,6 +24,8 @@ class _InsertEmailState extends State<InsertEmail> {
   final _emailController = TextEditingController();
 
   Future<void> _handleSubmit(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
+
     try {
       setState(() {
         _isLoading = true;
@@ -119,11 +121,7 @@ class _InsertEmailState extends State<InsertEmail> {
               DecoratedButton(
                 primary: true,
                 text: "Continuar",
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    _handleSubmit(context);
-                  }
-                },
+                onPressed: () => _handleSubmit(context),
                 isLoading: _isLoading,
               ),
             ],
