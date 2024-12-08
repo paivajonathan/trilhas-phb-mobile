@@ -18,9 +18,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
-  String _email = "";
-  String _password = "";
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
 
   Future<void> _login(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
@@ -29,11 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = true);
       
       final userData = await _auth.login(
-        email: _email,
-        password: _password,
+        email: _emailController.text,
+        password: _passwordController.text,
       );
-
-      setState(() => _isLoading = false);
         
       if (!context.mounted) return;
 
@@ -72,103 +72,110 @@ class _LoginScreenState extends State<LoginScreen> {
  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: false,
-      body: Column(
-        children: [
-          Container(
-            clipBehavior: Clip.hardEdge,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(10),
-                bottomRight: Radius.circular(10),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: [
+            Container(
+              clipBehavior: Clip.hardEdge,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
               ),
+              child: Image.asset("assets/hikes.jpeg"),
             ),
-            child: Image.asset("assets/hikes.jpeg"),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  const SizedBox(
-                    width: double.infinity,
-                    child: Text(
-                      "Bem Vindo(a)!",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  DecoratedTextFormField(
-                    hintText: "Email",
-                    validator: _validateEmail,
-                    onChanged: (value) {
-                      setState(() => _email = value);
-                    },
-                    isHintTextLabel: true,
-                  ),
-                  const SizedBox(height: 20),
-                  DecoratedTextFormField(
-                    hintText: "Senha",
-                    onChanged: (value) {
-                      setState(() => _password = value);
-                    },
-                    validator: _validatePassword,
-                    isPassword: true,
-                    isHintTextLabel: true,
-                  ),
-                  const SizedBox(height: 12),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const InsertEmail(),
-                        ),
-                      );
-                    },
-                    child: const Align(
-                      alignment: Alignment.centerLeft,
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    const SizedBox(
+                      width: double.infinity,
                       child: Text(
-                        "Esqueceu a senha?",
+                        "Bem Vindo(a)!",
+                        textAlign: TextAlign.left,
                         style: TextStyle(
-                          fontSize: 16,
-                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  DecoratedButton(
-                    text: "Login",
-                    primary: true,
-                    isLoading: _isLoading,
-                    onPressed: () => _login(context),
-                  ),
-                  const SizedBox(height: 20),
-                  DecoratedButton(
-                    text: "Criar Conta",
-                    primary: false,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Register()
+                    const SizedBox(height: 20),
+                    DecoratedTextFormField(
+                      hintText: "Email",
+                      validator: _validateEmail,
+                      controller: _emailController,
+                      isHintTextLabel: true,
+                    ),
+                    const SizedBox(height: 20),
+                    DecoratedTextFormField(
+                      hintText: "Senha",
+                      controller: _passwordController,
+                      validator: _validatePassword,
+                      isPassword: true,
+                      isHintTextLabel: true,
+                      onPasswordToggle: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                      isPasswordVisible: _isPasswordVisible,
+                    ),
+                    const SizedBox(height: 20),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const InsertEmail(),
+                          ),
+                        );
+                      },
+                      child: const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Esqueceu a senha?",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.primary,
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    DecoratedButton(
+                      text: "Login",
+                      primary: true,
+                      isLoading: _isLoading,
+                      onPressed: () => _login(context),
+                    ),
+                    const SizedBox(height: 20),
+                    DecoratedButton(
+                      text: "Criar Conta",
+                      primary: false,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Register()
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ), 
-        ],
+            ), 
+          ],
+        ),
       ),
     );
   }
