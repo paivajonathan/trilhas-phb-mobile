@@ -11,6 +11,8 @@ class HikeChoiceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -22,7 +24,7 @@ class HikeChoiceScreen extends StatelessWidget {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: const Color(0xFF71727A),
+            color: Colors.black.withOpacity(.25),
             height: 1.0,
           ),
         ),
@@ -67,15 +69,17 @@ class HikeChoiceScreen extends StatelessWidget {
             const SizedBox(height: 25),
             Expanded(
               child: FutureBuilder(
-                future: _hikeService.getAll(),
+                future: _hikeService.getAll(hasActiveAppointments: false),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Loader();
                   }
 
                   if (snapshot.hasError) {
-                    return const Center(
-                      child: Text("Ocorreu um erro"),
+                    return Center(
+                      child: Text(
+                        "Ocorreu um erro: ${snapshot.error.toString().replaceAll("Exception: ", "")}",
+                      ),
                     );
                   }
 
@@ -97,9 +101,11 @@ class HikeChoiceScreen extends StatelessWidget {
                         hike: hike,
                         onTap: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context){
-                              return AppointmentRegisterScreen(hike: hike);
-                            })
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return AppointmentRegisterScreen(hike: hike);
+                              },
+                            ),
                           );
                         },
                       );
