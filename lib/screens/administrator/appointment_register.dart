@@ -98,96 +98,101 @@ class _AppointmentRegisterScreenState extends State<AppointmentRegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: SizedBox(
-            height: 20,
-            width: 20,
-            child: Image.asset("assets/icon_voltar.png"),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: SizedBox(
+              height: 20,
+              width: 20,
+              child: Image.asset("assets/icon_voltar.png"),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          top: 8.0,
-          left: 25.0,
-          right: 25.0,
-          bottom: 25.0,
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Defina data e hora",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+        body: Padding(
+          padding: const EdgeInsets.only(
+            top: 8.0,
+            left: 25.0,
+            right: 25.0,
+            bottom: 25.0,
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Defina data e hora",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                "Defina a data e a hora que a trilha ocorrerá",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFF71727A),
+                const SizedBox(height: 4),
+                const Text(
+                  "Defina a data e a hora que a trilha ocorrerá",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF71727A),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 30),
-              DecoratedListTile(
-                hike: widget.hike,
-                onTap: () {},
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                "Data",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                const SizedBox(height: 30),
+                DecoratedListTile(
+                  hike: widget.hike,
+                  onTap: () {},
                 ),
-              ),
-              const SizedBox(height: 8),
-              DecoratedTextFormField(
-                hintText: "DD/MM/AAAA",
-                controller: _dateController,
-                textInputType: TextInputType.number,
-                validator: _validateDate,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                "Horário",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                const SizedBox(height: 16),
+                const Text(
+                  "Data",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              DecoratedTextFormField(
-                hintText: "HH:MM",
-                controller: _timeController,
-                textInputType: TextInputType.number,
-                validator: _validateTime,
-              ),
-              const Spacer(),
-              DecoratedButton(
-                primary: true,
-                text: "Salvar",
-                isLoading: _isLoading,
-                onPressed: _isLoading ? null : () => _handleSubmit(context),
-              ),
-            ],
+                const SizedBox(height: 8),
+                DecoratedTextFormField(
+                  hintText: "DD/MM/AAAA",
+                  controller: _dateController,
+                  textInputType: TextInputType.number,
+                  validator: _validateDate,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  "Horário",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                DecoratedTextFormField(
+                  hintText: "HH:MM",
+                  controller: _timeController,
+                  textInputType: TextInputType.number,
+                  validator: _validateTime,
+                ),
+                const Spacer(),
+                DecoratedButton(
+                  primary: true,
+                  text: "Salvar",
+                  isLoading: _isLoading,
+                  onPressed: _isLoading ? null : () => _handleSubmit(context),
+                ),
+              ],
+            ),
           ),
         ),
       ),
