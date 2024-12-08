@@ -77,16 +77,22 @@ class _AppointmentRegisterScreenState extends State<AppointmentRegisterScreen> {
   }
 
   String? _validateDate(String? value) {
-    if (value == null || value.isEmpty) {
-      return "Digite a data";
-    }
+    if (value == null || value.isEmpty) return "Digite a data";
+
+    final result = DateFormat("dd/MM/yyyy").tryParseStrict(value);
+
+    if (result == null) return "Data inválida";
+
     return null;
   }
 
   String? _validateTime(String? value) {
-    if (value == null || value.isEmpty) {
-      return "Digite o horário";
-    }
+    if (value == null || value.isEmpty) return "Digite o horário";
+
+    final result = DateFormat("HH:mm").tryParseStrict(value);
+
+    if (result == null) return "Horário inválido";
+
     return null;
   }
 
@@ -178,6 +184,7 @@ class _AppointmentRegisterScreenState extends State<AppointmentRegisterScreen> {
               DecoratedButton(
                 primary: true,
                 text: "Salvar",
+                isLoading: _isLoading,
                 onPressed: _isLoading ? null : () => _handleSubmit(context),
               ),
             ],
