@@ -79,8 +79,8 @@ class MapView extends StatelessWidget {
           options: MapOptions(
             initialCenter: snapshot.data!.last,
             initialZoom: 15.0,
-            minZoom: 15.0,
-            maxZoom: 20.0,
+            minZoom: 12.5,
+            maxZoom: 17.5,
             cameraConstraint: CameraConstraint.containCenter(
               bounds: calculateBounds(snapshot.data!),
             ),

@@ -49,7 +49,7 @@ class HikeModel {
   int get difficultyColor {
     return switch(difficulty) {
       "H" => 0xFFFF0000,
-      "M" => 0xFF00FFFF,
+      "M" => 0xFFFFDE21,
       "E" => 0xFF00BF63,
       _ => 0xFF000000,
     };

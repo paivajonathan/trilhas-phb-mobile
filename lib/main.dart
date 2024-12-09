@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_dotenv/flutter_dotenv.dart";
+import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/screens/auth_check.dart";
 
 Future<void> main() async {
@@ -7,15 +8,23 @@ Future<void> main() async {
   runApp(const MainApp());
 }
 
+final themeData = ThemeData(
+  textSelectionTheme: const TextSelectionThemeData(
+    cursorColor: AppColors.primary,
+    selectionHandleColor: AppColors.primary,
+  ),
+);
+
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: "Trilhas PHB",
       debugShowCheckedModeBanner: false,
-      home: AuthCheckScreen(),
+      theme: themeData,
+      home: const AuthCheckScreen(),
     );
   }
 }

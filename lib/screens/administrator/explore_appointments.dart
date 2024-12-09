@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
+import 'package:trilhas_phb/screens/administrator/hike_choice.dart';
 import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/decorated_card.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
@@ -31,7 +32,13 @@ class _ExploreAppointmentsScreenState extends State<ExploreAppointmentsScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  print("Navegando para a tela de agendar trilhas...");
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return HikeChoiceScreen();
+                      },
+                    ),
+                  );
                 },
                 child: const Text(
                   "Agendar trilha",
@@ -57,8 +64,9 @@ class _ExploreAppointmentsScreenState extends State<ExploreAppointmentsScreen> {
               }
 
               if (snapshot.hasError) {
-                return const Center(
-                  child: Text("Ocorreu um erro"),
+                return Center(
+                  child: Text(
+                      snapshot.error!.toString().replaceAll("Exception: ", "")),
                 );
               }
 
