@@ -207,7 +207,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
 
                 // Campo Distância percorrida
                 Text(
-                  'Distância Percorrida',
+                  'Distância Percorrida (km)',
                   style: GoogleFonts.inter(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
