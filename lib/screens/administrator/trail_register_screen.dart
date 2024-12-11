@@ -77,9 +77,9 @@ class _CadastroScreenState extends State<CadastroScreen> {
       // Quando o botão está no modo "Adicionar"
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.any,
-        //allowedExtensions: ['gpx'],
+        withData: true,
       );
-
+    
       if (result != null) {
         setState(() {
           _isGpxAdded = true;
@@ -105,6 +105,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
     FilePickerResult? result = await FilePicker.platform.pickFiles( //Select image
       allowMultiple: true,
       type: FileType.image,
+      withData: true,
     );
     if (result != null) { //Se a imagem for adicionada
       setState(() {
@@ -577,11 +578,12 @@ class _CadastroScreenState extends State<CadastroScreen> {
                     if (_formKey.currentState!.validate()) {
                       // Determinar o nível de dificuldade selecionado
                       String difficulty = '';
-                      if (_isFacilSelected) difficulty = 'Fácil';
-                      if (_isMedioSelected) difficulty = 'Médio';
-                      if (_isDificilSelected) difficulty = 'Difícil';
+                      if (_isFacilSelected) difficulty = 'E';
+                      if (_isMedioSelected) difficulty = 'M';
+                      if (_isDificilSelected) difficulty = 'H';
 
                       try {
+                        print("Testando");
                         await _hikeService.create(
                           name: nome,
                           length: distancia,
