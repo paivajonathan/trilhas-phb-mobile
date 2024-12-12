@@ -194,10 +194,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
         ),
       );
 
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const ExploreScreen()),
-        (Route<dynamic> route) => false,
-      );
+      Navigator.of(context).pop();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

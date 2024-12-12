@@ -128,7 +128,7 @@ class HikeService {
     });
 
     try {
-      final response = await request.send().timeout(const Duration(seconds: 5));
+      final response = await request.send().timeout(const Duration(seconds: 10));
       final responseBody = await response.stream.bytesToString();
 
       final responseStatus = response.statusCode;

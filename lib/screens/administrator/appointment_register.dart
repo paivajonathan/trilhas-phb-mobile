@@ -56,10 +56,8 @@ class _AppointmentRegisterScreenState extends State<AppointmentRegisterScreen> {
         const SnackBar(content: Text("Trilha agendada com sucesso!")),
       );
 
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const ExploreScreen()),
-        (Route<dynamic> route) => false,
-      );
+      int count = 0;
+      Navigator.of(context).popUntil((_) => count++ >= 2);
     } catch (e) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(

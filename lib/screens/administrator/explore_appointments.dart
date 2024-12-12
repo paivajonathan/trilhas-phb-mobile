@@ -38,7 +38,7 @@ class _ExploreAppointmentsScreenState extends State<ExploreAppointmentsScreen> {
                         return HikeChoiceScreen();
                       },
                     ),
-                  );
+                  ).then((value) => setState(() {}));
                 },
                 child: const Text(
                   "Agendar trilha",
