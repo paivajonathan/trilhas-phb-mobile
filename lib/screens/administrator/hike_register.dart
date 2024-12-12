@@ -1,7 +1,6 @@
 import "dart:io";
 import "dart:typed_data";
 import "package:flutter/material.dart";
-import "package:google_fonts/google_fonts.dart";
 import "package:file_picker/file_picker.dart";
 import "package:trilhas_phb/screens/administrator/explore.dart";
 import "package:trilhas_phb/services/hike.dart";
@@ -39,23 +38,56 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
   List<PlatformFile> _selectedImages = [];
 
   Future<void> _pickGpx() async {
-    if (!_isGpxAdded) {
+    try {
+      if (_isGpxAdded) {
+        setState(() {
+          _isGpxAdded = false;
+          _gpxFile = null;
+        });
+        return;
+      }
+
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.any,
         withData: true,
       );
 
-      if (result != null) {
-        setState(() {
-          _isGpxAdded = true;
-          _gpxFile = result.files.first;
-        });
+      if (result == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Selecione algum arquivo GPX.",
+            ),
+          ),
+        );
+        return;
       }
-    } else {
+
+      final file = result.files.first;
+
+      if (file.extension!.toLowerCase() != "gpx") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Arquivo não possui a extensão correta.",
+            ),
+          ),
+        );
+        return;
+      }
+
       setState(() {
-        _isGpxAdded = false;
-        _gpxFile = null;
+        _isGpxAdded = true;
+        _gpxFile = file;
       });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Erro ao modificar o arquivo GPX: ${e.toString().replaceAll("Exception: ", "")}",
+          ),
+        ),
+      );
     }
   }
 
@@ -66,12 +98,21 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
       withData: true,
     );
 
-    if (result != null) {
-      setState(() {
-        _selectedImages.addAll(result.files);
-        _selectedImagesCount = _selectedImages.length;
-      });
+    if (result == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Selecione alguma imagem.",
+          ),
+        ),
+      );
+      return;
     }
+
+    setState(() {
+      _selectedImages.addAll(result.files);
+      _selectedImagesCount = _selectedImages.length;
+    });
   }
 
   void _removeImage(int index) {
@@ -172,6 +213,26 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
     }
   }
 
+  String? _validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite o nome";
+    }
+
+    return null;
+  }
+
+  String? _validateLength(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite aqui";
+    }
+
+    if (double.tryParse(value) == null) {
+      return "Valor inválido";
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -225,12 +286,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                   DecoratedTextFormField(
                     hintText: "Digite aqui",
                     controller: _nameController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Digite o nome";
-                      }
-                      return null;
-                    },
+                    validator: _validateName,
                   ),
                   const SizedBox(height: 16),
                   const DecoratedLabel(
@@ -242,12 +298,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                         const TextInputType.numberWithOptions(decimal: true),
                     controller: _lengthController,
                     hintText: "Digite aqui",
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Digite aqui";
-                      }
-                      return null;
-                    },
+                    validator: _validateLength,
                   ),
                   const SizedBox(height: 16),
                   const DecoratedLabel(
