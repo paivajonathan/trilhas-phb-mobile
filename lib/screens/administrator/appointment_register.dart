@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:intl/intl.dart';
 import 'package:trilhas_phb/models/hike.dart';
-import 'package:trilhas_phb/screens/administrator/explore.dart';
 import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
 import 'package:trilhas_phb/widgets/decorated_list_tile.dart';

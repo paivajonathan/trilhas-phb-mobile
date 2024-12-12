@@ -2,7 +2,6 @@ import "dart:io";
 import "dart:typed_data";
 import "package:flutter/material.dart";
 import "package:file_picker/file_picker.dart";
-import "package:trilhas_phb/screens/administrator/explore.dart";
 import "package:trilhas_phb/services/hike.dart";
 import "package:trilhas_phb/models/file.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";
