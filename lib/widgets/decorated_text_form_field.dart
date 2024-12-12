@@ -5,6 +5,7 @@ class DecoratedTextFormField extends StatelessWidget {
   const DecoratedTextFormField({
     super.key,
     
+    int maxLines = 1,
     bool isPassword = false,
     bool isPasswordVisible = false,
     bool isHintTextLabel = false,
@@ -16,6 +17,7 @@ class DecoratedTextFormField extends StatelessWidget {
     String? Function(String?)? validator,
     void Function(String)? onChanged,
   }) :
+    _maxLines = maxLines,
     _isHintTextLabel = isHintTextLabel,
     _isPasswordVisible = isPasswordVisible,
     _isPassword = isPassword,
@@ -27,6 +29,7 @@ class DecoratedTextFormField extends StatelessWidget {
     _validator = validator,
     _onChanged = onChanged;
   
+  final int _maxLines;
   final bool _isHintTextLabel;
   final bool _isPassword;
   final bool _isPasswordVisible;
@@ -47,6 +50,7 @@ class DecoratedTextFormField extends StatelessWidget {
       onChanged: _onChanged,
       initialValue: _initialValue,
       keyboardType: _textInputType,
+      maxLines: _maxLines,
       obscureText: _isPassword && !_isPasswordVisible,
       decoration: InputDecoration(
         filled: true,

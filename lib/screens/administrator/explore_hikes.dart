@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/services/hike.dart';
 import 'package:trilhas_phb/widgets/decorated_list_tile.dart';
-import 'package:trilhas_phb/screens/administrator/trail_register_screen.dart';
+import 'package:trilhas_phb/screens/administrator/hike_register.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
 
 class ExploreHikesScreen extends StatefulWidget {
@@ -34,10 +34,10 @@ class _ExploreHikesScreenState extends State<ExploreHikesScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return CadastroScreen();
+                        return HikeRegisterScreen();
                       },
                     ),
-                  );
+                  ).then((value) => setState(() {}));
                 },
                 child: const Text(
                   "Cadastrar trilha",
