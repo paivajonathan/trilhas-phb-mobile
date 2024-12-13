@@ -66,7 +66,8 @@ class _ExploreAppointmentsScreenState extends State<ExploreAppointmentsScreen> {
               if (snapshot.hasError) {
                 return Center(
                   child: Text(
-                      snapshot.error!.toString().replaceAll("Exception: ", "")),
+                    snapshot.error!.toString().replaceAll("Exception: ", ""),
+                  ),
                 );
               }
 

@@ -134,23 +134,45 @@ class _BottomDrawerState extends State<BottomDrawer> {
 
   Future<void> _handleParticipation(BuildContext context) async {
     try {
-      setState(() => _isButtonLoading = true);
+      setState(() {
+        _isButtonLoading = true;
+      });
 
       if (_doesUserParticipate) {
         await _participationService.cancel(
           appointmentId: widget._appointment.id,
         );
-        setState(() => _doesUserParticipate = false);
-      } else {
-        await _participationService.create(
-          appointmentId: widget._appointment.id,
-        );
-        setState(() => _doesUserParticipate = true);
-      }
-    } catch (e) {
-      if (!mounted) return;
 
-      print(e.toString());
+        setState(() {
+          _doesUserParticipate = false;
+        });
+
+        if (!context.mounted) return;
+
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Participação cancelada com sucesso.")),
+        );
+
+        return;
+      }
+
+      await _participationService.create(
+        appointmentId: widget._appointment.id,
+      );
+
+      setState(() {
+        _doesUserParticipate = true;
+      });
+
+      if (!context.mounted) return;
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Participação registrada com sucesso.")),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
 
       late String message = _doesUserParticipate
           ? "Ocorreu um erro ao tentar cancelar a sua participação na trilha."
@@ -158,10 +180,16 @@ class _BottomDrawerState extends State<BottomDrawer> {
 
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("$message: ${e.toString()}")),
+        SnackBar(
+          content: Text(
+            "$message: ${e.toString().replaceAll("Exception: ", "")}",
+          ),
+        ),
       );
     } finally {
-      setState(() => _isButtonLoading = false);
+      setState(() {
+        _isButtonLoading = false;
+      });
     }
   }
 

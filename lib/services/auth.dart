@@ -49,7 +49,7 @@ class AuthService {
           "email": email,
           "password": password,
         }),
-      ).timeout(const Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 10));
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -110,7 +110,7 @@ class AuthService {
             }
           }
         ),
-      ).timeout(const Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 10));
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -147,7 +147,7 @@ class AuthService {
             "email": email,
           }
         ),
-      ).timeout(const Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 10));
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -188,7 +188,7 @@ class AuthService {
             "confirmation_code": confirmationCode,
           }
         ),
-      ).timeout(const Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 10));
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -231,7 +231,7 @@ class AuthService {
             "password": newPassword,
           }
         ),
-      ).timeout(const Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 10));
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;

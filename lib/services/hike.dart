@@ -65,7 +65,7 @@ class HikeService {
     final uri = Uri.parse(gpxFile);
 
     try {
-      final response = await http.get(uri).timeout(const Duration(seconds: 5));
+      final response = await http.get(uri).timeout(const Duration(seconds: 10));
 
       final responseStatus = response.statusCode;
       final responseData = response.body;

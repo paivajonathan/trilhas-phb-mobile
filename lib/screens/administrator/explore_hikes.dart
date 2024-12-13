@@ -60,8 +60,10 @@ class _ExploreHikesScreenState extends State<ExploreHikesScreen> {
               }
 
               if (snapshot.hasError) {
-                return const Center(
-                  child: Text("Ocorreu um erro"),
+                return Center(
+                  child: Text(
+                    snapshot.error!.toString().replaceAll("Exception: ", ""),
+                  ),
                 );
               }
 

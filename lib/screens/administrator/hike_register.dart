@@ -219,11 +219,19 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
 
   String? _validateLength(String? value) {
     if (value == null || value.isEmpty) {
-      return "Digite aqui";
+      return "Digite a distância";
     }
 
     if (double.tryParse(value) == null) {
       return "Valor inválido";
+    }
+
+    return null;
+  }
+
+  String? _validateDescription(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite a descrição";
     }
 
     return null;
@@ -428,6 +436,8 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                     maxLines: 5,
                     textInputType: TextInputType.multiline,
                     controller: _descriptionController,
+                    validator: _validateDescription,
+                    hintText: "Descreva a trilha",
                   ),
                   const SizedBox(height: 16),
                   Row(
