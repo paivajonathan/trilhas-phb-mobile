@@ -231,9 +231,21 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         itemCount: widget._appointment.hike.images.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          return Image.network(
-                            widget._appointment.hike.images[index],
+                          final imageUrl =
+                              widget._appointment.hike.images[index];
+
+                          return FadeInImage.assetNetwork(
+                            placeholder: "assets/loading.gif",
+                            image: imageUrl,
                             fit: BoxFit.cover,
+                            width: double.infinity,
+                            imageErrorBuilder:
+                                (context, error, stackTrace) {
+                              return Image.asset(
+                                "assets/placeholder.png",
+                                fit: BoxFit.cover,
+                              );
+                            },
                           );
                         },
                       ),
