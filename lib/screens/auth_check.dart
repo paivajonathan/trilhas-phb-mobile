@@ -1,9 +1,11 @@
 import "package:flutter/material.dart";
-import "package:trilhas_phb/constants/app_colors.dart";
-import "package:trilhas_phb/models/user.dart";
+import "package:provider/provider.dart";
+import "package:trilhas_phb/models/user_data.dart";
+import "package:trilhas_phb/providers/user_data.dart";
 import "package:trilhas_phb/screens/authenticate/login.dart";
 import "package:trilhas_phb/screens/navigation_wrapper.dart";
 import "package:trilhas_phb/services/auth.dart";
+import "package:trilhas_phb/widgets/loader.dart";
 
 class AuthCheckScreen extends StatefulWidget {
   const AuthCheckScreen({super.key});
@@ -15,7 +17,7 @@ class AuthCheckScreen extends StatefulWidget {
 class _AuthCheckScreenState extends State<AuthCheckScreen> {
   final authService = AuthService();
 
-  late UserLoginModel? _userData;
+  late UserDataModel? _userData;
   bool _isLoading = true;
 
   @override
@@ -26,32 +28,33 @@ class _AuthCheckScreenState extends State<AuthCheckScreen> {
 
   Future<void> _loadUserData() async {
     setState(() => _isLoading = true);
-    _userData = await authService.userData;
-    setState(() => _isLoading = false);
-  }
 
-  Widget _getLoadingScreen() {
-    return Container(
-      color: Colors.white,
-      child: const Center(
-        child: CircularProgressIndicator(
-          color: AppColors.primary,
-          value: 1,
-        )
-      ),
-    );
+    _userData = await authService.userData;
+
+    if (!mounted) return;
+
+    final userDataProvider =
+        Provider.of<UserDataProvider>(context, listen: false);
+    (_userData != null)
+        ? userDataProvider.setUserData(_userData)
+        : userDataProvider.clearUserData();
+
+    setState(() => _isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return _getLoadingScreen();
+      return Container(
+        color: Colors.white,
+        child: const Loader(),
+      );
     }
 
     if (_userData != null) {
-      return NavigationWrapper(userData: _userData!);
+      return const NavigationWrapper();
     }
-    
+
     return const LoginScreen();
   }
 }

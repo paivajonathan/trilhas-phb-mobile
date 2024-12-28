@@ -3,10 +3,8 @@ import "package:flutter/material.dart";
 // import "package:trilhas_phb/models/message.dart";
 // import "package:trilhas_phb/services/chat.dart";
 
-class ChatScreen extends StatefulWidget {
-  final int userId;
-  
-  const ChatScreen({super.key, required this.userId});
+class ChatScreen extends StatefulWidget {  
+  const ChatScreen({super.key});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();

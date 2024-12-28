@@ -3,21 +3,21 @@ import "dart:convert";
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import "package:http/http.dart" as http;
 import "package:jwt_decode/jwt_decode.dart";
-import "package:trilhas_phb/models/user.dart";
+import "package:trilhas_phb/models/user_data.dart";
 import "package:trilhas_phb/services/storage.dart";
 
 class AuthService {
   final _baseUrl = dotenv.env["BASE_URL"];
   final _storage = StorageService();
   
-  Future<UserLoginModel?> get userData async {
+  Future<UserDataModel?> get userData async {
     var (storedUserData, storedToken) = await _storage.loadKeys();
 
     if (storedUserData == null || storedToken == null) return null;
 
     if (Jwt.isExpired(storedToken)) return null;
 
-    final userData = UserLoginModel.fromMap(json.decode(storedUserData));
+    final userData = UserDataModel.fromMap(json.decode(storedUserData));
 
     return userData;
   }
@@ -31,7 +31,7 @@ class AuthService {
     await _storage.destroyKeys();
   }
 
-  Future<UserLoginModel> login({
+  Future<UserDataModel> login({
     required String email,
     required String password,
   }) async {
@@ -68,7 +68,7 @@ class AuthService {
 
       await _storage.saveKeys(token, userData);
 
-      return UserLoginModel.fromMap(userData);
+      return UserDataModel.fromMap(userData);
     } on TimeoutException catch (_) {
       throw Exception("Tempo limite da requisição atingido.");
     } catch (e) {

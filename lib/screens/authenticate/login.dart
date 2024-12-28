@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
+import "package:trilhas_phb/providers/user_data.dart";
 import "package:trilhas_phb/screens/authenticate/register.dart";
 import "package:trilhas_phb/screens/navigation_wrapper.dart";
 import "package:trilhas_phb/screens/authenticate/reset_password/insert_email.dart";
@@ -37,8 +39,11 @@ class _LoginScreenState extends State<LoginScreen> {
         
       if (!context.mounted) return;
 
+      final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
+      userDataProvider.setUserData(userData);
+  
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => NavigationWrapper(userData: userData)),
+        MaterialPageRoute(builder: (context) => const NavigationWrapper()),
         (Route<dynamic> route) => false,
       );
     } on Exception catch (e) {
