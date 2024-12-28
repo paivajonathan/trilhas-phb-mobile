@@ -3,7 +3,7 @@ import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
 import "package:trilhas_phb/services/auth.dart";
-import "package:trilhas_phb/screens/authenticate/reset_password/confirmation_code.dart";
+import "package:trilhas_phb/screens/authentication/reset_password/confirmation_code.dart";
 
 class InsertEmail extends StatefulWidget {
   const InsertEmail({

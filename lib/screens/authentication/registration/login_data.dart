@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:trilhas_phb/screens/authenticate/personal_data.dart";
+import "package:trilhas_phb/screens/authentication/registration/personal_data.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";

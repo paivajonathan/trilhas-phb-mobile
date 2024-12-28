@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_masked_text2/flutter_masked_text2.dart";
-import "package:trilhas_phb/screens/authenticate/login.dart";
+import "package:trilhas_phb/screens/authentication/login.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:intl/intl.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";

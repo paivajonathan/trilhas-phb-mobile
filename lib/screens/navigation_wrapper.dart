@@ -1,14 +1,13 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:trilhas_phb/constants/user_type.dart";
-import "package:trilhas_phb/models/user_data.dart";
 import "package:trilhas_phb/providers/user_data.dart";
 import "package:trilhas_phb/screens/hiker/chat.dart" as hiker;
-import "package:trilhas_phb/screens/hiker/explore.dart" as hiker;
+import "package:trilhas_phb/screens/hiker/explore/explore.dart" as hiker;
 import "package:trilhas_phb/screens/hiker/profile.dart" as hiker;
 import "package:trilhas_phb/screens/hiker/ranking.dart" as hiker;
 import "package:trilhas_phb/screens/administrator/chat.dart" as administrator;
-import "package:trilhas_phb/screens/administrator/explore.dart"
+import "package:trilhas_phb/screens/administrator/explore/explore.dart"
     as administrator;
 import "package:trilhas_phb/screens/administrator/profile.dart"
     as administrator;

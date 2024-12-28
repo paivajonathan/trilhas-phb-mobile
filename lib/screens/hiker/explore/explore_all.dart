@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trilhas_phb/screens/hiker/appointment_details.dart';
+import 'package:trilhas_phb/screens/hiker/explore/details/appointment_details.dart';
 import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/decorated_card.dart';
 import 'package:trilhas_phb/widgets/decorated_list_tile.dart';

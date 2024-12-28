@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
-import 'package:trilhas_phb/services/hike.dart';
-import 'package:trilhas_phb/widgets/decorated_list_tile.dart';
-import 'package:trilhas_phb/screens/administrator/hike_register.dart';
+import 'package:trilhas_phb/screens/administrator/explore/register/hike_choice.dart';
+import 'package:trilhas_phb/services/appointment.dart';
+import 'package:trilhas_phb/widgets/decorated_card.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
 
-class ExploreHikesScreen extends StatefulWidget {
-  const ExploreHikesScreen({super.key});
+class ExploreAppointmentsScreen extends StatefulWidget {
+  const ExploreAppointmentsScreen({super.key});
 
   @override
-  State<ExploreHikesScreen> createState() => _ExploreHikesScreenState();
+  State<ExploreAppointmentsScreen> createState() =>
+      _ExploreAppointmentsScreenState();
 }
 
-class _ExploreHikesScreenState extends State<ExploreHikesScreen> {
-  final _hikeService = HikeService();
+class _ExploreAppointmentsScreenState extends State<ExploreAppointmentsScreen> {
+  final _appointmentService = AppointmentService();
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class _ExploreHikesScreenState extends State<ExploreHikesScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                "Trilhas cadastradas",
+                "Trilhas agendadas",
                 textAlign: TextAlign.left,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
@@ -34,13 +35,13 @@ class _ExploreHikesScreenState extends State<ExploreHikesScreen> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return HikeRegisterScreen();
+                        return HikeChoiceScreen();
                       },
                     ),
                   ).then((value) => setState(() {}));
                 },
                 child: const Text(
-                  "Cadastrar trilha",
+                  "Agendar trilha",
                   textAlign: TextAlign.right,
                   style: TextStyle(
                     color: AppColors.primary,
@@ -53,7 +54,10 @@ class _ExploreHikesScreenState extends State<ExploreHikesScreen> {
         ),
         Expanded(
           child: FutureBuilder(
-            future: _hikeService.getAll(),
+            future: _appointmentService.getAll(
+              isActive: true,
+              isAvailable: true,
+            ),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Loader();
@@ -69,7 +73,7 @@ class _ExploreHikesScreenState extends State<ExploreHikesScreen> {
 
               if (snapshot.data!.isEmpty) {
                 return const Center(
-                  child: Text("As trilhas cadastradas aparecerão aqui."),
+                  child: Text("Os agendamentos aparecerão aqui."),
                 );
               }
 
@@ -81,11 +85,12 @@ class _ExploreHikesScreenState extends State<ExploreHikesScreen> {
                   return const SizedBox(height: 10);
                 },
                 itemBuilder: (context, index) {
-                  final hike = snapshot.data![index];
-                  return DecoratedListTile(
-                    hike: hike,
+                  final appointment = snapshot.data![index];
+                  return DecoratedCard(
+                    appointment: appointment,
+                    actionText: "Editar",
                     onTap: () {
-                      print("Navegando para tela de edição");
+                      print("Navegando para a tela de editar...");
                     },
                   );
                 },

@@ -3,7 +3,7 @@ import "package:flutter/services.dart";
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
-import 'package:trilhas_phb/screens/authenticate/reset_password/create_new_password.dart';
+import 'package:trilhas_phb/screens/authentication/reset_password/create_new_password.dart';
 import 'package:trilhas_phb/services/auth.dart';
 
 class ConfirmationCodeScreen extends StatefulWidget {

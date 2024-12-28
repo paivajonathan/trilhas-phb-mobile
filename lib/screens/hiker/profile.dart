@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:trilhas_phb/screens/authenticate/login.dart";
+import "package:trilhas_phb/screens/authentication/login.dart";
 import "package:trilhas_phb/services/auth.dart";
 
 class ProfileScreen extends StatefulWidget {

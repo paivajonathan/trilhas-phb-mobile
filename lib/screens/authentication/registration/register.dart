@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trilhas_phb/screens/authenticate/login_data.dart';
+import 'package:trilhas_phb/screens/authentication/registration/login_data.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});

@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
-import "package:trilhas_phb/screens/administrator/explore_appointments.dart";
-import "package:trilhas_phb/screens/administrator/explore_hikes.dart";
+import "package:trilhas_phb/screens/hiker/explore/explore_all.dart";
+import "package:trilhas_phb/screens/hiker/explore/explore_available.dart";
+import "package:trilhas_phb/screens/hiker/explore/explore_user.dart";
 import "package:trilhas_phb/widgets/tab_navigation.dart";
 
 class ExploreScreen extends StatefulWidget {
@@ -12,8 +13,9 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   final _tabsTitles = [
-    "AGENDADAS",
-    "CADASTRADAS",
+    "TODAS",
+    "PARTICIPAR",
+    "INSCRIÇÕES",
   ];
 
   @override
@@ -24,8 +26,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
         appBar: TabNavigation(tabsTitles: _tabsTitles),
         body: const TabBarView(
           children: [
-            ExploreAppointmentsScreen(),
-            ExploreHikesScreen(),
+            ExploreAllScreen(),
+            ExploreAvailableScreen(),
+            ExploreUserScreen(),
           ]
         )
       )

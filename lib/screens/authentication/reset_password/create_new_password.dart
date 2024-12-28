@@ -3,7 +3,7 @@ import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
 import 'package:trilhas_phb/services/auth.dart';
-import 'package:trilhas_phb/screens/authenticate/login.dart';
+import 'package:trilhas_phb/screens/authentication/login.dart';
 
 class CreateNewPassword extends StatefulWidget {
   const CreateNewPassword({

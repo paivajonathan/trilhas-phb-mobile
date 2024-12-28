@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:trilhas_phb/models/user_data.dart";
 import "package:trilhas_phb/providers/user_data.dart";
-import "package:trilhas_phb/screens/authenticate/login.dart";
+import "package:trilhas_phb/screens/authentication/login.dart";
 import "package:trilhas_phb/screens/navigation_wrapper.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:trilhas_phb/widgets/loader.dart";

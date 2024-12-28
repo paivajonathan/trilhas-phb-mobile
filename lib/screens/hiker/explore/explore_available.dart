@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:trilhas_phb/screens/hiker/appointment_details.dart';
+import 'package:trilhas_phb/screens/hiker/explore/details/appointment_details.dart';
 import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/decorated_card.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
 
-class ExploreUserScreen extends StatefulWidget {
-  const ExploreUserScreen({super.key});
+class ExploreAvailableScreen extends StatefulWidget {
+  const ExploreAvailableScreen({super.key});
 
   @override
-  State<ExploreUserScreen> createState() => _ExploreUserScreenState();
+  State<ExploreAvailableScreen> createState() => _ExploreAvailableScreenState();
 }
 
-class _ExploreUserScreenState extends State<ExploreUserScreen> {
+class _ExploreAvailableScreenState extends State<ExploreAvailableScreen> {
   final _appointmentService = AppointmentService();
 
   @override
@@ -22,7 +22,7 @@ class _ExploreUserScreenState extends State<ExploreUserScreen> {
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.all(20),
           child: const Text(
-            "Suas trilhas",
+            "Trilhas agendadas",
             textAlign: TextAlign.left,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -32,7 +32,7 @@ class _ExploreUserScreenState extends State<ExploreUserScreen> {
             future: _appointmentService.getAll(
               isActive: true,
               isAvailable: true,
-              hasUserParticipation: true,
+              hasUserParticipation: false,
             ),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -47,7 +47,7 @@ class _ExploreUserScreenState extends State<ExploreUserScreen> {
 
               if (snapshot.data!.isEmpty) {
                 return const Center(
-                  child: Text("As suas trilhas aparecerão aqui."),
+                  child: Text("Os agendamentos aparecerão aqui."),
                 );
               }
 
@@ -59,15 +59,16 @@ class _ExploreUserScreenState extends State<ExploreUserScreen> {
                 itemBuilder: (context, index) {
                   final appointment = snapshot.data![index];
                   return DecoratedCard(
-                    isPrimary: false,
                     appointment: appointment,
-                    actionText: "Informações",
+                    actionText: "Participar",
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => AppointmentDetailsScreen(
-                            appointment: appointment,
-                          ),
+                          builder: (context) {
+                            return AppointmentDetailsScreen(
+                              appointment: appointment,
+                            );
+                          },
                         ),
                       ).then((value) => setState(() {}));
                     },
