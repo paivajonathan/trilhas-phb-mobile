@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/services/hike.dart';
 import 'package:trilhas_phb/widgets/decorated_list_tile.dart';
-import 'package:trilhas_phb/screens/administrator/explore/register/hike_register.dart';
+import 'package:trilhas_phb/screens/administrator/explore/register/hike/hike_register.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
 
 class ExploreHikesScreen extends StatefulWidget {

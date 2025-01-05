@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
-import 'package:trilhas_phb/screens/administrator/explore/register/hike_choice.dart';
+import 'package:trilhas_phb/screens/administrator/explore/edit/appointment/appointment_details.dart';
+import 'package:trilhas_phb/screens/administrator/explore/register/hike/hike_choice.dart';
 import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/decorated_card.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
@@ -90,7 +91,13 @@ class _ExploreAppointmentsScreenState extends State<ExploreAppointmentsScreen> {
                     appointment: appointment,
                     actionText: "Editar",
                     onTap: () {
-                      print("Navegando para a tela de editar...");
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return AppointmentDetailsScreen(appointment: appointment);
+                          },
+                        ),
+                      ).then((value) => setState(() {}));
                     },
                   );
                 },

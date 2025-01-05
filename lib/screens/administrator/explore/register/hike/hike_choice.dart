@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trilhas_phb/screens/administrator/explore/register/appointment_register.dart';
+import 'package:trilhas_phb/screens/administrator/explore/register/appointment/appointment_register.dart';
 import 'package:trilhas_phb/services/hike.dart';
 import 'package:trilhas_phb/widgets/decorated_list_tile.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
