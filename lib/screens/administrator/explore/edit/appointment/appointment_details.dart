@@ -6,6 +6,7 @@ import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/screens/administrator/explore/edit/appointment/appointment_edit.dart';
 import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/services/hike.dart';
+import 'package:trilhas_phb/widgets/alert_dialog.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
 import 'package:trilhas_phb/widgets/future_button.dart';
 
@@ -133,8 +134,24 @@ class _BottomDrawerState extends State<BottomDrawer> {
   }
 
   Future<void> _handleInactivate() async {
+    final keepAction = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const BlurryDialogWidget(
+          title: "Deseja continuar?",
+          content: "Tem certeza de que deseja continuar?",
+        );
+      },
+    );
+
+    if (!keepAction) {
+      return;
+    }
+
     try {
-      await _appointmentService.inactivate(appointmentId: widget.appointment.id);
+      await _appointmentService.inactivate(
+        appointmentId: widget.appointment.id,
+      );
 
       if (!mounted) {
         return;
@@ -142,13 +159,22 @@ class _BottomDrawerState extends State<BottomDrawer> {
 
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
-        ..showSnackBar(const SnackBar(content: Text("Agendamento inativado com sucesso!")));
+        ..showSnackBar(
+          const SnackBar(content: Text("Agendamento inativado com sucesso!")),
+        );
       Navigator.of(context).pop();
     } catch (e) {
       final message = e.toString().replaceAll("Exception: ", "");
+
+      if (!mounted) {
+        return;
+      }
+
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
-        ..showSnackBar(SnackBar(content: Text(message)));
+        ..showSnackBar(
+          SnackBar(content: Text(message)),
+        );
     }
   }
 
@@ -268,7 +294,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                       ),
                       Expanded(
                         child: FutureButton(
-                          primary: true,
+                          primary: false,
                           text: "INATIVAR",
                           future: _handleInactivate,
                         ),
