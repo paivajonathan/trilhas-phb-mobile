@@ -22,8 +22,19 @@ class MessageModel {
       senderId: map["sender_id"],
       sender: map["sender"],
       timestamp: DateTime.fromMillisecondsSinceEpoch(
-        map["timestamp"] * millisecondsInSeconds
-      ),
+          map["timestamp"] * millisecondsInSeconds),
     );
+  }
+
+  String get readableDate {
+    return "${timestamp.day.toString().padLeft(2, '0')}/${timestamp.month.toString().padLeft(2, '0')}/${timestamp.year}";
+  }
+
+  String get readableTime {
+    return "${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}";
+  }
+
+  String get readableTimestamp {
+    return "$readableDate $readableTime";
   }
 }
