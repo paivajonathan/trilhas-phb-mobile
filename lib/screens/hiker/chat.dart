@@ -4,6 +4,7 @@ import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/models/message.dart";
 import "package:trilhas_phb/providers/user_data.dart";
 import "package:trilhas_phb/services/chat.dart";
+import "package:trilhas_phb/widgets/message_bubble.dart";
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -27,8 +28,10 @@ class _ChatScreenState extends State<ChatScreen> {
     _chat.connect(_handleIncomingData);
     _scrollController.addListener(_onScroll);
 
-    final userDataProvider =
-        Provider.of<UserDataProvider>(context, listen: false);
+    final userDataProvider = Provider.of<UserDataProvider>(
+      context,
+      listen: false,
+    );
     _userId = userDataProvider.userData!.id;
   }
 
@@ -40,8 +43,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _handleIncomingData(dynamic data) {
     if (data is List<MessageModel>) {
-      if (_isLoadingInitialMessages)
+      if (_isLoadingInitialMessages) {
         setState(() => _isLoadingInitialMessages = false);
+      }
       setState(() => _messages.insertAll(0, data));
     } else if (data is MessageModel) {
       setState(() => _messages.add(data));
@@ -104,10 +108,12 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: _isLoadingInitialMessages
                 ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.primary))
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  )
                 : _messages.isEmpty
                     ? const Center(
-                        child: Text("Ainda não foram enviados comunicados."))
+                        child: Text("Ainda não foram enviados comunicados."),
+                      )
                     : ListView.builder(
                         itemCount: _messages.length,
                         controller: _scrollController,
@@ -116,73 +122,14 @@ class _ChatScreenState extends State<ChatScreen> {
                           final reversedMessages = _messages.reversed.toList();
                           final message = reversedMessages[index];
                           return MessageBubbleWidget(
-                              chatMessage: message,
-                              isMe: message.senderId == _userId);
+                            chatMessage: message,
+                            isMe: message.senderId == _userId,
+                          );
                         },
                       ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class MessageBubbleWidget extends StatelessWidget {
-  const MessageBubbleWidget({
-    super.key,
-    required this.chatMessage,
-    required this.isMe,
-  });
-
-  final MessageModel chatMessage;
-  final bool isMe;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment:
-          isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment:
-              isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              margin: isMe
-                  ? const EdgeInsets.only(right: 10)
-                  : const EdgeInsets.only(left: 10),
-              width: 200,
-              decoration: BoxDecoration(
-                color: isMe ? AppColors.primary : Colors.black38,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    chatMessage.sender,
-                    style: const TextStyle(fontSize: 13, color: Colors.white),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    chatMessage.content,
-                    style: const TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          child: Text(
-            chatMessage.readableTimestamp,
-            style: const TextStyle(
-                color: Colors.grey, fontSize: 12, fontStyle: FontStyle.italic),
-          ),
-        ),
-      ],
     );
   }
 }
