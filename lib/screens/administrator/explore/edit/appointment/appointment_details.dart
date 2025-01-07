@@ -226,7 +226,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                                 top: 0,
                                 bottom: 0,
                                 child: Container(
-                                  color: Colors.black.withOpacity(.5),
+                                  color: Colors.black.withOpacity(.25),
                                   width: double.infinity,
                                 ),
                               ),
