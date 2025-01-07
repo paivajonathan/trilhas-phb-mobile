@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/screens/administrator/explore/edit/appointment/appointment_details.dart';
-import 'package:trilhas_phb/screens/administrator/explore/register/hike/hike_choice.dart';
+import 'package:trilhas_phb/screens/administrator/explore/register/appointment/hike_choice.dart';
 import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/decorated_card.dart';
 import 'package:trilhas_phb/widgets/loader.dart';

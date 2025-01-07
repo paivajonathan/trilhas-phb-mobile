@@ -55,7 +55,7 @@ class MapView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _hikeService.loadGpx(gpxFile: _appointment.hike.gpxFile),
+      future: _hikeService.loadGpxPoints(gpxFile: _appointment.hike.gpxFile),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -231,12 +231,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         itemCount: widget._appointment.hike.images.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          final imageUrl =
+                          final image =
                               widget._appointment.hike.images[index];
 
                           return FadeInImage.assetNetwork(
                             placeholder: "assets/loading.gif",
-                            image: imageUrl,
+                            image: image.url,
                             fit: BoxFit.cover,
                             width: double.infinity,
                             imageErrorBuilder:

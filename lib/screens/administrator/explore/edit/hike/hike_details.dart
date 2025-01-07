@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/models/hike.dart';
+import 'package:trilhas_phb/screens/administrator/explore/edit/hike/hike_edit.dart';
 import 'package:trilhas_phb/services/hike.dart';
 import 'package:trilhas_phb/widgets/alert_dialog.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
@@ -150,7 +151,13 @@ class _BottomDrawerState extends State<BottomDrawer> {
   }
 
   Future<void> _handleEdit() async {
-    print("Navegando para a tela de edição...");
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return HikeEditScreen(hike: widget.hike);
+        },
+      ),
+    );
 
     widget.onUpdate();
   }
@@ -191,14 +198,14 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         itemCount: widget.hike.images.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          final imageUrl =
+                          final image =
                               widget.hike.images[index];
 
                           return Stack(
                             children: [
                               FadeInImage.assetNetwork(
                                 placeholder: "assets/loading.gif",
-                                image: imageUrl,
+                                image: image.url,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 imageErrorBuilder:

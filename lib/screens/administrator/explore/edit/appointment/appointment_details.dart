@@ -202,14 +202,14 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         itemCount: widget.appointment.hike.images.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          final imageUrl =
+                          final image =
                               widget.appointment.hike.images[index];
 
                           return Stack(
                             children: [
                               FadeInImage.assetNetwork(
                                 placeholder: "assets/loading.gif",
-                                image: imageUrl,
+                                image: image.url,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 imageErrorBuilder:
