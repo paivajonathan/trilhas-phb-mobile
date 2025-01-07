@@ -94,7 +94,7 @@ class _ExploreAppointmentsScreenState extends State<ExploreAppointmentsScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            return AppointmentDetailsScreen(appointment: appointment);
+                            return AppointmentDetailsScreen(appointmentId: appointment.id);
                           },
                         ),
                       ).then((value) => setState(() {}));

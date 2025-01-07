@@ -47,10 +47,48 @@ class AppointmentService {
       }
 
       List<AppointmentModel> appointments = (responseData["items"] as List)
-        .map((messageJson) => AppointmentModel.fromMap(messageJson, _baseUrl))
+        .map((messageJson) => AppointmentModel.fromMap(messageJson))
         .toList();
 
       return appointments;
+    } on TimeoutException catch (_) {
+      throw Exception("Tempo limite da requisição atingido.");
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<AppointmentModel> getOne(
+    {
+      required int appointmentId,
+    }
+  ) async {
+    String token = await _auth.token;
+    
+    final uri = Uri.parse("$_baseUrl/api/v1/appointments/$appointmentId");
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          "Content-type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl,
+          "Authorization": "Bearer $token",
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
+        );
+      }
+
+      AppointmentModel appointment = AppointmentModel.fromMap(responseData);
+      return appointment;
     } on TimeoutException catch (_) {
       throw Exception("Tempo limite da requisição atingido.");
     } catch (e) {

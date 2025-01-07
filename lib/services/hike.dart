@@ -48,7 +48,7 @@ class HikeService {
       }
 
       List<HikeModel> hikes = (responseData["items"] as List)
-          .map((messageJson) => HikeModel.fromMap(messageJson, _baseUrl))
+          .map((messageJson) => HikeModel.fromMap(messageJson))
           .toList();
 
       return hikes;
@@ -140,7 +140,7 @@ class HikeService {
             "Um erro inesperado ocorreu");
       }
 
-      HikeModel hike = HikeModel.fromMap(responseData, _baseUrl);
+      HikeModel hike = HikeModel.fromMap(responseData);
       return hike;
     } on TimeoutException catch (_) {
       throw Exception("Tempo limite da requisição atingido.");

@@ -17,14 +17,14 @@ class AppointmentModel {
   final bool hasUserParticipation;
   final HikeModel hike;
 
-  factory AppointmentModel.fromMap(Map<String, dynamic> map, String url) {
+  factory AppointmentModel.fromMap(Map<String, dynamic> map) {
     return AppointmentModel(
       id: map["id"],
       datetime: DateTime.parse("${map["date"]} ${map["time"]}"),
       isActive: map["is_active"],
       isAvailable: map["is_available"],
       hasUserParticipation: map["has_user_participation"],
-      hike: HikeModel.fromMap(map["hike"], url),
+      hike: HikeModel.fromMap(map["hike"]),
     );
   }
 

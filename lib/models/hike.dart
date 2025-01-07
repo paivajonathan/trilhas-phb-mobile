@@ -21,8 +21,9 @@ class HikeModel {
   String gpxFile;
   List<String> images;
 
-  factory HikeModel.fromMap(Map<String, dynamic> map, String url) {
-    return HikeModel(
+  factory HikeModel.fromMap(Map<String, dynamic> map) {
+
+    var a = HikeModel(
       id: map["id"],
       name: map["name"],
       description: map["description"],
@@ -30,11 +31,13 @@ class HikeModel {
       length: double.parse(map["length"]),
       isActive: map["is_active"],
       hasActiveAppointments: map["has_active_appointments"],
-      gpxFile: "$url/${map["gpx_file"]}",
+      gpxFile: map["gpx_file"],
       images: (map["images"] as List<dynamic>)
-          .map((imageMap) => "$url/${imageMap["image"] as String}")
+          .map((imageMap) => imageMap["image"] as String)
           .toList(),
     );
+    print(a);
+    return a;
   }
 
   String get readableDifficulty {

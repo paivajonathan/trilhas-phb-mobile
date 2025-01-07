@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
-import 'package:trilhas_phb/helpers/map.dart';
 import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/screens/administrator/explore/edit/appointment/appointment_edit.dart';
 import 'package:trilhas_phb/services/appointment.dart';
-import 'package:trilhas_phb/services/hike.dart';
 import 'package:trilhas_phb/widgets/alert_dialog.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
 import 'package:trilhas_phb/widgets/future_button.dart';
+import 'package:trilhas_phb/widgets/map_view.dart';
 
 class AppointmentDetailsScreen extends StatefulWidget {
   const AppointmentDetailsScreen({
     super.key,
-    required AppointmentModel appointment,
-  }) : _appointment = appointment;
+    required this.appointmentId,
+  });
 
-  final AppointmentModel _appointment;
+  final int appointmentId;
 
   @override
   State<AppointmentDetailsScreen> createState() =>
@@ -24,6 +22,14 @@ class AppointmentDetailsScreen extends StatefulWidget {
 }
 
 class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
+  final _appointmentService = AppointmentService();
+
+  void _reloadScreen() {
+    if (!mounted) return;
+
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,75 +41,38 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: Stack(
-        children: [
-          MapView(appointment: widget._appointment),
-          BottomDrawer(appointment: widget._appointment),
-        ],
+      body: FutureBuilder(
+        future: _appointmentService.getOne(appointmentId: widget.appointmentId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error!.toString()),
+            );
+          }
+
+          if (snapshot.data == null) {
+            return const Center(
+              child: Text("Não há dados para mostrar."),
+            );
+          }
+
+          return Stack(
+            children: [
+              MapView(appointment: snapshot.data!),
+              BottomDrawer(
+                appointment: snapshot.data!,
+                onUpdate: _reloadScreen,
+              ),
+            ],
+          );
+        },
       ),
-    );
-  }
-}
-
-class MapView extends StatelessWidget {
-  MapView({
-    super.key,
-    required AppointmentModel appointment,
-  }) : _appointment = appointment;
-
-  final AppointmentModel _appointment;
-
-  final _hikeService = HikeService();
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _hikeService.loadGpx(gpxFile: _appointment.hike.gpxFile),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          );
-        }
-
-        if (snapshot.hasError) {
-          return Center(
-            child: Text(snapshot.error!.toString()),
-          );
-        }
-
-        if (snapshot.data!.isEmpty) {
-          return const Center(
-            child: Text("Não há dados para mostrar."),
-          );
-        }
-
-        return FlutterMap(
-          options: MapOptions(
-            initialCenter: snapshot.data!.last,
-            initialZoom: 15.0,
-            minZoom: 12.5,
-            maxZoom: 17.5,
-            cameraConstraint: CameraConstraint.containCenter(
-              bounds: calculateBounds(snapshot.data!),
-            ),
-          ),
-          children: [
-            TileLayer(
-              urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-            ),
-            PolylineLayer(
-              polylines: [
-                Polyline(
-                  points: snapshot.data!,
-                  color: AppColors.primary,
-                  strokeWidth: 4.0,
-                ),
-              ],
-            )
-          ],
-        );
-      },
     );
   }
 }
@@ -112,9 +81,11 @@ class BottomDrawer extends StatefulWidget {
   const BottomDrawer({
     super.key,
     required this.appointment,
+    required this.onUpdate,
   });
 
   final AppointmentModel appointment;
+  final void Function() onUpdate;
 
   @override
   State<BottomDrawer> createState() => _BottomDrawerState();
@@ -128,9 +99,9 @@ class _BottomDrawerState extends State<BottomDrawer> {
 
   @override
   void setState(VoidCallback fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
+    if (!mounted) return;
+
+    super.setState(fn);
   }
 
   Future<void> _handleInactivate() async {
@@ -162,6 +133,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
         ..showSnackBar(
           const SnackBar(content: Text("Agendamento inativado com sucesso!")),
         );
+
       Navigator.of(context).pop();
     } catch (e) {
       final message = e.toString().replaceAll("Exception: ", "");
@@ -176,6 +148,20 @@ class _BottomDrawerState extends State<BottomDrawer> {
           SnackBar(content: Text(message)),
         );
     }
+  }
+
+  Future<void> _handleEdit() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return AppointmentEditScreen(
+            appointment: widget.appointment,
+          );
+        },
+      ),
+    );
+
+    widget.onUpdate();
   }
 
   @override
@@ -210,14 +196,13 @@ class _BottomDrawerState extends State<BottomDrawer> {
               children: [
                 Stack(
                   children: [
-                    Container(
+                    SizedBox(
                       height: 250,
                       child: PageView.builder(
                         itemCount: widget.appointment.hike.images.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          final imageUrl =
-                              widget.appointment.hike.images[index];
+                          final imageUrl = widget.appointment.hike.images[index];
 
                           return FadeInImage.assetNetwork(
                             placeholder: "assets/loading.gif",
@@ -277,16 +262,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         child: DecoratedButton(
                           primary: true,
                           text: "EDITAR",
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return AppointmentEditScreen(
-                                      appointment: widget.appointment);
-                                },
-                              ),
-                            ).then((value) => setState(() {}));
-                          },
+                          onPressed: () => _handleEdit(),
                         ),
                       ),
                       const SizedBox(

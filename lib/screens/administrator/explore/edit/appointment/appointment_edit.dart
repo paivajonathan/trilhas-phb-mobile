@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:intl/intl.dart';
 import 'package:trilhas_phb/models/appointment.dart';
-import 'package:trilhas_phb/screens/navigation_wrapper.dart';
 import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
 import 'package:trilhas_phb/widgets/decorated_list_tile.dart';
@@ -58,10 +57,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
         const SnackBar(content: Text("Agendamento editado com sucesso!")),
       );
 
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const NavigationWrapper()),
-        (Route<dynamic> route) => false,
-      );
+      Navigator.of(context).pop();
     } catch (e) {
       String message = e.toString().replaceAll("Exception: ", "");
       ScaffoldMessenger.of(context)
