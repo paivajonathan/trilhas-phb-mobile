@@ -149,10 +149,13 @@ class _BottomDrawerState extends State<BottomDrawer> {
 
         if (!context.mounted) return;
 
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Participação cancelada com sucesso.")),
-        );
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text("Participação cancelada com sucesso."),
+            ),
+          );
 
         return;
       }
@@ -167,10 +170,11 @@ class _BottomDrawerState extends State<BottomDrawer> {
 
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Participação registrada com sucesso.")),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(content: Text("Participação registrada com sucesso.")),
+        );
     } catch (e) {
       if (!context.mounted) return;
 
@@ -178,14 +182,15 @@ class _BottomDrawerState extends State<BottomDrawer> {
           ? "Ocorreu um erro ao tentar cancelar a sua participação na trilha."
           : "Ocorreu um erro ao tentar fixar sua participação na trilha.";
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "$message: ${e.toString().replaceAll("Exception: ", "")}",
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              "$message: ${e.toString().replaceAll("Exception: ", "")}",
+            ),
           ),
-        ),
-      );
+        );
     } finally {
       setState(() {
         _isButtonLoading = false;
@@ -231,16 +236,14 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         itemCount: widget._appointment.hike.images.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          final image =
-                              widget._appointment.hike.images[index];
+                          final image = widget._appointment.hike.images[index];
 
                           return FadeInImage.assetNetwork(
                             placeholder: "assets/loading.gif",
                             image: image.url,
                             fit: BoxFit.cover,
                             width: double.infinity,
-                            imageErrorBuilder:
-                                (context, error, stackTrace) {
+                            imageErrorBuilder: (context, error, stackTrace) {
                               return Image.asset(
                                 "assets/placeholder.png",
                                 fit: BoxFit.cover,

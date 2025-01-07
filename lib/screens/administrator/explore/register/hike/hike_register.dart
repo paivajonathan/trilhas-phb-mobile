@@ -50,13 +50,15 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
       if (result == null) {
         if (!mounted) return;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Selecione algum arquivo GPX.",
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                "Selecione algum arquivo GPX.",
+              ),
             ),
-          ),
-        );
+          );
         return;
       }
 
@@ -65,13 +67,15 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
       if (file.extension!.toLowerCase() != "gpx") {
         if (!mounted) return;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Arquivo não possui a extensão correta.",
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                "Arquivo não possui a extensão correta.",
+              ),
             ),
-          ),
-        );
+          );
 
         return;
       }
@@ -89,26 +93,30 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Erro ao modificar o arquivo GPX: ${e.toString().replaceAll("Exception: ", "")}",
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              "Erro ao modificar o arquivo GPX: ${e.toString().replaceAll("Exception: ", "")}",
+            ),
           ),
-        ),
-      );
+        );
     }
   }
 
   Future<void> _pickImages() async {
     try {
       if (_selectedImages.length == 5) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "O número máximo de imagens permitido é 5.",
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                "O número máximo de imagens permitido é 5.",
+              ),
             ),
-          ),
-        );
+          );
 
         return;
       }
@@ -122,13 +130,15 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
       if (result == null) {
         if (!mounted) return;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              "Selecione alguma imagem.",
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                "Selecione alguma imagem.",
+              ),
             ),
-          ),
-        );
+          );
 
         return;
       }
@@ -148,13 +158,15 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Erro ao modificar o arquivo GPX: ${e.toString().replaceAll("Exception: ", "")}",
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              "Erro ao modificar o arquivo GPX: ${e.toString().replaceAll("Exception: ", "")}",
+            ),
           ),
-        ),
-      );
+        );
     }
   }
 
@@ -168,46 +180,54 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     if (_difficulty == "") {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Para se cadastrar a trilha, é necessário definir a sua dificuldade.",
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Para se cadastrar a trilha, é necessário definir a sua dificuldade.",
+            ),
           ),
-        ),
-      );
+        );
       return;
     }
 
     if (_selectedImages.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Para se cadastrar a trilha, é necessário possuir pelo menos uma imagem.",
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Para se cadastrar a trilha, é necessário possuir pelo menos uma imagem.",
+            ),
           ),
-        ),
-      );
+        );
       return;
     }
 
     if (_selectedImages.length > 5) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "O número máximo de imagens permitidas é 5.",
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text(
+              "O número máximo de imagens permitidas é 5.",
+            ),
           ),
-        ),
-      );
+        );
       return;
     }
 
     if (_gpxFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Para se cadastrar a trilha, é necessário haver o seu arquivo GPX.",
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Para se cadastrar a trilha, é necessário haver o seu arquivo GPX.",
+            ),
           ),
-        ),
-      );
+        );
       return;
     }
 
@@ -223,25 +243,29 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Trilha cadastrada com sucesso!",
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Trilha cadastrada com sucesso!",
+            ),
           ),
-        ),
-      );
+        );
 
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Erro ao cadastrar trilha: ${e.toString().replaceAll("Exception: ", "")}",
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              "Erro ao cadastrar trilha: ${e.toString().replaceAll("Exception: ", "")}",
+            ),
           ),
-        ),
-      );
+        );
     }
   }
 

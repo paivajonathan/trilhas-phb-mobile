@@ -21,7 +21,7 @@ class PersonalData extends StatefulWidget {
 class _PersonalDataScreenState extends State<PersonalData> {
   // Instância do AuthService
   final AuthService _auth = AuthService();
-  
+
   final _formKey = GlobalKey<FormState>();
 
   late MaskedTextController _dateController;
@@ -53,9 +53,11 @@ class _PersonalDataScreenState extends State<PersonalData> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      String unmaskedPhone = widget._sharedData["phone"].replaceAll(RegExp(r"[^0-9]"), "");
-      
-      DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(widget._sharedData["birthDate"]);
+      String unmaskedPhone =
+          widget._sharedData["phone"].replaceAll(RegExp(r"[^0-9]"), "");
+
+      DateTime parsedDate =
+          DateFormat("dd/MM/yyyy").parse(widget._sharedData["birthDate"]);
       String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
 
       setState(() => _isLoading = true);
@@ -70,21 +72,27 @@ class _PersonalDataScreenState extends State<PersonalData> {
       );
 
       setState(() => _isLoading = false);
-      
+
       if (!context.mounted) return;
-    
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Cadastro realizado com sucesso!")),
-      );
+
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(content: Text("Cadastro realizado com sucesso!")),
+        );
 
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
         (Route<dynamic> route) => false,
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}")),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+              content: Text(
+                  "Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}")),
+        );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -138,7 +146,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 ),
               ),
               const SizedBox(height: 30), // Ajuste inicial
-              
+
               // Campo Nome Completo
               const Text(
                 "Nome Completo",
@@ -163,7 +171,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // Campo Data de Aniversário
               const Text(
                 "Data de Aniversário",
@@ -189,7 +197,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // Campo Número
               const Text(
                 "Número",
@@ -216,7 +224,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // Campo Bairro (opcional)
               const Text(
                 "Bairro (opcional)",
@@ -235,7 +243,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                   widget._sharedData["neighborhoodName"] = value;
                 },
               ),
-              
+
               // Empurra o botão "Continuar" para o fundo
               const Spacer(),
 

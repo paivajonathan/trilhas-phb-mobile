@@ -37,15 +37,17 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
 
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Código reenviado com sucesso.")),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(content: Text("Código reenviado com sucesso.")),
+        );
     } catch (e) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+        );
     } finally {
       setState(() {
         _isLoading = false;
@@ -55,12 +57,13 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
 
   Future<void> _validateCode(BuildContext context) async {
     if (_verificationCode == "" || _verificationCode.length != 6) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Código de verificação inválido."),
-        ),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text("Código de verificação inválido."),
+          ),
+        );
       return;
     }
 
@@ -76,10 +79,11 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
 
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(content: Text(message)),
+        );
 
       Navigator.push(
         context,
@@ -91,10 +95,11 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
         ),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+        );
     } finally {
       setState(() {
         _isLoading = false;

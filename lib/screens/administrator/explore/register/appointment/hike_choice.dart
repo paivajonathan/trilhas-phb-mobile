@@ -69,7 +69,7 @@ class HikeChoiceScreen extends StatelessWidget {
             const SizedBox(height: 25),
             Expanded(
               child: FutureBuilder(
-                future: _hikeService.getAll(hasActiveAppointments: false),
+                future: _hikeService.getAll(hasActiveAppointments: false, isActive: true),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Loader();

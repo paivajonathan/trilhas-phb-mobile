@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
+import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/screens/administrator/explore/edit/appointment/appointment_details.dart';
 import 'package:trilhas_phb/screens/administrator/explore/register/appointment/hike_choice.dart';
-import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/decorated_card.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
 
-class ExploreAppointmentsScreen extends StatefulWidget {
-  const ExploreAppointmentsScreen({super.key});
+class ExploreAppointmentsScreen extends StatelessWidget {
+  const ExploreAppointmentsScreen({
+    super.key,
+    required this.appointments,
+    required this.isAppointmentsLoading,
+    required this.isAppointmentsLoadingError,
+    required this.onUpdate,
+  });
 
-  @override
-  State<ExploreAppointmentsScreen> createState() =>
-      _ExploreAppointmentsScreenState();
-}
-
-class _ExploreAppointmentsScreenState extends State<ExploreAppointmentsScreen> {
-  final _appointmentService = AppointmentService();
+  final List<AppointmentModel> appointments;
+  final bool isAppointmentsLoading;
+  final String? isAppointmentsLoadingError;
+  final void Function() onUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +42,7 @@ class _ExploreAppointmentsScreenState extends State<ExploreAppointmentsScreen> {
                         return HikeChoiceScreen();
                       },
                     ),
-                  ).then((value) => setState(() {}));
+                  ).then((value) => onUpdate());
                 },
                 child: const Text(
                   "Agendar trilha",
@@ -54,53 +57,57 @@ class _ExploreAppointmentsScreenState extends State<ExploreAppointmentsScreen> {
           ),
         ),
         Expanded(
-          child: FutureBuilder(
-            future: _appointmentService.getAll(
-              isActive: true,
-              isAvailable: true,
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+          child: Builder(
+            builder: (context) {
+              if (isAppointmentsLoading) {
                 return const Loader();
               }
 
-              if (snapshot.hasError) {
+              if (isAppointmentsLoadingError != null) {
                 return Center(
                   child: Text(
-                    snapshot.error!.toString().replaceAll("Exception: ", ""),
+                    isAppointmentsLoadingError!,
                   ),
                 );
               }
 
-              if (snapshot.data!.isEmpty) {
+              if (appointments.isEmpty) {
                 return const Center(
                   child: Text("Os agendamentos aparecerão aqui."),
                 );
               }
 
-              return ListView.separated(
-                scrollDirection: Axis.vertical,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: snapshot.data!.length,
-                separatorBuilder: (context, value) {
-                  return const SizedBox(height: 10);
+              return RefreshIndicator(
+                onRefresh: () async {
+                  onUpdate();
                 },
-                itemBuilder: (context, index) {
-                  final appointment = snapshot.data![index];
-                  return DecoratedCard(
-                    appointment: appointment,
-                    actionText: "Editar",
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return AppointmentDetailsScreen(appointmentId: appointment.id);
-                          },
-                        ),
-                      ).then((value) => setState(() {}));
-                    },
-                  );
-                },
+                color: AppColors.primary,
+                child: ListView.separated(
+                  scrollDirection: Axis.vertical,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: appointments.length,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  separatorBuilder: (context, value) {
+                    return const SizedBox(height: 10);
+                  },
+                  itemBuilder: (context, index) {
+                    final appointment = appointments[index];
+                    return DecoratedCard(
+                      appointment: appointment,
+                      actionText: "Editar",
+                      onTap: () {
+                        onUpdate();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return AppointmentDetailsScreen(appointmentId: appointment.id);
+                            },
+                          ),
+                        ).then((value) => onUpdate());
+                      },
+                    );
+                  },
+                ),
               );
             },
           ),

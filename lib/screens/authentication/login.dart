@@ -31,25 +31,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       setState(() => _isLoading = true);
-      
+
       final userData = await _auth.login(
         email: _emailController.text,
         password: _passwordController.text,
       );
-        
+
       if (!context.mounted) return;
 
-      final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
+      final userDataProvider =
+          Provider.of<UserDataProvider>(context, listen: false);
       userDataProvider.setUserData(userData);
-  
+
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const NavigationWrapper()),
         (Route<dynamic> route) => false,
       );
     } on Exception catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erro no login: ${e.toString().replaceAll("Exception: ", "")}")),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+              content: Text(
+                  "Erro no login: ${e.toString().replaceAll("Exception: ", "")}")),
+        );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -60,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return "Digite um email.";
     }
 
-    return null;                 
+    return null;
   }
 
   String? _validatePassword(String? value) {
@@ -74,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return null;
   }
- 
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -170,15 +175,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const Register()
-                          ),
+                              builder: (context) => const Register()),
                         );
                       },
                     ),
                   ],
                 ),
               ),
-            ), 
+            ),
           ],
         ),
       ),

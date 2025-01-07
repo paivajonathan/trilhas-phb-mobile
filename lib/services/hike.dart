@@ -20,6 +20,7 @@ class HikeService {
 
   Future<List<HikeModel>> getAll({
     bool? hasActiveAppointments,
+    bool? isActive,
   }) async {
     String token = await _auth.token;
     final queryParameters = {"ordering": "-id"};
@@ -29,7 +30,9 @@ class HikeService {
           hasActiveAppointments.toString();
     }
 
-    queryParameters["is_active"] = true.toString();
+    if (isActive != null) {
+      queryParameters["is_active"] = isActive.toString();
+    }
 
     final uri = Uri.parse("$_baseUrl/api/v1/hikes/")
         .replace(queryParameters: queryParameters);
@@ -159,7 +162,8 @@ class HikeService {
       final uri = Uri.parse(image.url);
 
       try {
-        final response = await http.get(uri).timeout(const Duration(seconds: 10));
+        final response =
+            await http.get(uri).timeout(const Duration(seconds: 10));
 
         final responseStatus = response.statusCode;
         final responseData = response.bodyBytes;
@@ -271,7 +275,8 @@ class HikeService {
       ));
 
     for (var image in images) {
-      final imageMimeType = lookupMimeType(image.filename) ?? "application/octet-stream";
+      final imageMimeType =
+          lookupMimeType(image.filename) ?? "application/octet-stream";
 
       request.files.add(http.MultipartFile.fromBytes(
         "images",
@@ -289,7 +294,8 @@ class HikeService {
     });
 
     try {
-      final response = await request.send().timeout(const Duration(seconds: 10));
+      final response =
+          await request.send().timeout(const Duration(seconds: 10));
       final responseBody = await response.stream.bytesToString();
 
       final responseStatus = response.statusCode;

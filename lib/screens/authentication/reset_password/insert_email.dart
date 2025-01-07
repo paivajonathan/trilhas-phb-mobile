@@ -23,26 +23,33 @@ class _InsertEmailState extends State<InsertEmail> {
 
   final _emailController = TextEditingController();
 
-  Future<void> _handleSubmit(BuildContext context) async {
+  Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     try {
       setState(() {
         _isLoading = true;
       });
+
       await _authService.sendConfirmationCode(email: _emailController.text);
+
+      if (!mounted) return;
 
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) =>
-              ConfirmationCodeScreen(email: _emailController.text),
+          builder: (context) => ConfirmationCodeScreen(
+            email: _emailController.text,
+          ),
         ),
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
-      );
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+        );
     } finally {
       setState(() {
         _isLoading = false;
@@ -121,7 +128,7 @@ class _InsertEmailState extends State<InsertEmail> {
               DecoratedButton(
                 primary: true,
                 text: "Continuar",
-                onPressed: () => _handleSubmit(context),
+                onPressed: () => _handleSubmit(),
                 isLoading: _isLoading,
               ),
             ],

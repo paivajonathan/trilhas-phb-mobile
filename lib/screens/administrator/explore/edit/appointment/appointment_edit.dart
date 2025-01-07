@@ -53,9 +53,11 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
 
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Agendamento editado com sucesso!")),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(content: Text("Agendamento editado com sucesso!")),
+        );
 
       Navigator.of(context).pop();
     } catch (e) {
