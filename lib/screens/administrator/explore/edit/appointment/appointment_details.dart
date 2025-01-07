@@ -202,19 +202,35 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         itemCount: widget.appointment.hike.images.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          final imageUrl = widget.appointment.hike.images[index];
+                          final imageUrl =
+                              widget.appointment.hike.images[index];
 
-                          return FadeInImage.assetNetwork(
-                            placeholder: "assets/loading.gif",
-                            image: imageUrl,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            imageErrorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                "assets/placeholder.png",
+                          return Stack(
+                            children: [
+                              FadeInImage.assetNetwork(
+                                placeholder: "assets/loading.gif",
+                                image: imageUrl,
                                 fit: BoxFit.cover,
-                              );
-                            },
+                                width: double.infinity,
+                                imageErrorBuilder:
+                                    (context, error, stackTrace) {
+                                  return Image.asset(
+                                    "assets/placeholder.png",
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              ),
+                              Positioned(
+                                left: 0,
+                                right: 0,
+                                top: 0,
+                                bottom: 0,
+                                child: Container(
+                                  color: Colors.black.withOpacity(.5),
+                                  width: double.infinity,
+                                ),
+                              ),
+                            ],
                           );
                         },
                       ),

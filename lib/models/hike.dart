@@ -22,8 +22,7 @@ class HikeModel {
   List<String> images;
 
   factory HikeModel.fromMap(Map<String, dynamic> map) {
-
-    var a = HikeModel(
+    return HikeModel(
       id: map["id"],
       name: map["name"],
       description: map["description"],
@@ -36,8 +35,6 @@ class HikeModel {
           .map((imageMap) => imageMap["image"] as String)
           .toList(),
     );
-    print(a);
-    return a;
   }
 
   String get readableDifficulty {
