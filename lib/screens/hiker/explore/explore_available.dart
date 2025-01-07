@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/screens/hiker/explore/details/appointment_details.dart';
-import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/decorated_card.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
 
-class ExploreAvailableScreen extends StatefulWidget {
-  const ExploreAvailableScreen({super.key});
+class ExploreAvailableScreen extends StatelessWidget {
+  const ExploreAvailableScreen({
+    super.key,
+    required this.availableAppointments,
+    required this.isAvailableAppointmentsLoading,
+    required this.isAvailableAppointmentsLoadingError,
+    required this.onUpdate,
+  });
 
-  @override
-  State<ExploreAvailableScreen> createState() => _ExploreAvailableScreenState();
-}
-
-class _ExploreAvailableScreenState extends State<ExploreAvailableScreen> {
-  final _appointmentService = AppointmentService();
+  final List<AppointmentModel> availableAppointments;
+  final bool isAvailableAppointmentsLoading;
+  final String? isAvailableAppointmentsLoadingError;
+  final void Function() onUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -28,24 +32,21 @@ class _ExploreAvailableScreenState extends State<ExploreAvailableScreen> {
           ),
         ),
         Expanded(
-          child: FutureBuilder(
-            future: _appointmentService.getAll(
-              isActive: true,
-              isAvailable: true,
-              hasUserParticipation: false,
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+          child: Builder(
+            builder: (context) {
+              if (isAvailableAppointmentsLoading) {
                 return const Loader();
               }
 
-              if (snapshot.hasError) {
-                return const Center(
-                  child: Text("Ocorreu um erro"),
+              if (isAvailableAppointmentsLoadingError != null) {
+                return Center(
+                  child: Text(
+                    isAvailableAppointmentsLoadingError!,
+                  ),
                 );
               }
 
-              if (snapshot.data!.isEmpty) {
+              if (availableAppointments.isEmpty) {
                 return const Center(
                   child: Text("Os agendamentos aparecerão aqui."),
                 );
@@ -54,10 +55,11 @@ class _ExploreAvailableScreenState extends State<ExploreAvailableScreen> {
               return ListView.separated(
                 scrollDirection: Axis.vertical,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                separatorBuilder: (context, value) => const SizedBox(height: 10),
-                itemCount: snapshot.data!.length,
+                separatorBuilder: (context, value) =>
+                    const SizedBox(height: 10),
+                itemCount: availableAppointments.length,
                 itemBuilder: (context, index) {
-                  final appointment = snapshot.data![index];
+                  final appointment = availableAppointments[index];
                   return DecoratedCard(
                     appointment: appointment,
                     actionText: "Participar",
@@ -70,7 +72,7 @@ class _ExploreAvailableScreenState extends State<ExploreAvailableScreen> {
                             );
                           },
                         ),
-                      ).then((value) => setState(() {}));
+                      ).then((value) => onUpdate());
                     },
                   );
                 },

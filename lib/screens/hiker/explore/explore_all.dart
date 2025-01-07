@@ -1,19 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/screens/hiker/explore/details/appointment_details.dart';
-import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/decorated_card.dart';
 import 'package:trilhas_phb/widgets/decorated_list_tile.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
 
-class ExploreAllScreen extends StatefulWidget {
-  const ExploreAllScreen({super.key});
+class ExploreAllScreen extends StatelessWidget {
+  const ExploreAllScreen({
+    super.key,
+    required this.availableAppointments,
+    required this.isAvailableAppointmentsLoading,
+    required this.isAvailableAppointmentsLoadingError,
+    required this.userAppointments,
+    required this.isUserAppointmentsLoading,
+    required this.isUserAppointmentsLoadingError,
+    required this.onUpdate,
+  });
 
-  @override
-  State<ExploreAllScreen> createState() => _ExploreAllScreenState();
-}
+  final List<AppointmentModel> availableAppointments;
+  final bool isAvailableAppointmentsLoading;
+  final String? isAvailableAppointmentsLoadingError;
 
-class _ExploreAllScreenState extends State<ExploreAllScreen> {
-  final _appointmentService = AppointmentService();
+  final List<AppointmentModel> userAppointments;
+  final bool isUserAppointmentsLoading;
+  final String? isUserAppointmentsLoadingError;
+
+  final void Function() onUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -31,24 +43,19 @@ class _ExploreAllScreenState extends State<ExploreAllScreen> {
         Container(
           height: 250,
           alignment: Alignment.center,
-          child: FutureBuilder(
-            future: _appointmentService.getAll(
-              isActive: true,
-              isAvailable: true,
-              hasUserParticipation: false,
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+          child: Builder(
+            builder: (context) {
+              if (isAvailableAppointmentsLoading) {
                 return const Loader();
               }
 
-              if (snapshot.hasError) {
-                return const Center(
-                  child: Text("Ocorreu um erro"),
+              if (isAvailableAppointmentsLoadingError != null) {
+                return Center(
+                  child: Text(isAvailableAppointmentsLoadingError!),
                 );
               }
 
-              if (snapshot.data!.isEmpty) {
+              if (availableAppointments.isEmpty) {
                 return const Center(
                   child: Text("Os agendamentos aparecerão aqui."),
                 );
@@ -58,9 +65,9 @@ class _ExploreAllScreenState extends State<ExploreAllScreen> {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 separatorBuilder: (context, value) => const SizedBox(width: 10),
-                itemCount: snapshot.data!.length,
+                itemCount: availableAppointments.length,
                 itemBuilder: (context, index) {
-                  final appointment = snapshot.data![index];
+                  final appointment = availableAppointments[index];
                   return Container(
                     alignment: Alignment.center,
                     child: DecoratedCard(
@@ -75,7 +82,7 @@ class _ExploreAllScreenState extends State<ExploreAllScreen> {
                               );
                             },
                           ),
-                        ).then((value) => setState(() {}));
+                        ).then((value) => onUpdate());
                       },
                     ),
                   );
@@ -94,24 +101,19 @@ class _ExploreAllScreenState extends State<ExploreAllScreen> {
           ),
         ),
         Expanded(
-          child: FutureBuilder(
-            future: _appointmentService.getAll(
-              isActive: true,
-              isAvailable: true,
-              hasUserParticipation: true,
-            ),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+          child: Builder(
+            builder: (context) {
+              if (isUserAppointmentsLoading) {
                 return const Loader();
               }
 
-              if (snapshot.hasError) {
-                return const Center(
-                  child: Text("Ocorreu um erro"),
+              if (isUserAppointmentsLoadingError != null) {
+                return Center(
+                  child: Text(isUserAppointmentsLoadingError!),
                 );
               }
 
-              if (snapshot.data!.isEmpty) {
+              if (userAppointments.isEmpty) {
                 return const Center(
                   child: Text("As suas trilhas aparecerão aqui."),
                 );
@@ -120,10 +122,11 @@ class _ExploreAllScreenState extends State<ExploreAllScreen> {
               return ListView.separated(
                 scrollDirection: Axis.vertical,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                separatorBuilder: (context, value) => const SizedBox(height: 10),
-                itemCount: snapshot.data!.length,
+                separatorBuilder: (context, value) =>
+                    const SizedBox(height: 10),
+                itemCount: userAppointments.length,
                 itemBuilder: (context, index) {
-                  final appointment = snapshot.data![index];
+                  final appointment = userAppointments[index];
                   return DecoratedListTile(
                     appointment: appointment,
                     onTap: () {
@@ -135,7 +138,7 @@ class _ExploreAllScreenState extends State<ExploreAllScreen> {
                             );
                           },
                         ),
-                      ).then((value) => setState(() {}));
+                      ).then((value) => onUpdate());
                     },
                   );
                 },

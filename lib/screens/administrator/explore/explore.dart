@@ -43,9 +43,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
       setState(() {
         _appointments = appointments;
+        _isAppointmentsLoadingError = null;
       });
     } catch (e) {
       setState(() {
+        _appointments = [];
         _isAppointmentsLoadingError = e.toString().replaceAll("Exception: ", "");
       });
     } finally {
@@ -65,9 +67,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
       setState(() {
         _hikes = hikes;
+        _isHikesLoadingError = null;
       });
     } catch (e) {
       setState(() {
+        _hikes = [];
         _isHikesLoadingError = e.toString().replaceAll("Exception: ", "");
       });
     } finally {
