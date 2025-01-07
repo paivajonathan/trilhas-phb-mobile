@@ -4,9 +4,9 @@ import "package:file_picker/file_picker.dart";
 import "package:trilhas_phb/models/hike.dart";
 import "package:trilhas_phb/services/hike.dart";
 import "package:trilhas_phb/models/file.dart";
-import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
+import "package:trilhas_phb/widgets/future_button.dart";
 
 class HikeEditScreen extends StatefulWidget {
   const HikeEditScreen({super.key, required this.hike});
@@ -23,11 +23,16 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isGpxLoading = false;
   bool _isImagesLoading = false;
-  bool _isLoading = false;
 
-  late final _nameController = TextEditingController(text: widget.hike.name);
-  late final _lengthController = TextEditingController(text: widget.hike.length.toString());
-  late final _descriptionController = TextEditingController(text: widget.hike.description);
+  late final _nameController = TextEditingController(
+    text: widget.hike.name,
+  );
+  late final _lengthController = TextEditingController(
+    text: widget.hike.length.toString(),
+  );
+  late final _descriptionController = TextEditingController(
+    text: widget.hike.description,
+  );
 
   late String _difficulty = widget.hike.difficulty;
   late bool _isEasySelected = widget.hike.difficulty == "E";
@@ -103,6 +108,14 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
 
   Future<void> _pickGpx() async {
     try {
+      if (_gpxFile != null) {
+        setState(() {
+          _gpxFile = null;
+        });
+
+        return;
+      }
+
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.any,
         withData: true,
@@ -163,6 +176,18 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
 
   Future<void> _pickImages() async {
     try {
+      if (_selectedImages.length == 5) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "O número máximo de imagens permitido é 5.",
+            ),
+          ),
+        );
+
+        return;
+      }
+
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: true,
         type: FileType.image,
@@ -214,7 +239,7 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
     });
   }
 
-  Future<void> _handleSubmit(BuildContext context) async {
+  Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     if (_difficulty == "") {
@@ -239,6 +264,17 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
       return;
     }
 
+    if (_selectedImages.length > 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "O número máximo de imagens permitidas é 5.",
+          ),
+        ),
+      );
+      return;
+    }
+
     if (_gpxFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -251,10 +287,6 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
     }
 
     try {
-      setState(() {
-        _isLoading = true;
-      });
-
       await _hikeService.edit(
         hikeId: widget.hike.id,
         name: _nameController.text,
@@ -265,7 +297,7 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
         gpxFile: _gpxFile!,
       );
 
-      if (!context.mounted) return;
+      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -284,10 +316,6 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
           ),
         ),
       );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -333,7 +361,7 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
           elevation: 0,
           centerTitle: true,
           title: const Text(
-            "Cadastrar Trilha",
+            "Editar Trilha",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           bottom: PreferredSize(
@@ -477,9 +505,8 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size(100, 40),
                             side: BorderSide(
-                              color: _isHardSelected
-                                  ? Colors.white
-                                  : Colors.red,
+                              color:
+                                  _isHardSelected ? Colors.white : Colors.red,
                               width: 2,
                             ),
                             backgroundColor:
@@ -500,9 +527,8 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
                             "DIFÍCIL",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: _isHardSelected
-                                  ? Colors.white
-                                  : Colors.red,
+                              color:
+                                  _isHardSelected ? Colors.white : Colors.red,
                             ),
                           ),
                         ),
@@ -559,7 +585,7 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
                         height: 65,
                         width: 60,
                         child: GestureDetector(
-                          onTap: _pickImages,
+                          onTap: _isImagesLoading ? null : _pickImages,
                           child: Container(
                             decoration: const BoxDecoration(
                               color: Color.fromARGB(255, 3, 204, 107),
@@ -569,11 +595,20 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
                                 bottomRight: Radius.circular(10),
                               ),
                             ),
-                            child: const Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: 25,
-                            ),
+                            child: _isImagesLoading
+                                ? const SizedBox(
+                                    width: 0.25,
+                                    height: 0.25,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                          color: Colors.white),
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                    size: 25,
+                                  ),
                           ),
                         ),
                       ),
@@ -660,34 +695,45 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
                         height: 65,
                         width: 60,
                         child: GestureDetector(
-                          onTap: _pickGpx,
+                          onTap: _isGpxLoading ? null : _pickGpx,
                           child: Container(
                             decoration: BoxDecoration(
                               color: _gpxFile != null
                                   ? Colors.grey
-                                  : const Color.fromARGB(255, 3, 204, 107),
+                                  : const Color.fromARGB(
+                                      255,
+                                      3,
+                                      204,
+                                      107,
+                                    ),
                               shape: BoxShape.rectangle,
                               borderRadius: const BorderRadius.only(
                                 topRight: Radius.circular(10),
                                 bottomRight: Radius.circular(10),
                               ),
                             ),
-                            child: Icon(
-                              _gpxFile != null ? Icons.close : Icons.add,
-                              color: Colors.white,
-                              size: 25,
-                            ),
+                            child: _isGpxLoading
+                                ? const SizedBox(
+                                    width: 0.25,
+                                    height: 0.25,
+                                    child: Center(
+                                        child: CircularProgressIndicator(
+                                            color: Colors.white)))
+                                : Icon(
+                                    _gpxFile != null ? Icons.close : Icons.add,
+                                    color: Colors.white,
+                                    size: 25,
+                                  ),
                           ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  DecoratedButton(
-                    onPressed: () => _isLoading ? null : _handleSubmit(context),
+                  FutureButton(
+                    future: _handleSubmit,
                     primary: true,
                     text: "Salvar",
-                    isLoading: _isLoading,
                   ),
                   const SizedBox(height: 25),
                 ],

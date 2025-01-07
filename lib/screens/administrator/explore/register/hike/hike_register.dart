@@ -1,12 +1,11 @@
-import "dart:io";
 import "dart:typed_data";
 import "package:flutter/material.dart";
 import "package:file_picker/file_picker.dart";
 import "package:trilhas_phb/services/hike.dart";
 import "package:trilhas_phb/models/file.dart";
-import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
+import "package:trilhas_phb/widgets/future_button.dart";
 
 class HikeRegisterScreen extends StatefulWidget {
   const HikeRegisterScreen({super.key});
@@ -19,7 +18,6 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
   final HikeService _hikeService = HikeService();
 
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
 
   final _nameController = TextEditingController();
   final _lengthController = TextEditingController();
@@ -30,19 +28,17 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
   bool _isMedioSelected = false;
   bool _isDificilSelected = false;
 
-  bool _isGpxAdded = false;
-  PlatformFile? _gpxFile;
+  FileModel? _gpxFile;
 
-  int _selectedImagesCount = 0;
-  List<PlatformFile> _selectedImages = [];
+  List<FileModel> _selectedImages = [];
 
   Future<void> _pickGpx() async {
     try {
-      if (_isGpxAdded) {
+      if (_gpxFile != null) {
         setState(() {
-          _isGpxAdded = false;
           _gpxFile = null;
         });
+
         return;
       }
 
@@ -52,6 +48,8 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
       );
 
       if (result == null) {
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -65,6 +63,8 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
       final file = result.files.first;
 
       if (file.extension!.toLowerCase() != "gpx") {
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -72,14 +72,23 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
             ),
           ),
         );
+
         return;
       }
 
+      final convertedFile = FileModel(
+        bytes: Uint8List.fromList(
+          file.bytes!,
+        ),
+        filename: file.name,
+      );
+
       setState(() {
-        _isGpxAdded = true;
-        _gpxFile = file;
+        _gpxFile = convertedFile;
       });
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -92,6 +101,18 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
 
   Future<void> _pickImages() async {
     try {
+      if (_selectedImages.length == 5) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "O número máximo de imagens permitido é 5.",
+            ),
+          ),
+        );
+
+        return;
+      }
+
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         allowMultiple: true,
         type: FileType.image,
@@ -112,9 +133,17 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
         return;
       }
 
+      final convertedImages = result.files
+          .map(
+            (file) => FileModel(
+              bytes: file.bytes!,
+              filename: file.name,
+            ),
+          )
+          .toList();
+
       setState(() {
-        _selectedImages.addAll(result.files);
-        _selectedImagesCount = _selectedImages.length;
+        _selectedImages.addAll(convertedImages);
       });
     } catch (e) {
       if (!mounted) return;
@@ -132,11 +161,10 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
   void _removeImage(int index) {
     setState(() {
       _selectedImages.removeAt(index);
-      _selectedImagesCount--;
     });
   }
 
-  Future<void> _handleSubmit(BuildContext context) async {
+  Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     if (_difficulty == "") {
@@ -161,7 +189,18 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
       return;
     }
 
-    if (!_isGpxAdded || _gpxFile == null) {
+    if (_selectedImages.length > 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "O número máximo de imagens permitidas é 5.",
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (_gpxFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -173,32 +212,16 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
     }
 
     try {
-      setState(() {
-        _isLoading = true;
-      });
-
       await _hikeService.create(
         name: _nameController.text,
         length: double.tryParse(_lengthController.text) ?? 0,
         description: _descriptionController.text,
         difficulty: _difficulty,
-        images: _selectedImages
-            .map(
-              (file) => FileModel(
-                bytes: file.bytes!,
-                filename: file.name,
-              ),
-            )
-            .toList(),
-        gpxFile: FileModel(
-          bytes: Uint8List.fromList(
-            _gpxFile!.bytes!,
-          ),
-          filename: _gpxFile!.name,
-        ),
+        images: _selectedImages,
+        gpxFile: _gpxFile!,
       );
 
-      if (!context.mounted) return;
+      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -210,6 +233,8 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
 
       Navigator.of(context).pop();
     } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -217,10 +242,6 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
           ),
         ),
       );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -477,8 +498,8 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                             ),
                           ),
                           child: Text(
-                            _selectedImagesCount > 0
-                                ? "$_selectedImagesCount foto(s) adicionada(s)"
+                            _selectedImages.isNotEmpty
+                                ? "${_selectedImages.length} foto(s) adicionada(s)"
                                 : "Adicionar fotos da trilha",
                             textAlign: TextAlign.justify,
                             style: const TextStyle(
@@ -520,13 +541,13 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                         scrollDirection: Axis.horizontal,
                         itemCount: _selectedImages.length,
                         itemBuilder: (context, index) {
-                          final file = _selectedImages[index];
+                          final image = _selectedImages[index];
                           return Stack(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Image.file(
-                                  File(file.path!),
+                                child: Image.memory(
+                                  image.bytes,
                                   width: 82,
                                   height: 82,
                                   fit: BoxFit.cover,
@@ -576,12 +597,12 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                             ),
                           ),
                           child: Text(
-                            _isGpxAdded
+                            _gpxFile != null
                                 ? "Arquivo GPX adicionado"
                                 : "Adicionar arquivo GPX",
                             textAlign: TextAlign.justify,
                             style: TextStyle(
-                              color: _isGpxAdded
+                              color: _gpxFile != null
                                   ? Colors.grey
                                   : const Color.fromARGB(255, 3, 204, 107),
                               fontWeight: FontWeight.bold,
@@ -596,7 +617,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                           onTap: _pickGpx,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: _isGpxAdded
+                              color: _gpxFile != null
                                   ? Colors.grey
                                   : const Color.fromARGB(255, 3, 204, 107),
                               shape: BoxShape.rectangle,
@@ -606,7 +627,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                               ),
                             ),
                             child: Icon(
-                              _isGpxAdded ? Icons.close : Icons.add,
+                              _gpxFile != null ? Icons.close : Icons.add,
                               color: Colors.white,
                               size: 25,
                             ),
@@ -616,11 +637,10 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  DecoratedButton(
-                    onPressed: () => _isLoading ? null : _handleSubmit(context),
+                  FutureButton(
+                    future: _handleSubmit,
                     primary: true,
                     text: "Salvar",
-                    isLoading: _isLoading,
                   ),
                   const SizedBox(height: 25),
                 ],
