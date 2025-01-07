@@ -163,41 +163,48 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
 
   Future<void> _pickImages() async {
     try {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
-      type: FileType.image,
-      withData: true,
-    );
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.image,
+        withData: true,
+      );
 
-    if (result == null) {
+      if (result == null) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Selecione alguma imagem.",
+            ),
+          ),
+        );
+
+        return;
+      }
+
+      final convertedImages = result.files
+          .map(
+            (file) => FileModel(
+              bytes: file.bytes!,
+              filename: file.name,
+            ),
+          )
+          .toList();
+
+      setState(() {
+        _selectedImages.addAll(convertedImages);
+      });
+    } catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            "Selecione alguma imagem.",
+            "Erro ao modificar o arquivo GPX: ${e.toString().replaceAll("Exception: ", "")}",
           ),
         ),
       );
-
-      return;
-    }
-
-    final convertedImages = result.files
-        .map(
-          (file) => FileModel(
-            bytes: file.bytes!,
-            filename: file.name,
-          ),
-        )
-        .toList();
-
-    setState(() {
-      _selectedImages.addAll(convertedImages);
-    });
-    }
-    catch (e) {
-      print(e.toString());
     }
   }
 

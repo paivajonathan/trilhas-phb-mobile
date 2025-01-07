@@ -91,27 +91,42 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
   }
 
   Future<void> _pickImages() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
-      type: FileType.image,
-      withData: true,
-    );
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.image,
+        withData: true,
+      );
 
-    if (result == null) {
+      if (result == null) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Selecione alguma imagem.",
+            ),
+          ),
+        );
+
+        return;
+      }
+
+      setState(() {
+        _selectedImages.addAll(result.files);
+        _selectedImagesCount = _selectedImages.length;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            "Selecione alguma imagem.",
+            "Erro ao modificar o arquivo GPX: ${e.toString().replaceAll("Exception: ", "")}",
           ),
         ),
       );
-      return;
     }
-
-    setState(() {
-      _selectedImages.addAll(result.files);
-      _selectedImagesCount = _selectedImages.length;
-    });
   }
 
   void _removeImage(int index) {
