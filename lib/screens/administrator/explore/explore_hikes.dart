@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
+import 'package:trilhas_phb/screens/administrator/explore/edit/hike/hike_details.dart';
 import 'package:trilhas_phb/services/hike.dart';
 import 'package:trilhas_phb/widgets/decorated_list_tile.dart';
 import 'package:trilhas_phb/screens/administrator/explore/register/hike/hike_register.dart';
@@ -85,7 +86,13 @@ class _ExploreHikesScreenState extends State<ExploreHikesScreen> {
                   return DecoratedListTile(
                     hike: hike,
                     onTap: () {
-                      print("Navegando para tela de edição");
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return HikeDetailsScreen(hikeId: hike.id);
+                          },
+                        ),
+                      ).then((value) => setState(() {}));
                     },
                   );
                 },

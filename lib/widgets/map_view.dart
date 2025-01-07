@@ -1,4 +1,5 @@
 import 'package:trilhas_phb/models/appointment.dart';
+import 'package:trilhas_phb/models/hike.dart';
 import 'package:trilhas_phb/services/hike.dart';
 import 'package:trilhas_phb/helpers/map.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -8,17 +9,21 @@ import 'package:trilhas_phb/constants/app_colors.dart';
 class MapView extends StatelessWidget {
   MapView({
     super.key,
-    required AppointmentModel appointment,
-  }) : _appointment = appointment;
+    this.appointment,
+    this.hike,
+  }) : assert((appointment != null && hike == null) || (appointment == null && hike != null), "É necessário um Agendamento ou uma Trilha para esse Widget.");
 
-  final AppointmentModel _appointment;
+  final AppointmentModel? appointment;
+  final HikeModel? hike;
 
   final _hikeService = HikeService();
 
   @override
   Widget build(BuildContext context) {
+    String gpxFile = (appointment != null) ? appointment!.hike.gpxFile : hike!.gpxFile;
+
     return FutureBuilder(
-      future: _hikeService.loadGpx(gpxFile: _appointment.hike.gpxFile),
+      future: _hikeService.loadGpx(gpxFile: gpxFile),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(

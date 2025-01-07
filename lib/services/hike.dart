@@ -27,6 +27,8 @@ class HikeService {
       queryParameters["has_active_appointments"] = hasActiveAppointments.toString();
     }
 
+    queryParameters["is_active"] = true.toString();
+
     final uri = Uri.parse("$_baseUrl/api/v1/hikes/").replace(queryParameters: queryParameters);
 
     try {
@@ -52,6 +54,44 @@ class HikeService {
           .toList();
 
       return hikes;
+    } on TimeoutException catch (_) {
+      throw Exception("Tempo limite da requisição atingido.");
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<HikeModel> getOne(
+    {
+      required int hikeId,
+    }
+  ) async {
+    String token = await _auth.token;
+    
+    final uri = Uri.parse("$_baseUrl/api/v1/hikes/$hikeId");
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          "Content-type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl,
+          "Authorization": "Bearer $token",
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
+        );
+      }
+
+      HikeModel hike = HikeModel.fromMap(responseData);
+      return hike;
     } on TimeoutException catch (_) {
       throw Exception("Tempo limite da requisição atingido.");
     } catch (e) {
@@ -148,4 +188,39 @@ class HikeService {
       throw Exception(e);
     }
   }
+
+  Future<void> inactivate(
+    {
+      required int hikeId,
+    }
+  ) async {
+    try {
+      String token = await _auth.token;
+      final url = Uri.parse("$_baseUrl/api/v1/hikes/$hikeId");
+    
+      final response = await http.patch(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl,
+          "Authorization": "Bearer $token",
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
+        );
+      }
+    } on TimeoutException catch (_) {
+      throw Exception("Tempo limite da requisição atingido.");
+    } catch (e) {
+      throw Exception(e);
+    }    
+  }
+
 }
