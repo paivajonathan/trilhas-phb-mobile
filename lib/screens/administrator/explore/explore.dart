@@ -26,6 +26,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
   bool _isHikesLoading = false;
   String? _isHikesLoadingError;
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   void _loadData() {
     Future.wait([_loadAppointments(), _loadHikes()]);
   }

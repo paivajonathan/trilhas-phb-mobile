@@ -24,6 +24,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
   bool _isUserAppointmentsLoading = false;
   String? _isUserAppointmentsLoadingError;
 
+  @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
   void _loadData() {
     Future.wait([_loadAvailableAppointments(), _loadUserAppointments()]);
   }

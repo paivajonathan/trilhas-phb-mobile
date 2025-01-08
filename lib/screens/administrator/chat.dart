@@ -23,6 +23,12 @@ class _ChatScreenState extends State<ChatScreen> {
   late int _userId;
 
   @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
+  @override
   void initState() {
     super.initState();
 

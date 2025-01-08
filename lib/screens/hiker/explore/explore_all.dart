@@ -30,85 +30,84 @@ class ExploreAllScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: RefreshIndicator(
-        color: AppColors.primary,
-        onRefresh: () async {
-          onUpdate();
-        },
-        child: ListView(
-          children: [
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.only(left: 20, bottom: 20, right: 20),
-              child: const Text(
-                "Trilhas agendadas",
-                textAlign: TextAlign.left,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async {
+        onUpdate();
+      },
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.all(20),
+            child: const Text(
+              "Trilhas agendadas",
+              textAlign: TextAlign.left,
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Container(
-              height: 250,
-              alignment: Alignment.center,
-              child: Builder(
-                builder: (context) {
-                  if (isAvailableAppointmentsLoading) {
-                    return const Loader();
-                  }
-        
-                  if (isAvailableAppointmentsLoadingError != null) {
-                    return Center(
-                      child: Text(isAvailableAppointmentsLoadingError!),
-                    );
-                  }
-        
-                  if (availableAppointments.isEmpty) {
-                    return const Center(
-                      child: Text("Os agendamentos aparecerão aqui."),
-                    );
-                  }
-        
-                  return ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    separatorBuilder: (context, value) => const SizedBox(width: 10),
-                    itemCount: availableAppointments.length,
-                    itemBuilder: (context, index) {
-                      final appointment = availableAppointments[index];
-                      return Container(
-                        alignment: Alignment.center,
-                        child: DecoratedCard(
-                          appointment: appointment,
-                          actionText: "Participar",
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return AppointmentDetailsScreen(
-                                    appointment: appointment,
-                                  );
-                                },
-                              ),
-                            ).then((value) => onUpdate());
-                          },
-                        ),
-                      );
-                    },
+          ),
+          Container(
+            height: 250,
+            alignment: Alignment.center,
+            child: Builder(
+              builder: (context) {
+                if (isAvailableAppointmentsLoading) {
+                  return const Loader();
+                }
+      
+                if (isAvailableAppointmentsLoadingError != null) {
+                  return Center(
+                    child: Text(isAvailableAppointmentsLoadingError!),
                   );
-                },
-              ),
+                }
+      
+                if (availableAppointments.isEmpty) {
+                  return const Center(
+                    child: Text("Os agendamentos aparecerão aqui."),
+                  );
+                }
+      
+                return ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  separatorBuilder: (context, value) => const SizedBox(width: 10),
+                  itemCount: availableAppointments.length,
+                  itemBuilder: (context, index) {
+                    final appointment = availableAppointments[index];
+                    return Container(
+                      alignment: Alignment.center,
+                      child: DecoratedCard(
+                        appointment: appointment,
+                        actionText: "Participar",
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return AppointmentDetailsScreen(
+                                  appointment: appointment,
+                                );
+                              },
+                            ),
+                          ).then((value) => onUpdate());
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
             ),
-            Container(
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.all(20),
-              child: const Text(
-                "Suas trilhas",
-                textAlign: TextAlign.left,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+          ),
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.all(20),
+            child: const Text(
+              "Suas trilhas",
+              textAlign: TextAlign.left,
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Builder(
+          ),
+          Expanded(
+            child: Builder(
               builder: (context) {
                 if (isUserAppointmentsLoading) {
                   return const Loader();
@@ -127,8 +126,6 @@ class ExploreAllScreen extends StatelessWidget {
                 }
                   
                 return ListView.separated(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   separatorBuilder: (context, value) =>
@@ -154,8 +151,8 @@ class ExploreAllScreen extends StatelessWidget {
                 );
               },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
