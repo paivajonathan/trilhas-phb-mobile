@@ -220,12 +220,15 @@ class _BottomDrawerState extends State<BottomDrawer> {
                                 placeholder: "assets/loading.gif",
                                 image: image.url,
                                 fit: BoxFit.cover,
+                                height: 250,
                                 width: double.infinity,
                                 imageErrorBuilder:
                                     (context, error, stackTrace) {
                                   return Image.asset(
                                     "assets/placeholder.png",
                                     fit: BoxFit.cover,
+                                    height: 250,
+                                    width: double.infinity,
                                   );
                                 },
                               ),

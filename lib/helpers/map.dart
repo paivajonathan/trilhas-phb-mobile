@@ -1,16 +1,41 @@
 import 'package:flutter_map/flutter_map.dart';
+import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:xml/xml.dart';
 
 List<LatLng> parseGpx(String gpxData) {
-  final XmlDocument gpx = XmlDocument.parse(gpxData);
-  final List<XmlElement> trackPoints = gpx.findAllElements('trkpt').toList();
+  Gpx gpx = GpxReader().fromString(gpxData);
+  List<LatLng> result = [];
 
-  return trackPoints.map((trkpt) {
-    final double lat = double.parse(trkpt.getAttribute('lat')!);
-    final double lon = double.parse(trkpt.getAttribute('lon')!);
-    return LatLng(lat, lon);
-  }).toList();
+  if (gpx.trks.isNotEmpty) {
+    for (int i = 0; i < gpx.trks.length; i++) {
+      for (int j = 0; j < gpx.trks[i].trksegs.length; j++) {
+        for (int k = 0; k < gpx.trks[i].trksegs[j].trkpts.length; k++) {
+          double latitude = gpx.trks[i].trksegs[j].trkpts[k].lat!;
+          double longitude = gpx.trks[i].trksegs[j].trkpts[k].lon!;
+          
+          result.add(LatLng(latitude, longitude));
+        }
+      }
+    }
+  } else if (gpx.rtes.isNotEmpty) {
+    for (int i = 0; i < gpx.rtes.length; i++) {
+      for (int j = 0; j < gpx.rtes[i].rtepts.length; j++) {
+        double latitude = gpx.rtes[i].rtepts[j].lat!;
+        double longitude = gpx.rtes[i].rtepts[j].lon!;
+        
+        result.add(LatLng(latitude, longitude));
+      }
+    }
+  } else if (gpx.wpts.isNotEmpty) {
+    for (int i = 0; i < gpx.wpts.length; i++) {
+      double latitude = gpx.wpts[i].lat!;
+      double longitude = gpx.wpts[i].lon!;
+      
+      result.add(LatLng(latitude, longitude));
+    }
+  }
+
+  return result;
 }
 
 LatLngBounds calculateBounds(List<LatLng> points) {

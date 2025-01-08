@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
+import "package:trilhas_phb/helpers/validators.dart";
 import "package:trilhas_phb/providers/user_data.dart";
 import "package:trilhas_phb/screens/authentication/registration/register.dart";
 import "package:trilhas_phb/screens/navigation_wrapper.dart";
@@ -52,8 +53,10 @@ class _LoginScreenState extends State<LoginScreen> {
         ..clearSnackBars()
         ..showSnackBar(
           SnackBar(
-              content: Text(
-                  "Erro no login: ${e.toString().replaceAll("Exception: ", "")}")),
+            content: Text(
+              "Erro no login: ${e.toString().replaceAll("Exception: ", "")}",
+            ),
+          ),
         );
     } finally {
       setState(() => _isLoading = false);
@@ -63,6 +66,10 @@ class _LoginScreenState extends State<LoginScreen> {
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return "Digite um email.";
+    }
+
+    if (!isEmailValid(value)) {
+      return "Digite um email válido.";
     }
 
     return null;

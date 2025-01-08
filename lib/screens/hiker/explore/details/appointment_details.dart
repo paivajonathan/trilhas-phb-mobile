@@ -230,7 +230,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
               children: [
                 Stack(
                   children: [
-                    Container(
+                    SizedBox(
                       height: 250,
                       child: PageView.builder(
                         itemCount: widget._appointment.hike.images.length,
@@ -242,11 +242,14 @@ class _BottomDrawerState extends State<BottomDrawer> {
                             placeholder: "assets/loading.gif",
                             image: image.url,
                             fit: BoxFit.cover,
+                            height: 250,
                             width: double.infinity,
                             imageErrorBuilder: (context, error, stackTrace) {
                               return Image.asset(
                                 "assets/placeholder.png",
                                 fit: BoxFit.cover,
+                                height: 250,
+                                width: double.infinity,
                               );
                             },
                           );
