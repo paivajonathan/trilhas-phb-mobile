@@ -384,7 +384,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,  // avoid getting hidden keyboard
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
