@@ -103,6 +103,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
     return DefaultTabController(
       length: _tabsTitles.length,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.white,
         appBar: TabNavigation(tabsTitles: _tabsTitles),
         body: TabBarView(
           children: [

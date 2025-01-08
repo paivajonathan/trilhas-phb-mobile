@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/screens/hiker/explore/details/appointment_details.dart';
 import 'package:trilhas_phb/widgets/decorated_card.dart';
@@ -51,31 +52,37 @@ class ExploreUserScreen extends StatelessWidget {
                 );
               }
 
-              return ListView.separated(
-                scrollDirection: Axis.vertical,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                separatorBuilder: (context, value) =>
-                    const SizedBox(height: 10),
-                itemCount: userAppointments.length,
-                itemBuilder: (context, index) {
-                  final appointment = userAppointments[index];
-                  return DecoratedCard(
-                    isPrimary: false,
-                    appointment: appointment,
-                    actionText: "Informações",
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(
-                            MaterialPageRoute(
-                              builder: (context) => AppointmentDetailsScreen(
-                                appointment: appointment,
-                              ),
-                            ),
-                          )
-                          .then((value) => onUpdate());
-                    },
-                  );
+              return RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: () async {
+                  onUpdate();
                 },
+                child: ListView.separated(
+                  scrollDirection: Axis.vertical,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  separatorBuilder: (context, value) =>
+                      const SizedBox(height: 10),
+                  itemCount: userAppointments.length,
+                  itemBuilder: (context, index) {
+                    final appointment = userAppointments[index];
+                    return DecoratedCard(
+                      isPrimary: false,
+                      appointment: appointment,
+                      actionText: "Informações",
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(
+                              MaterialPageRoute(
+                                builder: (context) => AppointmentDetailsScreen(
+                                  appointment: appointment,
+                                ),
+                              ),
+                            )
+                            .then((value) => onUpdate());
+                      },
+                    );
+                  },
+                ),
               );
             },
           ),
