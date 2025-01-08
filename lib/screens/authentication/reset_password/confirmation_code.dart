@@ -188,16 +188,12 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                       FilteringTextInputFormatter.digitsOnly,
                     ],
                     onCodeChanged: (String code) {
-                      print(code);
-                      //handle validation or checks here
-                    },
-                    onSubmit: (String verificationCode) {
-                      _verificationCode = verificationCode;
+                      _verificationCode = code;
                     },
                   ),
                   const Spacer(),
                   GestureDetector(
-                    onTap: () => _isLoading ? null : _handleSubmit(context),
+                    onTap: _isLoading ? null : () => _handleSubmit(context),
                     child: const Align(
                       alignment: Alignment.center,
                       child: Text(
@@ -214,7 +210,7 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                   DecoratedButton(
                     primary: true,
                     text: "Continuar",
-                    onPressed: () => _isLoading ? null : _validateCode(context),
+                    onPressed: _isLoading ? null : () => _validateCode(context),
                     isLoading: _isLoading,
                   ),
                 ],
