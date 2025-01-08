@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_masked_text2/flutter_masked_text2.dart";
+import "package:trilhas_phb/helpers/calculators.dart";
 import "package:trilhas_phb/screens/authentication/login.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:intl/intl.dart";
@@ -90,8 +91,10 @@ class _PersonalDataScreenState extends State<PersonalData> {
         ..clearSnackBars()
         ..showSnackBar(
           SnackBar(
-              content: Text(
-                  "Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}")),
+            content: Text(
+              "Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}",
+            ),
+          ),
         );
     } finally {
       setState(() => _isLoading = false);
@@ -119,17 +122,14 @@ class _PersonalDataScreenState extends State<PersonalData> {
 
     if (desiredDate == null) {
       return "Data inválida.";
-    } 
+    }
 
     if (desiredDate.year < 1900) {
       return "Data inválida.";
     }
 
-    final differenceInDays = DateTime.now().difference(desiredDate).inDays;
-    final differenceInYears = (differenceInDays / 365).round();
-
-    if (differenceInYears < 18) {
-      return "Você deve ser maior de 18 anos para participar das atividades.";
+    if (calculateAge(desiredDate) < 18) {
+      return "Você deve ser maior de 18 anos para participar.";
     }
 
     return null;
@@ -140,7 +140,9 @@ class _PersonalDataScreenState extends State<PersonalData> {
       return "Digite seu número de celular.";
     }
 
-    if (value.length != 11) {
+    final cleanedValue = value.replaceAll(RegExp(r"[^0-9]"), "");
+
+    if (cleanedValue.length != 11) {
       return "Número de celular deve conter 11 caracteres.";
     }
 
