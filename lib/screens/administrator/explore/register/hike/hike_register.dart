@@ -173,6 +173,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
               ),
             ),
           );
+
         return;
       }
 
