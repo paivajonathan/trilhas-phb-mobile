@@ -173,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       text: "Login",
                       primary: true,
                       isLoading: _isLoading,
-                      onPressed: () => _login(context),
+                      onPressed: _isLoading ? null : () => _login(context),
                     ),
                     const SizedBox(height: 20),
                     DecoratedButton(
@@ -183,7 +183,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Register()),
+                            builder: (context) => const Register(),
+                          ),
                         );
                       },
                     ),
