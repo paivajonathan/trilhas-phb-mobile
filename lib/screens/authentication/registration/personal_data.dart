@@ -294,7 +294,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 primary: true,
                 text: "Cadastrar-se",
                 isLoading: _isLoading,
-                onPressed: () => _register(context),
+                onPressed: _isLoading ? null : () => _register(context),
               ),
             ],
           ),

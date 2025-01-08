@@ -298,7 +298,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     text: _doesUserParticipate
                         ? "CANCELAR INSCRIÇÃO"
                         : "PARTICIPAR",
-                    onPressed: () => _handleParticipation(context),
+                    onPressed: _isButtonLoading ? null : () => _handleParticipation(context),
                     isLoading: _isButtonLoading,
                   ),
                 )
