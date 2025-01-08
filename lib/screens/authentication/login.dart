@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (value.length < 6) {
-      return "Digite uma senha maior do que 6 caracteres";
+      return "Digite uma senha maior do que 6 caracteres.";
     }
 
     return null;

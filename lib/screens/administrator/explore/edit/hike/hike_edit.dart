@@ -426,11 +426,11 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
 
   String? _validateLength(String? value) {
     if (value == null || value.isEmpty) {
-      return "Digite a distância";
+      return "Digite a distância da trilha.";
     }
 
     if (double.tryParse(value) == null) {
-      return "Valor inválido";
+      return "Valor inválido.";
     }
 
     return null;

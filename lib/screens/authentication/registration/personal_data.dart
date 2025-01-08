@@ -112,17 +112,17 @@ class _PersonalDataScreenState extends State<PersonalData> {
 
   String? _validateBirthDate(String? value) {
     if (value == null || value.isEmpty) {
-      return "Digite sua data de aniversário";
+      return "Digite sua data de aniversário.";
     }
 
     final desiredDate = DateFormat("dd/MM/yyyy").tryParseStrict(value);
 
     if (desiredDate == null) {
-      return "Data inválida";
+      return "Data inválida.";
     } 
 
     if (desiredDate.year < 1900) {
-      return "Data inválida";
+      return "Data inválida.";
     }
 
     final differenceInDays = DateTime.now().difference(desiredDate).inDays;
@@ -137,11 +137,11 @@ class _PersonalDataScreenState extends State<PersonalData> {
 
   String? _validatePhone(String? value) {
     if (value == null || value.isEmpty) {
-      return "Digite seu número de celular";
+      return "Digite seu número de celular.";
     }
 
     if (value.length != 11) {
-      return "Número de celular deve conter 11 caracteres";
+      return "Número de celular deve conter 11 caracteres.";
     }
 
     return null;
@@ -149,7 +149,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
 
   String? _validateNeighborhoodName(String? value) {
     if (value != null && value.length > 150) {
-      return "Nome do bairro não pode superar 150 caracteres";
+      return "Nome do bairro não pode superar 150 caracteres.";
     }
 
     return null;

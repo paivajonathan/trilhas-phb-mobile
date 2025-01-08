@@ -116,7 +116,7 @@ class _InsertEmailState extends State<InsertEmail> {
                 controller: _emailController,
                 validator: (value) {
                   if (value == null || value.isEmpty || !value.contains("@")) {
-                    return "Insira um e-mail válido";
+                    return "Insira um e-mail válido.";
                   }
                   return null;
                 },
