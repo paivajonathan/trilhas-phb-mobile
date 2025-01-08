@@ -121,6 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 20),
                     DecoratedTextFormField(
+                      textInputType: TextInputType.emailAddress,
                       hintText: "Email",
                       validator: _validateEmail,
                       controller: _emailController,
