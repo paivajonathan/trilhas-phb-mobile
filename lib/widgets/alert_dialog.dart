@@ -25,13 +25,13 @@ class BlurryDialogWidget extends StatelessWidget {
       ),
       actions: <Widget>[
         ElevatedButton(
-          child: const Text("Cancel"),
+          child: const Text("Cancelar"),
           onPressed: () {
             Navigator.of(context).pop(false);
           },
         ),
         ElevatedButton(
-          child: const Text("Continue"),
+          child: const Text("Continuar"),
           onPressed: () {
             Navigator.of(context).pop(true);
           },

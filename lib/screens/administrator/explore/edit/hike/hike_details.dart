@@ -128,9 +128,8 @@ class _BottomDrawerState extends State<BottomDrawer> {
       },
     );
 
-    if (!keepAction) {
-      return;
-    }
+    if (keepAction == null) return;
+    if (!keepAction) return;
 
     try {
       await _hikeService.inactivate(
