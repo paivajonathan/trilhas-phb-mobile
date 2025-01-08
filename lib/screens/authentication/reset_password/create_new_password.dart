@@ -71,16 +71,23 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
     if (value == null || value.isEmpty) {
       return "A senha não pode estar vazia.";
     }
+
     if (value.length < 6) {
       return "A senha deve ter pelo menos 6 caracteres.";
     }
+
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return "A confirmação de senha não pode estar vazia.";
+    }
+
     if (value != _passwordController.text) {
       return "As senhas não correspondem.";
     }
+
     return null;
   }
 

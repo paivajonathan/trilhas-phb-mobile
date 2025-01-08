@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:trilhas_phb/helpers/validators.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
@@ -57,6 +58,18 @@ class _InsertEmailState extends State<InsertEmail> {
     }
   }
 
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Insira um e-mail.";
+    }
+
+    if (!isEmailValid(value)) {
+      return "Insira um e-mail válido.";
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,14 +125,8 @@ class _InsertEmailState extends State<InsertEmail> {
               DecoratedTextFormField(
                 hintText: "Digite aqui",
                 textInputType: TextInputType.emailAddress,
-                //validator: _validateEmail,
                 controller: _emailController,
-                validator: (value) {
-                  if (value == null || value.isEmpty || !value.contains("@")) {
-                    return "Insira um e-mail válido.";
-                  }
-                  return null;
-                },
+                validator: _validateEmail,
               ),
 
               // Para jogar botão no final da tela
