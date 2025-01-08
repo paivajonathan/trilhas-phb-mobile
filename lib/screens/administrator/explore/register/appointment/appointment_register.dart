@@ -57,8 +57,7 @@ class _AppointmentRegisterScreenState extends State<AppointmentRegisterScreen> {
           const SnackBar(content: Text("Trilha agendada com sucesso!")),
         );
 
-      int count = 0;
-      Navigator.of(context).popUntil((_) => count++ >= 2);
+      Navigator.of(context).pop(true);
     } catch (e) {
       ScaffoldMessenger.of(context)
         ..clearSnackBars()

@@ -42,7 +42,10 @@ class ExploreAppointmentsScreen extends StatelessWidget {
                         return HikeChoiceScreen();
                       },
                     ),
-                  ).then((value) => onUpdate());
+                  ).then((value) {
+                    if (value == null) return;
+                    if (value) onUpdate();
+                  });
                 },
                 child: const Text(
                   "Agendar trilha",
@@ -103,7 +106,10 @@ class ExploreAppointmentsScreen extends StatelessWidget {
                               return AppointmentDetailsScreen(appointmentId: appointment.id);
                             },
                           ),
-                        ).then((value) => onUpdate());
+                        ).then((value) {
+                          if (value == null) return;
+                          if (value) onUpdate();
+                        });
                       },
                     );
                   },

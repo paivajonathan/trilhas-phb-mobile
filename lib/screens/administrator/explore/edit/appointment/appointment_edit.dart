@@ -59,7 +59,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
           const SnackBar(content: Text("Agendamento editado com sucesso!")),
         );
 
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     } catch (e) {
       String message = e.toString().replaceAll("Exception: ", "");
       ScaffoldMessenger.of(context)
@@ -169,7 +169,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
               child: Image.asset("assets/icon_voltar.png"),
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context).pop();
             },
           ),
         ),

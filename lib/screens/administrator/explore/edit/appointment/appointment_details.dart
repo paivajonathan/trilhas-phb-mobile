@@ -23,22 +23,35 @@ class AppointmentDetailsScreen extends StatefulWidget {
 
 class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
   final _appointmentService = AppointmentService();
+  bool wasEdited = false;
 
   void _reloadScreen() {
     if (!mounted) return;
 
-    setState(() {});
+    setState(() {
+      wasEdited = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
         title: const Text(
           "Informações",
           style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: SizedBox(
+            height: 20,
+            width: 20,
+            child: Image.asset("assets/icon_voltar.png"),
+          ),
+          onPressed: () {
+            Navigator.of(context).pop(wasEdited);
+          },
         ),
       ),
       body: FutureBuilder(
@@ -134,7 +147,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
           const SnackBar(content: Text("Agendamento inativado com sucesso!")),
         );
 
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     } catch (e) {
       final message = e.toString().replaceAll("Exception: ", "");
 
@@ -151,7 +164,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
   }
 
   Future<void> _handleEdit() async {
-    await Navigator.of(context).push(
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
           return AppointmentEditScreen(
@@ -159,9 +172,10 @@ class _BottomDrawerState extends State<BottomDrawer> {
           );
         },
       ),
-    );
-
-    widget.onUpdate();
+    ).then((value) {
+      if (value == null) return;
+      if (value) widget.onUpdate();
+    });
   }
 
   @override
@@ -202,8 +216,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         itemCount: widget.appointment.hike.images.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          final image =
-                              widget.appointment.hike.images[index];
+                          final image = widget.appointment.hike.images[index];
 
                           return Stack(
                             children: [

@@ -106,7 +106,10 @@ class HikeChoiceScreen extends StatelessWidget {
                                 return AppointmentRegisterScreen(hike: hike);
                               },
                             ),
-                          );
+                          ).then((value) {
+                            if (value == null) return;
+                            if (value) Navigator.of(context).pop(true);
+                          });
                         },
                       );
                     },
