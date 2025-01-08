@@ -98,6 +98,63 @@ class _PersonalDataScreenState extends State<PersonalData> {
     }
   }
 
+  String? _validateFullName(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite seu nome completo.";
+    }
+
+    if (value.length > 150) {
+      return "Tamanho do nome não pode superar 150 caracteres.";
+    }
+
+    return null;
+  }
+
+  String? _validateBirthDate(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite sua data de aniversário";
+    }
+
+    final desiredDate = DateFormat("dd/MM/yyyy").tryParseStrict(value);
+
+    if (desiredDate == null) {
+      return "Data inválida";
+    } 
+
+    if (desiredDate.year < 1900) {
+      return "Data inválida";
+    }
+
+    final differenceInDays = DateTime.now().difference(desiredDate).inDays;
+    final differenceInYears = (differenceInDays / 365).round();
+
+    if (differenceInYears < 18) {
+      return "Você deve ser maior de 18 anos para participar das atividades.";
+    }
+
+    return null;
+  }
+
+  String? _validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite seu número de celular";
+    }
+
+    if (value.length != 11) {
+      return "Número de celular deve conter 11 caracteres";
+    }
+
+    return null;
+  }
+
+  String? _validateNeighborhoodName(String? value) {
+    if (value != null && value.length > 150) {
+      return "Nome do bairro não pode superar 150 caracteres";
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -163,12 +220,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 onChanged: (value) {
                   widget._sharedData["fullName"] = value;
                 },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Digite seu nome";
-                  }
-                  return null;
-                },
+                validator: _validateFullName,
               ),
               const SizedBox(height: 16),
 
@@ -189,18 +241,13 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 onChanged: (value) {
                   widget._sharedData["birthDate"] = value;
                 },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Digite sua data de aniversário";
-                  }
-                  return null;
-                },
+                validator: _validateBirthDate,
               ),
               const SizedBox(height: 16),
 
               // Campo Número
               const Text(
-                "Número",
+                "Contato",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -212,13 +259,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 hintText: "Digite aqui",
                 controller: _phoneController,
                 textInputType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Digite seu número";
-                  }
-
-                  return null;
-                },
+                validator: _validatePhone,
                 onChanged: (value) {
                   widget._sharedData["phone"] = value;
                 },
@@ -238,7 +279,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
               DecoratedTextFormField(
                 initialValue: widget._sharedData["neighborhoodName"],
                 hintText: "Digite aqui",
-                validator: (value) => null,
+                validator: _validateNeighborhoodName,
                 onChanged: (value) {
                   widget._sharedData["neighborhoodName"] = value;
                 },

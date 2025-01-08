@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:trilhas_phb/helpers/validators.dart";
 import "package:trilhas_phb/screens/authentication/registration/personal_data.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
@@ -25,6 +26,10 @@ class _LoginDataState extends State<LoginData> {
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return "Digite um email.";
+    }
+
+    if (!isEmailValid(value)) {
+      return "Email inválido.";
     }
     
     return null;
