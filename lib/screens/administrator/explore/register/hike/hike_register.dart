@@ -1,6 +1,7 @@
 import "dart:typed_data";
 import "package:flutter/material.dart";
 import "package:file_picker/file_picker.dart";
+import "package:permission_handler/permission_handler.dart";
 import "package:trilhas_phb/services/hike.dart";
 import "package:trilhas_phb/models/file.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
@@ -38,6 +39,24 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
         setState(() {
           _gpxFile = null;
         });
+
+        return;
+      }
+
+      final storagePermission = await Permission.storage.request();
+
+      if (!storagePermission.isGranted) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                "Permissão de armazenamento necessária para selecionar o arquivo GPX.",
+              ),
+            ),
+          );
 
         return;
       }
@@ -125,6 +144,8 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
   Future<void> _pickImages() async {
     try {
       if (_selectedImages.length == 5) {
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context)
           ..clearSnackBars()
           ..showSnackBar(
@@ -135,6 +156,23 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
             ),
           );
 
+        return;
+      }
+
+      final storagePermission = await Permission.storage.request();
+
+      if (!storagePermission.isGranted) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                "Permissão de armazenamento necessária para selecionar imagens.",
+              ),
+            ),
+          );
         return;
       }
 
@@ -153,6 +191,22 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
             const SnackBar(
               content: Text(
                 "Selecione alguma imagem.",
+              ),
+            ),
+          );
+
+        return;
+      }
+
+      if ((result.files.length + _selectedImages.length) > 5) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                "São permitidas apenas 5 imagens.",
               ),
             ),
           );
@@ -180,7 +234,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
         ..showSnackBar(
           SnackBar(
             content: Text(
-              "Erro ao modificar o arquivo GPX: ${e.toString().replaceAll("Exception: ", "")}",
+              "Erro ao adicionar imagem(ns): ${e.toString().replaceAll("Exception: ", "")}",
             ),
           ),
         );
