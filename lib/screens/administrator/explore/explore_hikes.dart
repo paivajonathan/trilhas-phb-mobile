@@ -22,70 +22,75 @@ class ExploreHikesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Trilhas cadastradas",
-                textAlign: TextAlign.left,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const HikeRegisterScreen();
-                      },
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async {
+        onUpdate();
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Trilhas cadastradas",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const HikeRegisterScreen();
+                        },
+                      ),
+                    ).then((value) {
+                      if (value == null) return;
+                      if (value) onUpdate();
+                    });
+                  },
+                  child: const Text(
+                    "Cadastrar trilha",
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ).then((value) {
-                    if (value == null) return;
-                    if (value) onUpdate();
-                  });
-                },
-                child: const Text(
-                  "Cadastrar trilha",
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: Builder(
-            builder: (context) {
-              if (isHikesLoading) {
-                return const Loader();
-              }
-
-              if (isHikesLoadingError != null) {
-                return Center(
-                  child: Text(
-                    isHikesLoadingError!,
-                  ),
-                );
-              }
-
-              if (hikes.isEmpty) {
-                return const Center(
-                  child: Text("As trilhas cadastradas aparecerão aqui."),
-                );
-              }
-
-              return RefreshIndicator(
-                onRefresh: () async {
-                  onUpdate();
-                },
-                color: AppColors.primary,
-                child: ListView.separated(
+          Expanded(
+            child: Builder(
+              builder: (context) {
+                if (isHikesLoading) {
+                  return const Loader();
+                }
+      
+                if (isHikesLoadingError != null) {
+                  return Center(
+                    child: Text(
+                      isHikesLoadingError!,
+                    ),
+                  );
+                }
+      
+                if (hikes.isEmpty) {
+                  return Stack(
+                    children: <Widget>[
+                      const Center(
+                        child: Text("As trilhas cadastradas aparecerão aqui."),
+                      ),
+                      ListView()
+                    ],
+                  );
+                }
+      
+                return ListView.separated(
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   itemCount: hikes.length,
@@ -110,12 +115,12 @@ class ExploreHikesScreen extends StatelessWidget {
                       },
                     );
                   },
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

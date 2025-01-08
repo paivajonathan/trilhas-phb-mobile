@@ -54,23 +54,24 @@ class ExploreAllScreen extends StatelessWidget {
                 if (isAvailableAppointmentsLoading) {
                   return const Loader();
                 }
-      
+
                 if (isAvailableAppointmentsLoadingError != null) {
                   return Center(
                     child: Text(isAvailableAppointmentsLoadingError!),
                   );
                 }
-      
+
                 if (availableAppointments.isEmpty) {
                   return const Center(
                     child: Text("Os agendamentos aparecerão aqui."),
                   );
                 }
-      
+
                 return ListView.separated(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  separatorBuilder: (context, value) => const SizedBox(width: 10),
+                  separatorBuilder: (context, value) =>
+                      const SizedBox(width: 10),
                   itemCount: availableAppointments.length,
                   itemBuilder: (context, index) {
                     final appointment = availableAppointments[index];
@@ -112,19 +113,24 @@ class ExploreAllScreen extends StatelessWidget {
                 if (isUserAppointmentsLoading) {
                   return const Loader();
                 }
-                  
+
                 if (isUserAppointmentsLoadingError != null) {
                   return Center(
                     child: Text(isUserAppointmentsLoadingError!),
                   );
                 }
-                  
+
                 if (userAppointments.isEmpty) {
-                  return const Center(
-                    child: Text("As suas trilhas aparecerão aqui."),
+                  return Stack(
+                    children: <Widget>[
+                      const Center(
+                        child: Text("As suas trilhas aparecerão aqui."),
+                      ),
+                      ListView()
+                    ],
                   );
                 }
-                  
+
                 return ListView.separated(
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.symmetric(horizontal: 20),

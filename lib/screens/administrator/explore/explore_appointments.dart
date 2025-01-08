@@ -22,70 +22,75 @@ class ExploreAppointmentsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Trilhas agendadas",
-                textAlign: TextAlign.left,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return HikeChoiceScreen();
-                      },
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async {
+        onUpdate();
+      },
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Trilhas agendadas",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return HikeChoiceScreen();
+                        },
+                      ),
+                    ).then((value) {
+                      if (value == null) return;
+                      if (value) onUpdate();
+                    });
+                  },
+                  child: const Text(
+                    "Agendar trilha",
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ).then((value) {
-                    if (value == null) return;
-                    if (value) onUpdate();
-                  });
-                },
-                child: const Text(
-                  "Agendar trilha",
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: Builder(
-            builder: (context) {
-              if (isAppointmentsLoading) {
-                return const Loader();
-              }
-
-              if (isAppointmentsLoadingError != null) {
-                return Center(
-                  child: Text(
-                    isAppointmentsLoadingError!,
-                  ),
-                );
-              }
-
-              if (appointments.isEmpty) {
-                return const Center(
-                  child: Text("Os agendamentos aparecerão aqui."),
-                );
-              }
-
-              return RefreshIndicator(
-                onRefresh: () async {
-                  onUpdate();
-                },
-                color: AppColors.primary,
-                child: ListView.separated(
+          Expanded(
+            child: Builder(
+              builder: (context) {
+                if (isAppointmentsLoading) {
+                  return const Loader();
+                }
+      
+                if (isAppointmentsLoadingError != null) {
+                  return Center(
+                    child: Text(
+                      isAppointmentsLoadingError!,
+                    ),
+                  );
+                }
+      
+                if (appointments.isEmpty) {
+                  return Stack(
+                    children: <Widget>[
+                      const Center(
+                        child: Text("Os agendamentos aparecerão aqui."),
+                      ),
+                      ListView()
+                    ],
+                  );
+                }
+      
+                return ListView.separated(
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   itemCount: appointments.length,
@@ -113,12 +118,12 @@ class ExploreAppointmentsScreen extends StatelessWidget {
                       },
                     );
                   },
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

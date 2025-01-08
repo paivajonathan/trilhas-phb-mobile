@@ -22,42 +22,47 @@ class ExploreUserScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.all(20),
-          child: const Text(
-            "Suas trilhas",
-            textAlign: TextAlign.left,
-            style: TextStyle(fontWeight: FontWeight.bold),
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async {
+        onUpdate();
+      },
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.all(20),
+            child: const Text(
+              "Suas trilhas",
+              textAlign: TextAlign.left,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-        Expanded(
-          child: Builder(
-            builder: (context) {
-              if (isUserAppointmentsLoading) {
-                return const Loader();
-              }
-
-              if (isUserAppointmentsLoadingError != null) {
-                return Center(
-                  child: Text(isUserAppointmentsLoadingError!),
-                );
-              }
-
-              if (userAppointments.isEmpty) {
-                return const Center(
-                  child: Text("As suas trilhas aparecerão aqui."),
-                );
-              }
-
-              return RefreshIndicator(
-                color: AppColors.primary,
-                onRefresh: () async {
-                  onUpdate();
-                },
-                child: ListView.separated(
+          Expanded(
+            child: Builder(
+              builder: (context) {
+                if (isUserAppointmentsLoading) {
+                  return const Loader();
+                }
+      
+                if (isUserAppointmentsLoadingError != null) {
+                  return Center(
+                    child: Text(isUserAppointmentsLoadingError!),
+                  );
+                }
+      
+                if (userAppointments.isEmpty) {
+                  return Stack(
+                    children: <Widget>[
+                      const Center(
+                        child: Text("As suas trilhas aparecerão aqui."),
+                      ),
+                      ListView()
+                    ],
+                  );
+                }
+      
+                return ListView.separated(
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   separatorBuilder: (context, value) =>
@@ -82,12 +87,12 @@ class ExploreUserScreen extends StatelessWidget {
                       },
                     );
                   },
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -21,44 +21,49 @@ class ExploreAvailableScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.all(20),
-          child: const Text(
-            "Trilhas agendadas",
-            textAlign: TextAlign.left,
-            style: TextStyle(fontWeight: FontWeight.bold),
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async {
+        onUpdate();
+      },
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.all(20),
+            child: const Text(
+              "Trilhas agendadas",
+              textAlign: TextAlign.left,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-        Expanded(
-          child: Builder(
-            builder: (context) {
-              if (isAvailableAppointmentsLoading) {
-                return const Loader();
-              }
-
-              if (isAvailableAppointmentsLoadingError != null) {
-                return Center(
-                  child: Text(
-                    isAvailableAppointmentsLoadingError!,
-                  ),
-                );
-              }
-
-              if (availableAppointments.isEmpty) {
-                return const Center(
-                  child: Text("Os agendamentos aparecerão aqui."),
-                );
-              }
-
-              return RefreshIndicator(
-                color: AppColors.primary,
-                onRefresh: () async {
-                  onUpdate();
-                },
-                child: ListView.separated(
+          Expanded(
+            child: Builder(
+              builder: (context) {
+                if (isAvailableAppointmentsLoading) {
+                  return const Loader();
+                }
+      
+                if (isAvailableAppointmentsLoadingError != null) {
+                  return Center(
+                    child: Text(
+                      isAvailableAppointmentsLoadingError!,
+                    ),
+                  );
+                }
+      
+                if (availableAppointments.isEmpty) {
+                    return Stack(
+                      children: <Widget>[
+                        const Center(
+                          child: Text("Os agendamentos aparecerão aqui."),
+                        ),
+                        ListView()
+                      ],
+                    );
+                }
+      
+                return ListView.separated(
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   separatorBuilder: (context, value) =>
@@ -82,12 +87,12 @@ class ExploreAvailableScreen extends StatelessWidget {
                       },
                     );
                   },
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
