@@ -59,6 +59,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
               ),
             ),
           );
+
         return;
       }
 
@@ -73,6 +74,22 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
             const SnackBar(
               content: Text(
                 "Arquivo não possui a extensão correta.",
+              ),
+            ),
+          );
+
+        return;
+      }
+
+      if (file.size > 40000000) {
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                "O tamanho do GPX é maior do que o permitido (40MB).",
               ),
             ),
           );
@@ -271,7 +288,11 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
 
   String? _validateName(String? value) {
     if (value == null || value.isEmpty) {
-      return "Digite o nome";
+      return "Digite o nome da trilha.";
+    }
+
+    if (value.length > 50) {
+      return "O nome da trilha não pode possuir mais do que 50 caracteres.";
     }
 
     return null;
@@ -291,7 +312,11 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
 
   String? _validateDescription(String? value) {
     if (value == null || value.isEmpty) {
-      return "Digite a descrição";
+      return "Digite a descrição da trilha.";
+    }
+
+    if (value.length > 200) {
+      return "A descrição da trilha não pode possuir mais do que 200 caracteres.";
     }
 
     return null;
