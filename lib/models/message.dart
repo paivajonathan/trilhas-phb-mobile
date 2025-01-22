@@ -1,10 +1,14 @@
 class MessageModel {
+  final int id;
   final String content;
+  final int senderId;
   final String sender;
   final DateTime timestamp;
 
   MessageModel({
+    required this.id,
     required this.content,
+    required this.senderId,
     required this.sender,
     required this.timestamp,
   });
@@ -13,11 +17,24 @@ class MessageModel {
     const millisecondsInSeconds = 1000;
 
     return MessageModel(
-      content: map["content"] ?? "",
-      sender: map["sender"] ?? "",
-      timestamp: map["timestamp"]
-        ? DateTime.fromMillisecondsSinceEpoch(map["timestamp"] * millisecondsInSeconds)
-        : DateTime.now(),
+      id: map["id"],
+      content: map["content"],
+      senderId: map["sender_id"],
+      sender: map["sender"],
+      timestamp: DateTime.fromMillisecondsSinceEpoch(
+          map["timestamp"] * millisecondsInSeconds),
     );
+  }
+
+  String get readableDate {
+    return "${timestamp.day.toString().padLeft(2, '0')}/${timestamp.month.toString().padLeft(2, '0')}/${timestamp.year}";
+  }
+
+  String get readableTime {
+    return "${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}";
+  }
+
+  String get readableTimestamp {
+    return "$readableDate $readableTime";
   }
 }
