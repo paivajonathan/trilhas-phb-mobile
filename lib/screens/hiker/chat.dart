@@ -22,11 +22,16 @@ class _ChatScreenState extends State<ChatScreen> {
   late int _userId;
 
   @override
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
+  }
+
+  @override
   void initState() {
     super.initState();
 
     _chat.connect(_handleIncomingData);
-    _scrollController.addListener(_onScroll);
 
     final userDataProvider = Provider.of<UserDataProvider>(
       context,
@@ -50,14 +55,6 @@ class _ChatScreenState extends State<ChatScreen> {
     } else if (data is MessageModel) {
       setState(() => _messages.add(data));
       _scrollToBottom();
-    }
-  }
-
-  void _onScroll() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
-      _loadMoreMessages();
     }
   }
 
@@ -101,34 +98,40 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: _isLoadingInitialMessages
-                ? const Center(
-                    child: CircularProgressIndicator(color: AppColors.primary),
-                  )
-                : _messages.isEmpty
-                    ? const Center(
-                        child: Text("Ainda não foram enviados comunicados."),
-                      )
-                    : ListView.builder(
-                        itemCount: _messages.length,
-                        controller: _scrollController,
-                        reverse: true,
-                        itemBuilder: (context, index) {
-                          final reversedMessages = _messages.reversed.toList();
-                          final message = reversedMessages[index];
-                          return MessageBubbleWidget(
-                            chatMessage: message,
-                            isMe: message.senderId == _userId,
-                          );
-                        },
-                      ),
-          ),
-        ],
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async {
+        _loadMoreMessages();
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: _isLoadingInitialMessages
+                  ? const Center(
+                      child: CircularProgressIndicator(color: AppColors.primary),
+                    )
+                  : _messages.isEmpty
+                      ? const Center(
+                          child: Text("Ainda não foram enviados comunicados."),
+                        )
+                      : ListView.builder(
+                          itemCount: _messages.length,
+                          controller: _scrollController,
+                          reverse: true,
+                          itemBuilder: (context, index) {
+                            final reversedMessages = _messages.reversed.toList();
+                            final message = reversedMessages[index];
+                            return MessageBubbleWidget(
+                              chatMessage: message,
+                              isMe: message.senderId == _userId,
+                            );
+                          },
+                        ),
+            ),
+          ],
+        ),
       ),
     );
   }

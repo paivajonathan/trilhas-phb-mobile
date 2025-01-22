@@ -18,7 +18,7 @@ class DecoratedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String imageUrl = appointment.hike.images[0];
+    String imageUrl = appointment.hike.images[0].url;
     String difficulty = appointment.hike.readableDifficulty;
     int difficultyColor = appointment.hike.difficultyColor;
     String title = appointment.hike.name;

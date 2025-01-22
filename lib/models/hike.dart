@@ -1,3 +1,5 @@
+import 'package:trilhas_phb/models/file_out.dart';
+
 class HikeModel {
   HikeModel({
     required this.id,
@@ -19,7 +21,7 @@ class HikeModel {
   final bool isActive;
   final bool hasActiveAppointments;
   String gpxFile;
-  List<String> images;
+  List<FileOutModel> images;
 
   factory HikeModel.fromMap(Map<String, dynamic> map) {
     return HikeModel(
@@ -32,7 +34,7 @@ class HikeModel {
       hasActiveAppointments: map["has_active_appointments"],
       gpxFile: map["gpx_file"],
       images: (map["images"] as List<dynamic>)
-          .map((imageMap) => imageMap["image"] as String)
+          .map((imageMap) => FileOutModel.fromMap(imageMap))
           .toList(),
     );
   }

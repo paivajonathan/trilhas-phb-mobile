@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_masked_text2/flutter_masked_text2.dart";
+import "package:trilhas_phb/helpers/calculators.dart";
 import "package:trilhas_phb/screens/authentication/login.dart";
 import "package:trilhas_phb/services/auth.dart";
 import "package:intl/intl.dart";
@@ -21,7 +22,7 @@ class PersonalData extends StatefulWidget {
 class _PersonalDataScreenState extends State<PersonalData> {
   // Instância do AuthService
   final AuthService _auth = AuthService();
-  
+
   final _formKey = GlobalKey<FormState>();
 
   late MaskedTextController _dateController;
@@ -53,9 +54,11 @@ class _PersonalDataScreenState extends State<PersonalData> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      String unmaskedPhone = widget._sharedData["phone"].replaceAll(RegExp(r"[^0-9]"), "");
-      
-      DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(widget._sharedData["birthDate"]);
+      String unmaskedPhone =
+          widget._sharedData["phone"].replaceAll(RegExp(r"[^0-9]"), "");
+
+      DateTime parsedDate =
+          DateFormat("dd/MM/yyyy").parse(widget._sharedData["birthDate"]);
       String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
 
       setState(() => _isLoading = true);
@@ -70,24 +73,88 @@ class _PersonalDataScreenState extends State<PersonalData> {
       );
 
       setState(() => _isLoading = false);
-      
+
       if (!context.mounted) return;
-    
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Cadastro realizado com sucesso!")),
-      );
+
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(content: Text("Cadastro realizado com sucesso!")),
+        );
 
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
         (Route<dynamic> route) => false,
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}")),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              "Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}",
+            ),
+          ),
+        );
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  String? _validateFullName(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite seu nome completo.";
+    }
+
+    if (value.length > 150) {
+      return "Tamanho do nome não pode superar 150 caracteres.";
+    }
+
+    return null;
+  }
+
+  String? _validateBirthDate(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite sua data de aniversário.";
+    }
+
+    final desiredDate = DateFormat("dd/MM/yyyy").tryParseStrict(value);
+
+    if (desiredDate == null) {
+      return "Data inválida.";
+    }
+
+    if (desiredDate.year < 1900) {
+      return "Data inválida.";
+    }
+
+    if (calculateAge(desiredDate) < 18) {
+      return "Você deve ser maior de 18 anos para participar.";
+    }
+
+    return null;
+  }
+
+  String? _validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Digite seu número de celular.";
+    }
+
+    final cleanedValue = value.replaceAll(RegExp(r"[^0-9]"), "");
+
+    if (cleanedValue.length != 11) {
+      return "Número de celular deve conter 11 caracteres.";
+    }
+
+    return null;
+  }
+
+  String? _validateNeighborhoodName(String? value) {
+    if (value != null && value.length > 150) {
+      return "Nome do bairro não pode superar 150 caracteres.";
+    }
+
+    return null;
   }
 
   @override
@@ -138,7 +205,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 ),
               ),
               const SizedBox(height: 30), // Ajuste inicial
-              
+
               // Campo Nome Completo
               const Text(
                 "Nome Completo",
@@ -155,15 +222,10 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 onChanged: (value) {
                   widget._sharedData["fullName"] = value;
                 },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Digite seu nome";
-                  }
-                  return null;
-                },
+                validator: _validateFullName,
               ),
               const SizedBox(height: 16),
-              
+
               // Campo Data de Aniversário
               const Text(
                 "Data de Aniversário",
@@ -181,18 +243,13 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 onChanged: (value) {
                   widget._sharedData["birthDate"] = value;
                 },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Digite sua data de aniversário";
-                  }
-                  return null;
-                },
+                validator: _validateBirthDate,
               ),
               const SizedBox(height: 16),
-              
+
               // Campo Número
               const Text(
-                "Número",
+                "Contato",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -204,19 +261,13 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 hintText: "Digite aqui",
                 controller: _phoneController,
                 textInputType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Digite seu número";
-                  }
-
-                  return null;
-                },
+                validator: _validatePhone,
                 onChanged: (value) {
                   widget._sharedData["phone"] = value;
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // Campo Bairro (opcional)
               const Text(
                 "Bairro (opcional)",
@@ -230,12 +281,12 @@ class _PersonalDataScreenState extends State<PersonalData> {
               DecoratedTextFormField(
                 initialValue: widget._sharedData["neighborhoodName"],
                 hintText: "Digite aqui",
-                validator: (value) => null,
+                validator: _validateNeighborhoodName,
                 onChanged: (value) {
                   widget._sharedData["neighborhoodName"] = value;
                 },
               ),
-              
+
               // Empurra o botão "Continuar" para o fundo
               const Spacer(),
 
@@ -243,7 +294,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 primary: true,
                 text: "Cadastrar-se",
                 isLoading: _isLoading,
-                onPressed: () => _register(context),
+                onPressed: _isLoading ? null : () => _register(context),
               ),
             ],
           ),

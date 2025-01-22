@@ -200,7 +200,7 @@ class _OtpTextFieldState extends State<OtpTextField> {
                 );
               }
               _verificationCode[index] = value;
-              onCodeChanged(verificationCode: value);
+              onCodeChanged(verificationCode: _verificationCode);
               onSubmit(verificationCode: _verificationCode);
             },
           ),
@@ -348,9 +348,9 @@ class _OtpTextFieldState extends State<OtpTextField> {
     }
   }
 
-  void onCodeChanged({required String verificationCode}) {
+  void onCodeChanged({required List<String?> verificationCode}) {
     if (widget.onCodeChanged != null) {
-      widget.onCodeChanged!(verificationCode);
+      widget.onCodeChanged!(verificationCode.nonNulls.toList().join());
     }
   }
 

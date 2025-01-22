@@ -69,7 +69,7 @@ class HikeChoiceScreen extends StatelessWidget {
             const SizedBox(height: 25),
             Expanded(
               child: FutureBuilder(
-                future: _hikeService.getAll(hasActiveAppointments: false),
+                future: _hikeService.getAll(hasActiveAppointments: false, isActive: true),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Loader();
@@ -106,7 +106,10 @@ class HikeChoiceScreen extends StatelessWidget {
                                 return AppointmentRegisterScreen(hike: hike);
                               },
                             ),
-                          );
+                          ).then((value) {
+                            if (value == null) return;
+                            if (value) Navigator.of(context).pop(true);
+                          });
                         },
                       );
                     },

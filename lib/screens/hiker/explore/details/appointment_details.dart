@@ -55,7 +55,7 @@ class MapView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _hikeService.loadGpx(gpxFile: _appointment.hike.gpxFile),
+      future: _hikeService.loadGpxPoints(gpxFile: _appointment.hike.gpxFile),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -149,10 +149,13 @@ class _BottomDrawerState extends State<BottomDrawer> {
 
         if (!context.mounted) return;
 
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Participação cancelada com sucesso.")),
-        );
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text("Participação cancelada com sucesso."),
+            ),
+          );
 
         return;
       }
@@ -167,10 +170,11 @@ class _BottomDrawerState extends State<BottomDrawer> {
 
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Participação registrada com sucesso.")),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(content: Text("Participação registrada com sucesso.")),
+        );
     } catch (e) {
       if (!context.mounted) return;
 
@@ -178,14 +182,15 @@ class _BottomDrawerState extends State<BottomDrawer> {
           ? "Ocorreu um erro ao tentar cancelar a sua participação na trilha."
           : "Ocorreu um erro ao tentar fixar sua participação na trilha.";
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "$message: ${e.toString().replaceAll("Exception: ", "")}",
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              "$message: ${e.toString().replaceAll("Exception: ", "")}",
+            ),
           ),
-        ),
-      );
+        );
     } finally {
       setState(() {
         _isButtonLoading = false;
@@ -225,25 +230,26 @@ class _BottomDrawerState extends State<BottomDrawer> {
               children: [
                 Stack(
                   children: [
-                    Container(
+                    SizedBox(
                       height: 250,
                       child: PageView.builder(
                         itemCount: widget._appointment.hike.images.length,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          final imageUrl =
-                              widget._appointment.hike.images[index];
+                          final image = widget._appointment.hike.images[index];
 
                           return FadeInImage.assetNetwork(
                             placeholder: "assets/loading.gif",
-                            image: imageUrl,
+                            image: image.url,
                             fit: BoxFit.cover,
+                            height: 250,
                             width: double.infinity,
-                            imageErrorBuilder:
-                                (context, error, stackTrace) {
+                            imageErrorBuilder: (context, error, stackTrace) {
                               return Image.asset(
                                 "assets/placeholder.png",
                                 fit: BoxFit.cover,
+                                height: 250,
+                                width: double.infinity,
                               );
                             },
                           );
@@ -292,7 +298,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     text: _doesUserParticipate
                         ? "CANCELAR INSCRIÇÃO"
                         : "PARTICIPAR",
-                    onPressed: () => _handleParticipation(context),
+                    onPressed: _isButtonLoading ? null : () => _handleParticipation(context),
                     isLoading: _isButtonLoading,
                   ),
                 )

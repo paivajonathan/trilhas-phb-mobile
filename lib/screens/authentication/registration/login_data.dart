@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:trilhas_phb/helpers/validators.dart";
 import "package:trilhas_phb/screens/authentication/registration/personal_data.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
@@ -26,6 +27,10 @@ class _LoginDataState extends State<LoginData> {
     if (value == null || value.isEmpty) {
       return "Digite um email.";
     }
+
+    if (!isEmailValid(value)) {
+      return "Email inválido.";
+    }
     
     return null;
   }
@@ -36,7 +41,7 @@ class _LoginDataState extends State<LoginData> {
     }
     
     if (value.length < 6) {
-      return "Digite uma senha maior do que 6 caracteres";
+      return "Digite uma senha maior do que 6 caracteres.";
     }
 
     return null;

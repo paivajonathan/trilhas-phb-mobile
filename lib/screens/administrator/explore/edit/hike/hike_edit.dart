@@ -2,36 +2,110 @@ import "dart:typed_data";
 import "package:flutter/material.dart";
 import "package:file_picker/file_picker.dart";
 import "package:permission_handler/permission_handler.dart";
+import "package:trilhas_phb/models/hike.dart";
 import "package:trilhas_phb/services/hike.dart";
 import "package:trilhas_phb/models/file.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
 import "package:trilhas_phb/widgets/future_button.dart";
 
-class HikeRegisterScreen extends StatefulWidget {
-  const HikeRegisterScreen({super.key});
+class HikeEditScreen extends StatefulWidget {
+  const HikeEditScreen({super.key, required this.hike});
+
+  final HikeModel hike;
 
   @override
-  State<HikeRegisterScreen> createState() => _HikeRegisterScreenState();
+  State<HikeEditScreen> createState() => _HikeEditScreenState();
 }
 
-class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
+class _HikeEditScreenState extends State<HikeEditScreen> {
   final HikeService _hikeService = HikeService();
 
   final _formKey = GlobalKey<FormState>();
+  bool _isGpxLoading = false;
+  bool _isImagesLoading = false;
 
-  final _nameController = TextEditingController();
-  final _lengthController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  late final _nameController = TextEditingController(
+    text: widget.hike.name,
+  );
+  late final _lengthController = TextEditingController(
+    text: widget.hike.length.toString(),
+  );
+  late final _descriptionController = TextEditingController(
+    text: widget.hike.description,
+  );
 
-  String _difficulty = "";
-  bool _isEasySelected = false;
-  bool _isMedioSelected = false;
-  bool _isDificilSelected = false;
+  late String _difficulty = widget.hike.difficulty;
+  late bool _isEasySelected = widget.hike.difficulty == "E";
+  late bool _isMediumSelected = widget.hike.difficulty == "M";
+  late bool _isHardSelected = widget.hike.difficulty == "H";
 
   FileModel? _gpxFile;
 
   List<FileModel> _selectedImages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.wait([
+      _loadGpx(),
+      _loadImages(),
+    ]);
+  }
+
+  Future<void> _loadGpx() async {
+    try {
+      setState(() {
+        _isGpxLoading = true;
+        _gpxFile = null;
+      });
+
+      final gpx = await _hikeService.loadGpx(gpxFile: widget.hike.gpxFile);
+
+      if (!mounted) return;
+
+      setState(() {
+        _gpxFile = gpx;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _gpxFile = null;
+      });
+    } finally {
+      setState(() {
+        _isGpxLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadImages() async {
+    try {
+      setState(() {
+        _isImagesLoading = true;
+        _selectedImages = [];
+      });
+
+      final images = await _hikeService.loadImages(images: widget.hike.images);
+
+      if (!mounted) return;
+
+      setState(() {
+        _selectedImages = images;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _selectedImages = [];
+      });
+    } finally {
+      setState(() {
+        _isImagesLoading = false;
+      });
+    }
+  }
 
   Future<void> _pickGpx() async {
     try {
@@ -144,8 +218,6 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
   Future<void> _pickImages() async {
     try {
       if (_selectedImages.length == 5) {
-        if (!mounted) return;
-
         ScaffoldMessenger.of(context)
           ..clearSnackBars()
           ..showSnackBar(
@@ -304,7 +376,8 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
     }
 
     try {
-      await _hikeService.create(
+      await _hikeService.edit(
+        hikeId: widget.hike.id,
         name: _nameController.text,
         length: double.tryParse(_lengthController.text) ?? 0,
         description: _descriptionController.text,
@@ -320,21 +393,19 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
         ..showSnackBar(
           const SnackBar(
             content: Text(
-              "Trilha cadastrada com sucesso!",
+              "Trilha editada com sucesso!",
             ),
           ),
         );
 
       Navigator.of(context).pop(true);
     } catch (e) {
-      if (!mounted) return;
-
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
         ..showSnackBar(
           SnackBar(
             content: Text(
-              "Erro ao cadastrar trilha: ${e.toString().replaceAll("Exception: ", "")}",
+              "Erro ao editar a trilha: ${e.toString().replaceAll("Exception: ", "")}",
             ),
           ),
         );
@@ -384,14 +455,14 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: true,  // avoid getting hidden keyboard
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
           title: const Text(
-            "Cadastrar Trilha",
+            "Editar Trilha",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           bottom: PreferredSize(
@@ -475,8 +546,8 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                             setState(() {
                               _difficulty = "E";
                               _isEasySelected = !_isEasySelected;
-                              _isMedioSelected = false;
-                              _isDificilSelected = false;
+                              _isMediumSelected = false;
+                              _isHardSelected = false;
                             });
                           },
                           child: Text(
@@ -497,12 +568,12 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size(100, 40),
                             side: BorderSide(
-                              color: _isMedioSelected
+                              color: _isMediumSelected
                                   ? Colors.white
                                   : const Color.fromARGB(255, 255, 168, 0),
                               width: 2,
                             ),
-                            backgroundColor: _isMedioSelected
+                            backgroundColor: _isMediumSelected
                                 ? const Color.fromARGB(255, 255, 168, 0)
                                 : Colors.white,
                             shape: RoundedRectangleBorder(
@@ -512,16 +583,16 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                           onPressed: () {
                             setState(() {
                               _difficulty = "M";
-                              _isMedioSelected = !_isMedioSelected;
+                              _isMediumSelected = !_isMediumSelected;
                               _isEasySelected = false;
-                              _isDificilSelected = false;
+                              _isHardSelected = false;
                             });
                           },
                           child: Text(
                             "MÉDIO",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: _isMedioSelected
+                              color: _isMediumSelected
                                   ? Colors.white
                                   : const Color.fromARGB(255, 255, 168, 0),
                             ),
@@ -535,13 +606,12 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size(100, 40),
                             side: BorderSide(
-                              color: _isDificilSelected
-                                  ? Colors.white
-                                  : Colors.red,
+                              color:
+                                  _isHardSelected ? Colors.white : Colors.red,
                               width: 2,
                             ),
                             backgroundColor:
-                                _isDificilSelected ? Colors.red : Colors.white,
+                                _isHardSelected ? Colors.red : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -549,18 +619,17 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                           onPressed: () {
                             setState(() {
                               _difficulty = "H";
-                              _isDificilSelected = !_isDificilSelected;
+                              _isHardSelected = !_isHardSelected;
                               _isEasySelected = false;
-                              _isMedioSelected = false;
+                              _isMediumSelected = false;
                             });
                           },
                           child: Text(
                             "DIFÍCIL",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: _isDificilSelected
-                                  ? Colors.white
-                                  : Colors.red,
+                              color:
+                                  _isHardSelected ? Colors.white : Colors.red,
                             ),
                           ),
                         ),
@@ -617,7 +686,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                         height: 65,
                         width: 60,
                         child: GestureDetector(
-                          onTap: _pickImages,
+                          onTap: _isImagesLoading ? null : _pickImages,
                           child: Container(
                             decoration: const BoxDecoration(
                               color: Color.fromARGB(255, 3, 204, 107),
@@ -627,11 +696,20 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                                 bottomRight: Radius.circular(10),
                               ),
                             ),
-                            child: const Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: 25,
-                            ),
+                            child: _isImagesLoading
+                                ? const SizedBox(
+                                    width: 0.25,
+                                    height: 0.25,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                          color: Colors.white),
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                    size: 25,
+                                  ),
                           ),
                         ),
                       ),
@@ -718,23 +796,35 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                         height: 65,
                         width: 60,
                         child: GestureDetector(
-                          onTap: _pickGpx,
+                          onTap: _isGpxLoading ? null : _pickGpx,
                           child: Container(
                             decoration: BoxDecoration(
                               color: _gpxFile != null
                                   ? Colors.grey
-                                  : const Color.fromARGB(255, 3, 204, 107),
+                                  : const Color.fromARGB(
+                                      255,
+                                      3,
+                                      204,
+                                      107,
+                                    ),
                               shape: BoxShape.rectangle,
                               borderRadius: const BorderRadius.only(
                                 topRight: Radius.circular(10),
                                 bottomRight: Radius.circular(10),
                               ),
                             ),
-                            child: Icon(
-                              _gpxFile != null ? Icons.close : Icons.add,
-                              color: Colors.white,
-                              size: 25,
-                            ),
+                            child: _isGpxLoading
+                                ? const SizedBox(
+                                    width: 0.25,
+                                    height: 0.25,
+                                    child: Center(
+                                        child: CircularProgressIndicator(
+                                            color: Colors.white)))
+                                : Icon(
+                                    _gpxFile != null ? Icons.close : Icons.add,
+                                    color: Colors.white,
+                                    size: 25,
+                                  ),
                           ),
                         ),
                       ),

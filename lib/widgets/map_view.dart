@@ -23,7 +23,7 @@ class MapView extends StatelessWidget {
     String gpxFile = (appointment != null) ? appointment!.hike.gpxFile : hike!.gpxFile;
 
     return FutureBuilder(
-      future: _hikeService.loadGpx(gpxFile: gpxFile),
+      future: _hikeService.loadGpxPoints(gpxFile: gpxFile),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(

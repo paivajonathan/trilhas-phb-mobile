@@ -53,11 +53,13 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
 
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Agendamento editado com sucesso!")),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(content: Text("Agendamento editado com sucesso!")),
+        );
 
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     } catch (e) {
       String message = e.toString().replaceAll("Exception: ", "");
       ScaffoldMessenger.of(context)
@@ -74,17 +76,17 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
 
   String? _validateDate(String? value) {
     if (value == null || value.isEmpty) {
-      return "Digite a data";
+      return "Digite a data.";
     }
 
     final desiredDate = DateFormat("dd/MM/yyyy").tryParseStrict(value);
 
     if (desiredDate == null) {
-      return "Data inválida";
+      return "Data inválida.";
     }
 
     if (desiredDate.year < 2000 || desiredDate.year > 2100) {
-      return "Data inválida";
+      return "Data inválida.";
     }
 
     DateTime? desiredTime = DateFormat("HH:mm").tryParseStrict(
@@ -106,7 +108,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
     );
 
     if (currentTimestamp.compareTo(desiredTimestamp) == 1) {
-      return "Data inválida";
+      return "Data inválida.";
     }
 
     return null;
@@ -114,13 +116,13 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
 
   String? _validateTime(String? value) {
     if (value == null || value.isEmpty) {
-      return "Digite o horário";
+      return "Digite o horário.";
     }
 
     final desiredTime = DateFormat("HH:mm").tryParseStrict(value);
 
     if (desiredTime == null) {
-      return "Horário inválido";
+      return "Horário inválido.";
     }
 
     DateTime? desiredDate = DateFormat("dd/MM/yyyy").tryParseStrict(
@@ -142,7 +144,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
     );
 
     if (currentTimestamp.compareTo(desiredTimestamp) == 1) {
-      return "Data inválida";
+      return "Data inválida.";
     }
 
     return null;
@@ -167,7 +169,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
               child: Image.asset("assets/icon_voltar.png"),
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context).pop();
             },
           ),
         ),

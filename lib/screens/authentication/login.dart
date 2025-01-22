@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
+import "package:trilhas_phb/helpers/validators.dart";
 import "package:trilhas_phb/providers/user_data.dart";
 import "package:trilhas_phb/screens/authentication/registration/register.dart";
 import "package:trilhas_phb/screens/navigation_wrapper.dart";
@@ -31,25 +32,32 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       setState(() => _isLoading = true);
-      
+
       final userData = await _auth.login(
         email: _emailController.text,
         password: _passwordController.text,
       );
-        
+
       if (!context.mounted) return;
 
-      final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
+      final userDataProvider =
+          Provider.of<UserDataProvider>(context, listen: false);
       userDataProvider.setUserData(userData);
-  
+
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const NavigationWrapper()),
         (Route<dynamic> route) => false,
       );
     } on Exception catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erro no login: ${e.toString().replaceAll("Exception: ", "")}")),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              "Erro no login: ${e.toString().replaceAll("Exception: ", "")}",
+            ),
+          ),
+        );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -60,7 +68,11 @@ class _LoginScreenState extends State<LoginScreen> {
       return "Digite um email.";
     }
 
-    return null;                 
+    if (!isEmailValid(value)) {
+      return "Digite um email válido.";
+    }
+
+    return null;
   }
 
   String? _validatePassword(String? value) {
@@ -69,12 +81,12 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (value.length < 6) {
-      return "Digite uma senha maior do que 6 caracteres";
+      return "Digite uma senha maior do que 6 caracteres.";
     }
 
     return null;
   }
- 
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -116,6 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 20),
                     DecoratedTextFormField(
+                      textInputType: TextInputType.emailAddress,
                       hintText: "Email",
                       validator: _validateEmail,
                       controller: _emailController,
@@ -160,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       text: "Login",
                       primary: true,
                       isLoading: _isLoading,
-                      onPressed: () => _login(context),
+                      onPressed: _isLoading ? null : () => _login(context),
                     ),
                     const SizedBox(height: 20),
                     DecoratedButton(
@@ -170,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const Register()
+                            builder: (context) => const Register(),
                           ),
                         );
                       },
@@ -178,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-            ), 
+            ),
           ],
         ),
       ),

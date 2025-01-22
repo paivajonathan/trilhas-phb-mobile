@@ -42,19 +42,24 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
         newPassword: _passwordController.text,
       );
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(SnackBar(content: Text(message)));
 
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
         (Route<dynamic> route) => false,
       );
-      
     } catch (e) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
-      );
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll("Exception: ", ""))),
+        );
     } finally {
       setState(() {
         _isLoading = false;
@@ -64,108 +69,121 @@ class _CreateNewPasswordState extends State<CreateNewPassword> {
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return "A senha não pode estar vazia";
+      return "A senha não pode estar vazia.";
     }
+
     if (value.length < 6) {
-      return "A senha deve ter pelo menos 6 caracteres";
+      return "A senha deve ter pelo menos 6 caracteres.";
     }
+
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
-    if (value != _passwordController.text) {
-      return "As senhas não correspondem";
+    if (value == null || value.isEmpty) {
+      return "A confirmação de senha não pode estar vazia.";
     }
+
+    if (value != _passwordController.text) {
+      return "As senhas não correspondem.";
+    }
+
     return null;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: SizedBox(
-            height: 20,
-            width: 20,
-            child: Image.asset("assets/icon_voltar.png"),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: SizedBox(
+              height: 20,
+              width: 20,
+              child: Image.asset("assets/icon_voltar.png"),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          top: 8.0,
-          left: 25.0,
-          right: 25.0,
-          bottom: 25.0,
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Crie uma nova senha",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+        body: Padding(
+          padding: const EdgeInsets.only(
+            top: 8.0,
+            left: 25.0,
+            right: 25.0,
+            bottom: 25.0,
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Crie uma nova senha",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                "Insira sua nova senha abaixo",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFF71727A),
+                const SizedBox(height: 4),
+                const Text(
+                  "Insira sua nova senha abaixo",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF71727A),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 30),
-
-              // Campo de senha
-              const DecoratedLabel(content: "Senha"),
-              const SizedBox(height: 8),
-              DecoratedTextFormField(
-                hintText: "Digite aqui",
-                isPassword: true,
-                isPasswordVisible: _isPasswordVisible,
-                onPasswordToggle: () {
-                  setState(() => _isPasswordVisible = !_isPasswordVisible);
-                },
-                validator: _validatePassword,
-                controller: _passwordController,
-              ),
-              const SizedBox(height: 16),
-
-              // Campo de confirmar a senha
-              const DecoratedLabel(content: "Confirme a senha"),
-              const SizedBox(height: 8),
-              DecoratedTextFormField(
-                hintText: "Digite aqui",
-                isPassword: true,
-                isPasswordVisible: _isConfirmPasswordVisible,
-                onPasswordToggle: () {
-                  setState(() =>
-                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible);
-                },
-                validator: _validateConfirmPassword,
-              ),
-
-              // Para jogar botão no final da tela
-              const Spacer(),
-
-              DecoratedButton(
-                primary: true,
-                text: "Continuar",
-                onPressed: _isLoading ? null : _changePassword,
-              ),
-            ],
+                const SizedBox(height: 30),
+      
+                // Campo de senha
+                const DecoratedLabel(content: "Senha"),
+                const SizedBox(height: 8),
+                DecoratedTextFormField(
+                  hintText: "Digite aqui",
+                  isPassword: true,
+                  isPasswordVisible: _isPasswordVisible,
+                  onPasswordToggle: () {
+                    setState(() => _isPasswordVisible = !_isPasswordVisible);
+                  },
+                  validator: _validatePassword,
+                  controller: _passwordController,
+                ),
+                const SizedBox(height: 16),
+      
+                // Campo de confirmar a senha
+                const DecoratedLabel(content: "Confirme a senha"),
+                const SizedBox(height: 8),
+                DecoratedTextFormField(
+                  hintText: "Digite aqui",
+                  isPassword: true,
+                  isPasswordVisible: _isConfirmPasswordVisible,
+                  onPasswordToggle: () {
+                    setState(() =>
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible);
+                  },
+                  validator: _validateConfirmPassword,
+                ),
+      
+                // Para jogar botão no final da tela
+                const Spacer(),
+      
+                DecoratedButton(
+                  primary: true,
+                  text: "Continuar",
+                  onPressed: _isLoading ? null : () => _changePassword(),
+                  isLoading: _isLoading,
+                ),
+              ],
+            ),
           ),
         ),
       ),

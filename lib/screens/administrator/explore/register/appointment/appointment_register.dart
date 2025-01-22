@@ -51,21 +51,23 @@ class _AppointmentRegisterScreenState extends State<AppointmentRegisterScreen> {
 
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Trilha agendada com sucesso!")),
-      );
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(content: Text("Trilha agendada com sucesso!")),
+        );
 
-      int count = 0;
-      Navigator.of(context).popUntil((_) => count++ >= 2);
+      Navigator.of(context).pop(true);
     } catch (e) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}",
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              "Erro no cadastro: ${e.toString().replaceAll("Exception: ", "")}",
+            ),
           ),
-        ),
-      );
+        );
     } finally {
       setState(() {
         _isLoading = false;
@@ -74,55 +76,62 @@ class _AppointmentRegisterScreenState extends State<AppointmentRegisterScreen> {
   }
 
   String? _validateDate(String? value) {
-    if (value == null || value.isEmpty) return "Digite a data";
+    if (value == null || value.isEmpty) return "Digite a data.";
 
     final desiredDate = DateFormat("dd/MM/yyyy").tryParseStrict(value);
 
-    if (desiredDate == null) return "Data inválida";
-    
-    if (desiredDate.year < 2000 || desiredDate.year > 2100) return "Data inválida";
+    if (desiredDate == null) return "Data inválida.";
 
-    DateTime? desiredTime = DateFormat("HH:mm").tryParseStrict(_timeController.text);
+    if (desiredDate.year < 2000 || desiredDate.year > 2100) {
+      return "Data inválida.";
+    }
+
+    DateTime? desiredTime =
+        DateFormat("HH:mm").tryParseStrict(_timeController.text);
 
     if (desiredTime == null) return null;
-    
+
     final currentTimestamp = DateTime.now();
-    
+
     final desiredTimestamp = DateTime(
       desiredDate.year,
       desiredDate.month,
       desiredDate.day,
       desiredTime.hour,
-      desiredTime.minute,  
+      desiredTime.minute,
     );
-    
-    if (currentTimestamp.compareTo(desiredTimestamp) == 1) return "Data inválida";
+
+    if (currentTimestamp.compareTo(desiredTimestamp) == 1)
+      return "Data inválida.";
 
     return null;
   }
 
   String? _validateTime(String? value) {
-    if (value == null || value.isEmpty) return "Digite o horário";
+    if (value == null || value.isEmpty) return "Digite o horário.";
 
     final desiredTime = DateFormat("HH:mm").tryParseStrict(value);
 
-    if (desiredTime == null) return "Horário inválido";
+    if (desiredTime == null) return "Horário inválido.";
 
-    DateTime? desiredDate = DateFormat("dd/MM/yyyy").tryParseStrict(_dateController.text);
+    DateTime? desiredDate =
+        DateFormat("dd/MM/yyyy").tryParseStrict(_dateController.text);
 
     if (desiredDate == null) return null;
-    
+
     final currentTimestamp = DateTime.now();
-    
+
     final desiredTimestamp = DateTime(
       desiredDate.year,
       desiredDate.month,
       desiredDate.day,
       desiredTime.hour,
-      desiredTime.minute,  
+      desiredTime.minute,
     );
-    
-    if (currentTimestamp.compareTo(desiredTimestamp) == 1) return "Data inválida";
+
+    if (currentTimestamp.compareTo(desiredTimestamp) == 1) {
+      return "Data inválida.";
+    }
 
     return null;
   }

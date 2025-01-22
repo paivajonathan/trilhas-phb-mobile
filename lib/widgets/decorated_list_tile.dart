@@ -28,12 +28,12 @@ class DecoratedListTile extends StatelessWidget {
     if (appointment != null) {
       title = appointment!.hike.name;
       subtitle = appointment!.fullReadableTime;
-      imageUrl = appointment!.hike.images[0];
+      imageUrl = appointment!.hike.images[0].url;
       trailing = const Icon(Icons.chevron_right);
     } else if (hike != null) {
       title = hike!.name;
       subtitle = "Distância: ${hike!.length.toString()}km";
-      imageUrl = hike!.images[0];
+      imageUrl = hike!.images[0].url;
       trailing = Container(
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         width: 64,
