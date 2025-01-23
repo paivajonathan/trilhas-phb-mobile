@@ -12,16 +12,7 @@ class TabNavigationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Tab(
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-          border: Border.all(color: AppColors.primary),
-        ),
-        child: Align(
-          alignment: Alignment.center,
-          child: Text(tabTitle),
-        ),
-      ),
+      text: tabTitle,
     );
   }
 }
