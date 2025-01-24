@@ -54,6 +54,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       final finishedAppointments = await _appointmentService.getAll(
         isActive: true,
         isAvailable: false,
+        hasFrequencyMade: false,
       );
 
       setState(() {

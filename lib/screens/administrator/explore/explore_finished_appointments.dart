@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/models/appointment.dart';
+import 'package:trilhas_phb/screens/administrator/explore/frequency/frequency_register.dart';
 import 'package:trilhas_phb/widgets/decorated_card.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
 
@@ -41,7 +42,7 @@ class ExploreFinishedAppointmentsScreen extends StatelessWidget {
                 if (isFinishedAppointmentsLoading) {
                   return const Loader();
                 }
-      
+
                 if (isFinishedAppointmentsLoadingError != null) {
                   return Center(
                     child: Text(
@@ -49,7 +50,7 @@ class ExploreFinishedAppointmentsScreen extends StatelessWidget {
                     ),
                   );
                 }
-      
+
                 if (finishedAppointments.isEmpty) {
                   return Stack(
                     children: <Widget>[
@@ -60,7 +61,7 @@ class ExploreFinishedAppointmentsScreen extends StatelessWidget {
                     ],
                   );
                 }
-      
+
                 return ListView.separated(
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -75,7 +76,13 @@ class ExploreFinishedAppointmentsScreen extends StatelessWidget {
                       appointment: appointment,
                       actionText: "Frequência",
                       onTap: () async {
-                        print("Tela de frequencia..");
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => FrequencyRegisterScreen(
+                              appointment: appointment,
+                            ),
+                          ),
+                        );
                       },
                     );
                   },

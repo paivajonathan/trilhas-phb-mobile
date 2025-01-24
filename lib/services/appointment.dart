@@ -15,6 +15,7 @@ class AppointmentService {
       bool? isActive,
       bool? isAvailable,
       bool? hasUserParticipation,
+      bool? hasFrequencyMade,
     }
   ) async {
     String token = await _auth.token;
@@ -23,6 +24,7 @@ class AppointmentService {
     if (hasUserParticipation != null) queryParameters["has_user_participation"] = hasUserParticipation.toString();
     if (isActive != null) queryParameters["is_active"] = isActive.toString();
     if (isAvailable != null) queryParameters["is_available"] = isAvailable.toString();
+    if (hasFrequencyMade != null) queryParameters["has_frequency_made"] = hasFrequencyMade.toString();
     
     final uri = Uri.parse("$_baseUrl/api/v1/appointments/").replace(queryParameters: queryParameters);
 
