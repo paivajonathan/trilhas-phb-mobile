@@ -17,7 +17,7 @@ class AuthCheckScreen extends StatefulWidget {
 class _AuthCheckScreenState extends State<AuthCheckScreen> {
   final authService = AuthService();
 
-  late UserDataModel? _userData;
+  late UserProfileModel? _userData;
   bool _isLoading = true;
 
   @override

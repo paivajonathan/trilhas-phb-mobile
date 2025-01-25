@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:trilhas_phb/constants/app_colors.dart';
 
 class TabNavigationItem extends StatelessWidget {
   const TabNavigationItem({

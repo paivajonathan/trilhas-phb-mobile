@@ -10,14 +10,14 @@ class AuthService {
   final _baseUrl = dotenv.env["BASE_URL"];
   final _storage = StorageService();
   
-  Future<UserDataModel?> get userData async {
+  Future<UserProfileModel?> get userData async {
     var (storedUserData, storedToken) = await _storage.loadKeys();
 
     if (storedUserData == null || storedToken == null) return null;
 
     if (Jwt.isExpired(storedToken)) return null;
 
-    final userData = UserDataModel.fromMap(json.decode(storedUserData));
+    final userData = UserProfileModel.fromMap(json.decode(storedUserData));
 
     return userData;
   }
@@ -31,7 +31,7 @@ class AuthService {
     await _storage.destroyKeys();
   }
 
-  Future<UserDataModel> login({
+  Future<UserProfileModel> login({
     required String email,
     required String password,
   }) async {
@@ -62,13 +62,13 @@ class AuthService {
 
       final token = responseData["token"];
       final userData = {
-        "id": responseData["user"]["id"],
-        "type": responseData["user"]["user_type"],
+        "user": responseData["user"],
+        "profile": responseData["profile"],
       };
 
       await _storage.saveKeys(token, userData);
 
-      return UserDataModel.fromMap(userData);
+      return UserProfileModel.fromMap(userData);
     } on TimeoutException catch (_) {
       throw Exception("Tempo limite da requisição atingido.");
     } catch (e) {

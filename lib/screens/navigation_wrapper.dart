@@ -52,7 +52,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
     super.initState();
 
     final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
-    final userType = userDataProvider.userData!.type;
+    final userType = userDataProvider.userData!.userType;
     _screens = _roleScreens[userType]!;
   }
 

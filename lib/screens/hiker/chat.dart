@@ -37,7 +37,7 @@ class _ChatScreenState extends State<ChatScreen> {
       context,
       listen: false,
     );
-    _userId = userDataProvider.userData!.id;
+    _userId = userDataProvider.userData!.userId;
   }
 
   @override

@@ -26,7 +26,8 @@ class _TabsNavigationState extends State<TabNavigation> {
       bottom: TabBar(        
         unselectedLabelColor: AppColors.primary,
         indicatorSize: TabBarIndicatorSize.tab,
-        tabAlignment: TabAlignment.center,
+        tabAlignment: TabAlignment.fill,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         indicatorAnimation: TabIndicatorAnimation.elastic,
         labelColor: Colors.white,
         indicator: BoxDecoration(
