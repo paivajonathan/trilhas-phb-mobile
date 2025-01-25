@@ -56,14 +56,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-      body: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.only(
-          top: 25.0,
-          left: 25.0,
-          right: 25.0,
-          bottom: 25.0,
-        ),
+      body: Padding(
+        padding: const EdgeInsets.all(25),
         child: Column(
           children: [
             SizedBox(

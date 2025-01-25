@@ -111,51 +111,79 @@ class _ChatScreenState extends State<ChatScreen> {
       onRefresh: () async {
         _loadMoreMessages();
       },
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: _isLoadingInitialMessages
-                  ? const Center(
-                      child: CircularProgressIndicator(color: AppColors.primary),
-                    )
-                  : _messages.isEmpty
-                      ? const Center(
-                          child: Text("Ainda não foram enviados comunicados."),
-                        )
-                      : ListView.builder(
-                          itemCount: _messages.length,
-                          controller: _scrollController,
-                          reverse: true,
-                          itemBuilder: (context, index) {
-                            final reversedMessages = _messages.reversed.toList();
-                            final message = reversedMessages[index];
-                            return MessageBubbleWidget(
-                              chatMessage: message,
-                              isMe: message.senderId == _userId,
-                            );
-                          },
-                        ),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          title: const Text(
+            "Comunicados",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1.0),
+            child: Container(
+              color: Colors.black.withOpacity(.25),
+              height: 1.0,
             ),
-            TextField(
-              controller: _messageController,
-              decoration: InputDecoration(
-                hintText: "Digite uma mensagem",
-                enabledBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.primary, width: 2.5),
-                ),
-                focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColors.primary, width: 2.5),
-                ),
-                suffixIconColor: AppColors.primary,
-                suffixIcon: IconButton(
-                  onPressed: _sendMessage,
-                  icon: const Icon(Icons.send),
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: _isLoadingInitialMessages
+                    ? const Center(
+                        child:
+                            CircularProgressIndicator(color: AppColors.primary),
+                      )
+                    : _messages.isEmpty
+                        ? const Center(
+                            child:
+                                Text("Ainda não foram enviados comunicados."),
+                          )
+                        : ListView.builder(
+                            itemCount: _messages.length,
+                            controller: _scrollController,
+                            reverse: true,
+                            itemBuilder: (context, index) {
+                              final reversedMessages =
+                                  _messages.reversed.toList();
+                              final message = reversedMessages[index];
+                              return MessageBubbleWidget(
+                                chatMessage: message,
+                                isMe: message.senderId == _userId,
+                              );
+                            },
+                          ),
+              ),
+              TextField(
+                controller: _messageController,
+                decoration: InputDecoration(
+                  hintText: "Digite uma mensagem",
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide:
+                        const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide:
+                        const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
+                  suffixIconColor: AppColors.primary,
+                  suffixIcon: IconButton(
+                    onPressed: _sendMessage,
+                    icon: const Icon(Icons.send),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

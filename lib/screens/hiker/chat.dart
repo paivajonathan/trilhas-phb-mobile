@@ -103,34 +103,57 @@ class _ChatScreenState extends State<ChatScreen> {
       onRefresh: () async {
         _loadMoreMessages();
       },
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: _isLoadingInitialMessages
-                  ? const Center(
-                      child: CircularProgressIndicator(color: AppColors.primary),
-                    )
-                  : _messages.isEmpty
-                      ? const Center(
-                          child: Text("Ainda não foram enviados comunicados."),
-                        )
-                      : ListView.builder(
-                          itemCount: _messages.length,
-                          controller: _scrollController,
-                          reverse: true,
-                          itemBuilder: (context, index) {
-                            final reversedMessages = _messages.reversed.toList();
-                            final message = reversedMessages[index];
-                            return MessageBubbleWidget(
-                              chatMessage: message,
-                              isMe: message.senderId == _userId,
-                            );
-                          },
-                        ),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          title: const Text(
+            "Comunicados",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1.0),
+            child: Container(
+              color: Colors.black.withOpacity(.25),
+              height: 1.0,
             ),
-          ],
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: _isLoadingInitialMessages
+                    ? const Center(
+                        child:
+                            CircularProgressIndicator(color: AppColors.primary),
+                      )
+                    : _messages.isEmpty
+                        ? const Center(
+                            child:
+                                Text("Ainda não foram enviados comunicados."),
+                          )
+                        : ListView.builder(
+                            itemCount: _messages.length,
+                            controller: _scrollController,
+                            reverse: true,
+                            itemBuilder: (context, index) {
+                              final reversedMessages =
+                                  _messages.reversed.toList();
+                              final message = reversedMessages[index];
+                              return MessageBubbleWidget(
+                                chatMessage: message,
+                                isMe: message.senderId == _userId,
+                              );
+                            },
+                          ),
+              ),
+            ],
+          ),
         ),
       ),
     );
