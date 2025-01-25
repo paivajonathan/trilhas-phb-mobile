@@ -51,4 +51,14 @@ class UserProfileModel {
       profileIsActive: profileMap["is_active"],
     );
   }
+
+  String get firstLastName {
+    final names = profileFullName.split(" ");
+    
+    if (names.length == 1) {
+      return names.first;
+    }
+
+    return "${names.first} ${names.last}";
+  }
 }

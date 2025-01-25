@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
-import 'package:trilhas_phb/widgets/tab_navigation_item.dart';
 
 class TabNavigation extends StatefulWidget implements PreferredSizeWidget {
   const TabNavigation({
@@ -26,9 +25,10 @@ class _TabsNavigationState extends State<TabNavigation> {
       bottom: TabBar(        
         unselectedLabelColor: AppColors.primary,
         indicatorSize: TabBarIndicatorSize.tab,
-        tabAlignment: TabAlignment.fill,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        tabAlignment: TabAlignment.center,
         indicatorAnimation: TabIndicatorAnimation.elastic,
+        isScrollable: true,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         labelColor: Colors.white,
         indicator: BoxDecoration(
             borderRadius: BorderRadius.circular(50), color: AppColors.primary),
@@ -39,7 +39,7 @@ class _TabsNavigationState extends State<TabNavigation> {
                 ? null
                 : Colors.transparent),
         tabs: widget.tabsTitles
-            .map((e) => TabNavigationItem(tabTitle: e))
+            .map((e) => Tab(child: Container(width: 100, alignment: Alignment.center, child: Text(e),),))
             .toList(),
       ),
     );
