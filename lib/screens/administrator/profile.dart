@@ -115,23 +115,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: Colors.black.withOpacity(.125),
               height: 1.0,
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              "Excluir conta",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(color: Colors.red),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              color: Colors.black.withOpacity(.125),
-              height: 1.0,
-            ),
           ],
         ),
       ),

@@ -97,6 +97,10 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _scrollToBottom() {
+    if (!_scrollController.hasClients) {
+      return;
+    }
+
     _scrollController.animateTo(
       0,
       duration: const Duration(milliseconds: 300),
@@ -130,50 +134,59 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: _isLoadingInitialMessages
-                    ? const Center(
-                        child:
-                            CircularProgressIndicator(color: AppColors.primary),
-                      )
-                    : _messages.isEmpty
-                        ? const Center(
-                            child:
-                                Text("Ainda não foram enviados comunicados."),
-                          )
-                        : ListView.builder(
-                            itemCount: _messages.length,
-                            controller: _scrollController,
-                            reverse: true,
-                            itemBuilder: (context, index) {
-                              final reversedMessages =
-                                  _messages.reversed.toList();
-                              final message = reversedMessages[index];
-                              return MessageBubbleWidget(
-                                chatMessage: message,
-                                isMe: message.senderId == _userId,
-                              );
-                            },
-                          ),
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  if (_isLoadingInitialMessages) {
+                    return const Center(
+                      child:
+                          CircularProgressIndicator(color: AppColors.primary),
+                    );
+                  }
+        
+                  if (_messages.isEmpty) {
+                    return const Center(
+                      child: Text("Ainda não foram enviados comunicados."),
+                    );
+                  }
+        
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                      itemCount: _messages.length,
+                      controller: _scrollController,
+                      reverse: true,
+                      itemBuilder: (context, index) {
+                        final reversedMessages = _messages.reversed.toList();
+                        final message = reversedMessages[index];
+                        return MessageBubbleWidget(
+                          chatMessage: message,
+                          isMe: message.senderId == _userId,
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
-              TextField(
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+              child: TextField(
                 controller: _messageController,
                 decoration: InputDecoration(
                   hintText: "Digite uma mensagem",
                   hintStyle: const TextStyle(color: Colors.grey),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide:
-                        const BorderSide(color: AppColors.primary, width: 1.5),
+                    borderSide: const BorderSide(
+                        color: AppColors.primary, width: 1.5),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide:
-                        const BorderSide(color: AppColors.primary, width: 1.5),
+                    borderSide: const BorderSide(
+                        color: AppColors.primary, width: 1.5),
                   ),
                   suffixIconColor: AppColors.primary,
                   suffixIcon: IconButton(
@@ -182,8 +195,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

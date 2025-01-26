@@ -7,7 +7,7 @@ import "package:trilhas_phb/models/user_data.dart";
 import "package:trilhas_phb/services/storage.dart";
 
 class AuthService {
-  final _baseUrl = dotenv.env["BASE_URL"];
+  final _baseUrl = dotenv.env["BASE_URL"]!;
   final _storage = StorageService();
   
   Future<UserProfileModel?> get userData async {
@@ -43,7 +43,7 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "Origin": _baseUrl!,
+          "Origin": _baseUrl,
         },
         body: json.encode({
           "email": email,
@@ -94,7 +94,7 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "Origin": _baseUrl!,
+          "Origin": _baseUrl,
         },
         body: json.encode(
           {
@@ -140,7 +140,7 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "Origin": _baseUrl!,
+          "Origin": _baseUrl,
         },
         body: json.encode(
           {
@@ -180,7 +180,7 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "Origin": _baseUrl!,
+          "Origin": _baseUrl,
         },
         body: json.encode(
           {
@@ -222,7 +222,7 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "Origin": _baseUrl!,
+          "Origin": _baseUrl,
         },
         body: json.encode(
           {
@@ -243,6 +243,36 @@ class AuthService {
       }
 
       return responseData["message"];
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
+    } catch (e) {
+      throw Exception(e);
+    }    
+  }
+
+  Future<void> inactivateAccount() async {
+    try {
+      String token = await this.token;
+      final url = Uri.parse("$_baseUrl/api/v1/users/");
+    
+      final response = await http.patch(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl,
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
+        );
+      }
     } on http.ClientException catch (_) {
       throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
