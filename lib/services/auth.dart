@@ -49,7 +49,7 @@ class AuthService {
           "email": email,
           "password": password,
         }),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -69,8 +69,8 @@ class AuthService {
       await _storage.saveKeys(token, userData);
 
       return UserProfileModel.fromMap(userData);
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -110,7 +110,7 @@ class AuthService {
             }
           }
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -120,8 +120,8 @@ class AuthService {
           responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
         );
       }
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    
@@ -147,7 +147,7 @@ class AuthService {
             "email": email,
           }
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -159,8 +159,8 @@ class AuthService {
       }
 
       return responseData["message"];
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    
@@ -188,7 +188,7 @@ class AuthService {
             "confirmation_code": confirmationCode,
           }
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -200,8 +200,8 @@ class AuthService {
       }
 
       return responseData["message"];
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    
@@ -231,7 +231,7 @@ class AuthService {
             "password": newPassword,
           }
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -243,8 +243,8 @@ class AuthService {
       }
 
       return responseData["message"];
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    

@@ -39,7 +39,7 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
     } catch (e) {
       setState(() {
         _participations = [];
-        _areParticipationsLoadingError = e.toString();
+        _areParticipationsLoadingError = e.toString().replaceAll("Exception: ", "");
       });
     } finally {
       setState(() {
@@ -84,7 +84,7 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
         ..clearSnackBars()
         ..showSnackBar(
           SnackBar(
-            content: Text(e.toString()),
+            content: Text(e.toString().replaceAll("Exception: ", "")),
           ),
         );
     }

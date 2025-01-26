@@ -32,7 +32,7 @@ class ParticipationService {
           "Origin": _baseUrl,
           "Authorization": "Bearer $token",
         },
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -50,10 +50,8 @@ class ParticipationService {
       return participations;
     } on http.ClientException catch (_) {
       throw Exception("Verifique a sua conexão com a internet.");
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
     } catch (e) {
-      throw Exception(e.toString());
+      throw Exception(e);
     }
   }
 
@@ -76,8 +74,7 @@ class ParticipationService {
             body: json.encode({
               "appointment_id": appointmentId,
             }),
-          )
-          .timeout(const Duration(seconds: 10));
+          );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -87,8 +84,8 @@ class ParticipationService {
             responseData["message"] ??
             "Um erro inesperado ocorreu");
       }
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -113,8 +110,7 @@ class ParticipationService {
             body: json.encode({
               "appointment_id": appointmentId,
             }),
-          )
-          .timeout(const Duration(seconds: 10));
+          );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -124,8 +120,8 @@ class ParticipationService {
             responseData["message"] ??
             "Um erro inesperado ocorreu");
       }
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -154,8 +150,7 @@ class ParticipationService {
                 "participations": participations.map((p) => {"id": p.id, "status": p.status}).toList(),
               },
             ),
-          )
-          .timeout(const Duration(seconds: 10));
+          );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body);
@@ -165,10 +160,8 @@ class ParticipationService {
       }
     } on http.ClientException catch (_) {
       throw Exception("Verifique a sua conexão com a internet.");
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
     } catch (e) {
-      throw Exception(e.toString());
+      throw Exception(e);
     }
   }
 }

@@ -46,7 +46,7 @@ class HikeService {
           "Origin": _baseUrl,
           "Authorization": "Bearer $token",
         },
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -62,8 +62,8 @@ class HikeService {
           .toList();
 
       return hikes;
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -85,7 +85,7 @@ class HikeService {
           "Origin": _baseUrl,
           "Authorization": "Bearer $token",
         },
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -98,8 +98,8 @@ class HikeService {
 
       HikeModel hike = HikeModel.fromMap(responseData);
       return hike;
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -111,7 +111,7 @@ class HikeService {
     final uri = Uri.parse(gpxFile);
 
     try {
-      final response = await http.get(uri).timeout(const Duration(seconds: 10));
+      final response = await http.get(uri);
 
       final responseStatus = response.statusCode;
       final responseData = response.body;
@@ -123,8 +123,8 @@ class HikeService {
       List<LatLng> points = await compute(parseGpx, responseData);
 
       return points;
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -136,7 +136,7 @@ class HikeService {
     final uri = Uri.parse(gpxFile);
 
     try {
-      final response = await http.get(uri).timeout(const Duration(seconds: 10));
+      final response = await http.get(uri);
 
       final responseStatus = response.statusCode;
       final responseData = response.bodyBytes;
@@ -146,8 +146,8 @@ class HikeService {
       }
 
       return FileModel(bytes: responseData, filename: "Arquivo GPX");
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -163,7 +163,7 @@ class HikeService {
 
       try {
         final response =
-            await http.get(uri).timeout(const Duration(seconds: 10));
+            await http.get(uri);
 
         final responseStatus = response.statusCode;
         final responseData = response.bodyBytes;
@@ -173,8 +173,8 @@ class HikeService {
         }
 
         loadedImages.add(FileModel(bytes: responseData, filename: image.name));
-      } on TimeoutException catch (_) {
-        throw Exception("Tempo limite da requisição atingido.");
+      } on http.ClientException catch (_) {
+        throw Exception("Verifique a sua conexão com a internet.");
       } catch (e) {
         throw Exception(e);
       }
@@ -228,7 +228,7 @@ class HikeService {
 
     try {
       final response =
-          await request.send().timeout(const Duration(seconds: 10));
+          await request.send();
       final responseBody = await response.stream.bytesToString();
 
       final responseStatus = response.statusCode;
@@ -242,8 +242,8 @@ class HikeService {
 
       HikeModel hike = HikeModel.fromMap(responseData);
       return hike;
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -295,7 +295,7 @@ class HikeService {
 
     try {
       final response =
-          await request.send().timeout(const Duration(seconds: 10));
+          await request.send();
       final responseBody = await response.stream.bytesToString();
 
       final responseStatus = response.statusCode;
@@ -309,8 +309,8 @@ class HikeService {
 
       HikeModel hike = HikeModel.fromMap(responseData);
       return hike;
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -331,7 +331,7 @@ class HikeService {
           "Origin": _baseUrl,
           "Authorization": "Bearer $token",
         },
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -341,8 +341,8 @@ class HikeService {
             responseData["message"] ??
             "Um erro inesperado ocorreu");
       }
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }

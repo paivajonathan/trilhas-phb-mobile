@@ -37,7 +37,7 @@ class AppointmentService {
           "Origin": _baseUrl,
           "Authorization": "Bearer $token",
         },
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -53,8 +53,8 @@ class AppointmentService {
         .toList();
 
       return appointments;
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -78,7 +78,7 @@ class AppointmentService {
           "Origin": _baseUrl,
           "Authorization": "Bearer $token",
         },
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -91,8 +91,8 @@ class AppointmentService {
 
       AppointmentModel appointment = AppointmentModel.fromMap(responseData);
       return appointment;
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -124,7 +124,7 @@ class AppointmentService {
             "time": time,
           },
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -134,8 +134,8 @@ class AppointmentService {
           responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
         );
       }
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    
@@ -166,7 +166,7 @@ class AppointmentService {
             "time": time,
           },
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -176,8 +176,8 @@ class AppointmentService {
           responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
         );
       }
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    
@@ -200,7 +200,7 @@ class AppointmentService {
           "Origin": _baseUrl,
           "Authorization": "Bearer $token",
         },
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -210,8 +210,8 @@ class AppointmentService {
           responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
         );
       }
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    
