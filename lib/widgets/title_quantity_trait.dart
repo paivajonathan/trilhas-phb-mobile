@@ -28,10 +28,10 @@ class TitleQuantityTrait extends StatelessWidget {
             ),
             child: Text(
               number.toString(),
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
-          SizedBox(height: 5,),
+          const SizedBox(height: 5,),
           Text(title),
         ],
       ),
