@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/models/participation.dart';
 import 'package:trilhas_phb/services/participation.dart';
 import 'package:trilhas_phb/widgets/future_button.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
 import 'package:trilhas_phb/widgets/participation_item.dart';
+import 'package:trilhas_phb/widgets/title_quantity_trait.dart';
 
 class FrequencyRegisterScreen extends StatefulWidget {
   const FrequencyRegisterScreen({super.key, required this.appointment});
@@ -62,8 +64,9 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
 
     try {
       await _participationService.makeFrequency(
-          appointmentId: widget.appointment.id,
-          participations: _participations);
+        appointmentId: widget.appointment.id,
+        participations: _participations,
+      );
 
       if (!mounted) {
         return;
@@ -136,16 +139,45 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
           }
 
           if (_areParticipationsLoadingError != null) {
-            return Center(child: Text(_areParticipationsLoadingError!));
+            return Center(
+              child: Text(
+                _areParticipationsLoadingError!,
+              ),
+            );
           }
 
           if (_participations.isEmpty) {
             return const Center(
-                child: Text("Não há participações para esse agendamento."));
+              child: Text(
+                "Não há participações para esse agendamento.",
+              ),
+            );
           }
 
           return Column(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TitleQuantityTrait(
+                    color: AppColors.primary,
+                    number: _participations
+                        .where((p) => p.status == "P")
+                        .toList()
+                        .length,
+                    title: "Presentes",
+                  ),
+                  TitleQuantityTrait(
+                    color: Colors.red,
+                    number: _participations
+                        .where((p) => p.status == "A")
+                        .toList()
+                        .length,
+                    title: "Ausentes",
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20,),
               for (final (i, p) in _participations.indexed)
                 ParticipationItem(
                   participation: p,
@@ -162,7 +194,7 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
                 ),
               const Spacer(),
               FutureButton(
-                text: "Registrar",
+                text: "Salvar",
                 primary: true,
                 future: _handleSubmit,
               ),
