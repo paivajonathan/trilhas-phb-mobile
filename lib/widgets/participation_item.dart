@@ -17,20 +17,28 @@ class ParticipationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      contentPadding: EdgeInsets.zero,
       leading: const Icon(
         Icons.person,
       ),
-      title: Text(participation.profileName),
+      title: Text(
+        participation.profileName,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           IconButton(
-            icon: const Icon(Icons.verified),
+            padding: EdgeInsets.zero,
+            icon: const Icon(Icons.check_circle, size: 35),
             onPressed: confirmAction,
-            color: participation.status == "P" ? AppColors.primary : Colors.grey,
+            color:
+                participation.status == "P" ? AppColors.primary : Colors.grey,
           ),
           IconButton(
-            icon: const Icon(Icons.cancel),
+            padding: EdgeInsets.zero,
+            icon: const Icon(Icons.cancel, size: 35),
             onPressed: cancelAction,
             color: participation.status == "A" ? Colors.red : Colors.grey,
           ),

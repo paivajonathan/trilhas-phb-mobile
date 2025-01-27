@@ -39,7 +39,8 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
     } catch (e) {
       setState(() {
         _participations = [];
-        _areParticipationsLoadingError = e.toString().replaceAll("Exception: ", "");
+        _areParticipationsLoadingError =
+            e.toString().replaceAll("Exception: ", "");
       });
     } finally {
       setState(() {
@@ -114,46 +115,61 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
             Navigator.pop(context);
           },
         ),
+        centerTitle: true,
+        title: const Text(
+          "Frequência",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.black.withOpacity(.25),
+            height: 1.0,
+          ),
+        ),
       ),
-      body: Builder(builder: (context) {
-        if (_areParticipationsLoading) {
-          return const Loader();
-        }
+      body: Padding(
+        padding: const EdgeInsets.all(25),
+        child: Builder(builder: (context) {
+          if (_areParticipationsLoading) {
+            return const Loader();
+          }
 
-        if (_areParticipationsLoadingError != null) {
-          return Center(child: Text(_areParticipationsLoadingError!));
-        }
+          if (_areParticipationsLoadingError != null) {
+            return Center(child: Text(_areParticipationsLoadingError!));
+          }
 
-        if (_participations.isEmpty) {
-          return const Center(
-              child: Text("Não há participações para esse agendamento."));
-        }
+          if (_participations.isEmpty) {
+            return const Center(
+                child: Text("Não há participações para esse agendamento."));
+          }
 
-        return Column(
-          children: [
-            for (final (i, p) in _participations.indexed)
-              ParticipationItem(
-                participation: p,
-                confirmAction: () {
-                  setState(() {
-                    _participations[i] = p.copyWith(status: "P");
-                  });
-                },
-                cancelAction: () {
-                  setState(() {
-                    _participations[i] = p.copyWith(status: "A");
-                  });
-                },
+          return Column(
+            children: [
+              for (final (i, p) in _participations.indexed)
+                ParticipationItem(
+                  participation: p,
+                  confirmAction: () {
+                    setState(() {
+                      _participations[i] = p.copyWith(status: "P");
+                    });
+                  },
+                  cancelAction: () {
+                    setState(() {
+                      _participations[i] = p.copyWith(status: "A");
+                    });
+                  },
+                ),
+              const Spacer(),
+              FutureButton(
+                text: "Registrar",
+                primary: true,
+                future: _handleSubmit,
               ),
-            const Spacer(),
-            FutureButton(
-              text: "Registrar",
-              primary: true,
-              future: _handleSubmit,
-            ),
-          ],
-        );
-      }),
+            ],
+          );
+        }),
+      ),
     );
   }
 }
