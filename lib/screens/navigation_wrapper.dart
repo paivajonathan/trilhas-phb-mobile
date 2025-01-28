@@ -26,7 +26,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
   int _selectedIndex = 0;
   late List<Widget> _screens;
 
-  final _roleScreens = const {
+  final _roleScreens = {
     UserType.administrator: [
       administrator.ExploreScreen(),
       administrator.ChatScreen(),
