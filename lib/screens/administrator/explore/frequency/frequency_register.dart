@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/models/participation.dart';
 import 'package:trilhas_phb/services/participation.dart';
 import 'package:trilhas_phb/widgets/future_button.dart';
 import 'package:trilhas_phb/widgets/loader.dart';
 import 'package:trilhas_phb/widgets/participation_item.dart';
+import 'package:trilhas_phb/widgets/title_quantity_trait.dart';
 
 class FrequencyRegisterScreen extends StatefulWidget {
   const FrequencyRegisterScreen({super.key, required this.appointment});
@@ -39,7 +41,8 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
     } catch (e) {
       setState(() {
         _participations = [];
-        _areParticipationsLoadingError = e.toString().replaceAll("Exception: ", "");
+        _areParticipationsLoadingError =
+            e.toString().replaceAll("Exception: ", "");
       });
     } finally {
       setState(() {
@@ -61,8 +64,9 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
 
     try {
       await _participationService.makeFrequency(
-          appointmentId: widget.appointment.id,
-          participations: _participations);
+        appointmentId: widget.appointment.id,
+        participations: _participations,
+      );
 
       if (!mounted) {
         return;
@@ -114,46 +118,90 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
             Navigator.pop(context);
           },
         ),
+        centerTitle: true,
+        title: const Text(
+          "Frequência",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.black.withOpacity(.25),
+            height: 1.0,
+          ),
+        ),
       ),
-      body: Builder(builder: (context) {
-        if (_areParticipationsLoading) {
-          return const Loader();
-        }
+      body: Padding(
+        padding: const EdgeInsets.all(25),
+        child: Builder(builder: (context) {
+          if (_areParticipationsLoading) {
+            return const Loader();
+          }
 
-        if (_areParticipationsLoadingError != null) {
-          return Center(child: Text(_areParticipationsLoadingError!));
-        }
-
-        if (_participations.isEmpty) {
-          return const Center(
-              child: Text("Não há participações para esse agendamento."));
-        }
-
-        return Column(
-          children: [
-            for (final (i, p) in _participations.indexed)
-              ParticipationItem(
-                participation: p,
-                confirmAction: () {
-                  setState(() {
-                    _participations[i] = p.copyWith(status: "P");
-                  });
-                },
-                cancelAction: () {
-                  setState(() {
-                    _participations[i] = p.copyWith(status: "A");
-                  });
-                },
+          if (_areParticipationsLoadingError != null) {
+            return Center(
+              child: Text(
+                _areParticipationsLoadingError!,
               ),
-            const Spacer(),
-            FutureButton(
-              text: "Registrar",
-              primary: true,
-              future: _handleSubmit,
-            ),
-          ],
-        );
-      }),
+            );
+          }
+
+          if (_participations.isEmpty) {
+            return const Center(
+              child: Text(
+                "Não há participações para esse agendamento.",
+              ),
+            );
+          }
+
+          return Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TitleQuantityTrait(
+                    color: AppColors.primary,
+                    number: _participations
+                        .where((p) => p.status == "P")
+                        .toList()
+                        .length,
+                    title: "Presentes",
+                  ),
+                  TitleQuantityTrait(
+                    color: Colors.red,
+                    number: _participations
+                        .where((p) => p.status == "A")
+                        .toList()
+                        .length,
+                    title: "Ausentes",
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20,),
+              for (final (i, p) in _participations.indexed)
+                ParticipationItem(
+                  participation: p,
+                  confirmAction: () {
+                    setState(() {
+                      _participations[i] = p.copyWith(status: "P");
+                    });
+                  },
+                  cancelAction: () {
+                    setState(() {
+                      _participations[i] = p.copyWith(status: "A");
+                    });
+                  },
+                ),
+              const Spacer(),
+              FutureButton(
+                text: "Salvar",
+                primary: true,
+                future: _handleSubmit,
+              ),
+            ],
+          );
+        }),
+      ),
     );
   }
 }
