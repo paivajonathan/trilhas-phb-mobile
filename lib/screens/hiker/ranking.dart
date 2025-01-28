@@ -12,36 +12,55 @@ class _RankingScreenState extends State<RankingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tabela de Classificação'),
-      ),
-      body: FutureBuilder<List<UserProfileModel>>(
-        future: _userService.fetchUsers(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          
-          if (snapshot.hasError) {
-            return Center(child: Text('Erro ao carregar dados: ${snapshot.error!.toString().replaceAll("Exception: ", "")}'));
-          }
-
-          final users = snapshot.data ?? [];
-
-          if (users.isEmpty) {
-            return const Center(child: Text('Nenhum usuário encontrado.'));
-          }
-
-          return ListView.builder(
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              final user = users[index];
-              final rank = index + 1; // Posição no ranking
-              return RankingListItem(user: user, rank: rank);
-            },
-          );
-        },
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {});
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            centerTitle: true,
+            title: const Text(
+              "Tabela de Classificação",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(1.0),
+              child: Container(
+                color: Colors.black.withOpacity(.25),
+                height: 1.0,
+              ),
+            ),
+          ),
+        body: FutureBuilder<List<UserProfileModel>>(
+          future: _userService.fetchUsers(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            
+            if (snapshot.hasError) {
+              return Center(child: Text('Erro ao carregar dados: ${snapshot.error!.toString().replaceAll("Exception: ", "")}'));
+            }
+      
+            final users = snapshot.data ?? [];
+      
+            if (users.isEmpty) {
+              return const Center(child: Text('Nenhum usuário encontrado.'));
+            }
+      
+            return ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final user = users[index];
+                final rank = index + 1; // Posição no ranking
+                return RankingListItem(user: user, rank: rank);
+              },
+            );
+          },
+        ),
       ),
     );
   }

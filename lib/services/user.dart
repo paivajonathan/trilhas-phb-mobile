@@ -9,10 +9,26 @@ class UserService {
   final String _baseUrl = dotenv.env["BASE_URL"]!;
   final _auth = AuthService();
 
-  Future<List<UserProfileModel>> fetchUsers() async {
+  Future<List<UserProfileModel>> fetchUsers({
+    bool? isAccepted,
+    bool orderByName = true,
+    bool orderAsc = true,
+  }) async {
     String token = await _auth.token;
 
-    final uri = Uri.parse("$_baseUrl/api/v1/users/");
+    final params = {
+      "is_active": true.toString(),
+    };
+
+    if (isAccepted != null) params["is_accepted"] = isAccepted.toString();
+
+    if (orderByName) {
+      params["ordering"] = "${orderAsc ? "" : "-"}profile_customuser_user__full_name";
+    } else {
+      params["ordering"] = "${orderAsc ? "" : "-"}profile_customuser_user__stars";
+    }
+
+    final uri = Uri.parse("$_baseUrl/api/v1/users/").replace(queryParameters: params);
 
     final headers = {
       'Content-Type': 'application/json',
