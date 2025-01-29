@@ -6,13 +6,14 @@ class ParticipationItem extends StatelessWidget {
   const ParticipationItem({
     super.key,
     required this.participation,
-    required this.confirmAction,
-    required this.cancelAction,
-  });
+    this.confirmAction,
+    this.cancelAction,
+  }) : assert((confirmAction == null && cancelAction == null) ||
+            (confirmAction != null && cancelAction != null));
 
   final ParticipationModel participation;
-  final void Function() confirmAction;
-  final void Function() cancelAction;
+  final void Function()? confirmAction;
+  final void Function()? cancelAction;
 
   @override
   Widget build(BuildContext context) {
@@ -26,24 +27,27 @@ class ParticipationItem extends StatelessWidget {
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          IconButton(
-            padding: EdgeInsets.zero,
-            icon: const Icon(Icons.check_circle, size: 35),
-            onPressed: confirmAction,
-            color:
-                participation.status == "P" ? AppColors.primary : Colors.grey,
-          ),
-          IconButton(
-            padding: EdgeInsets.zero,
-            icon: const Icon(Icons.cancel, size: 35),
-            onPressed: cancelAction,
-            color: participation.status == "A" ? Colors.red : Colors.grey,
-          ),
-        ],
-      ),
+      trailing: confirmAction == null && cancelAction == null
+          ? null
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: const Icon(Icons.check_circle, size: 35),
+                  onPressed: confirmAction,
+                  color: participation.status == "P"
+                      ? AppColors.primary
+                      : Colors.grey,
+                ),
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: const Icon(Icons.cancel, size: 35),
+                  onPressed: cancelAction,
+                  color: participation.status == "A" ? Colors.red : Colors.grey,
+                ),
+              ],
+            ),
     );
   }
 }
