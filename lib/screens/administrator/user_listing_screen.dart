@@ -22,6 +22,9 @@ class ListaUsuariosScreen extends StatefulWidget {
 }
 
 class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
+  bool _isUsariosCadastradosSelected = true;
+  bool _isUsuariosSolicitadosSelected = false;
+
   List<Map<String, dynamic>> usuarios = [
     {'id': 1, 'nome': 'Usuário A', 'estrelas': 8},
     {'id': 2, 'nome': 'Usuário B', 'estrelas': 3},
@@ -69,6 +72,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
             leading: Radio(
               value: 'nome',
               groupValue: criterioOrdenacao,
+              activeColor:Colors.green,
               onChanged: (value) {
                 setState(() {
                   criterioOrdenacao = value as String;
@@ -87,6 +91,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
             leading: Radio(
               value: 'estrelas',
               groupValue: criterioOrdenacao,
+              activeColor: Colors.green,
               onChanged: (value) {
                 setState(() {
                   criterioOrdenacao = value as String;
@@ -112,6 +117,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
             leading: Radio(
               value: true,
               groupValue: crescente,
+              activeColor: Colors.green,
               onChanged: (value) {
                 setState(() {
                   crescente = value as bool;
@@ -130,6 +136,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
             leading: Radio(
               value: false,
               groupValue: crescente,
+              activeColor: Colors.green,
               onChanged: (value) {
                 setState(() {
                   crescente = value as bool;
@@ -172,34 +179,59 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {},
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(100, 40),
+                            side: BorderSide(
+                              color: _isUsariosCadastradosSelected
+                                  ? Colors.white
+                                  : const Color.fromARGB(255, 3, 204, 107),
+                              width: 2,
+                            ),
+                            backgroundColor: _isUsariosCadastradosSelected
+                                ? const Color.fromARGB(255, 3, 204, 107)
+                                : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                    onPressed: () {
+                      setState(() {
+                        _isUsariosCadastradosSelected = !_isUsariosCadastradosSelected;
+                        _isUsuariosSolicitadosSelected = false;
+                      });
+                    },
                     child: Text('USUÁRIOS CADASTRADOS',
-                    style: GoogleFonts.inter()
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                    style: GoogleFonts.inter(fontSize: 13)
                     ),
                   ),
                 ),
                 SizedBox(width: 10),
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {},
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                            minimumSize: const Size(100, 40),
+                            side: BorderSide(
+                              color: _isUsuariosSolicitadosSelected
+                                  ? Colors.white
+                                  : const Color.fromARGB(255, 3, 204, 107),
+                              width: 2,
+                            ),
+                            backgroundColor: _isUsuariosSolicitadosSelected
+                                ? const Color.fromARGB(255, 3, 204, 107)
+                                : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                    onPressed: () {
+                      setState(() {
+                        _isUsuariosSolicitadosSelected = !_isUsuariosSolicitadosSelected;
+                        _isUsariosCadastradosSelected = false;
+                      });
+                    },
                     child: Text('SOLICITAÇÕES',
-                    style: GoogleFonts.inter()
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: BorderSide(color: Colors.green),
-                      ),
+                    style: GoogleFonts.inter(fontSize: 13)
                     ),
                   ),
                 ),
