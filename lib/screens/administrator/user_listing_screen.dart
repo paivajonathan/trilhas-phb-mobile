@@ -169,14 +169,6 @@ class _UsuariosSolicitadosScreenState extends State<UsuariosSolicitadosScreen> {
           ? Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                // Botão de filtro para solicitações (opcional, você pode adicionar na AppBar ou onde preferir)
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: IconButton(
-                    icon: Icon(Icons.filter_list, color: Colors.green),
-                    onPressed: () => mostrarFiltroSolicitados(context),
-                  ),
-                ),
                 Expanded(
                   child: ListView.builder(
                     itemCount: usuariosSolicitados.length,
@@ -429,11 +421,6 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                         _isUsuariosSolicitadosSelected = true;
                         _isUsariosCadastradosSelected = false;
                       });
-                      // Carrega os usuários solicitados via service:
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => UsuariosSolicitadosScreen()),
-                      );
                     },
                     child: Text(
                       'SOLICITAÇÕES',
