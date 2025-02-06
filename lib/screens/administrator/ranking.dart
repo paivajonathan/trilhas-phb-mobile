@@ -1,15 +1,13 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
+import 'package:trilhas_phb/screens/administrator/user_listing_screen.dart'; // ajuste o caminho conforme necessário
 
 class RankingScreen extends StatelessWidget {
-  const RankingScreen({super.key});
+  const RankingScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        "Classificação",
-        style: TextStyle(fontSize: 35),
-      ),
+    return Scaffold(
+      body:ListaUsuariosScreen(),
     );
   }
 }

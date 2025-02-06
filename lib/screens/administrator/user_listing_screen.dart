@@ -30,51 +30,188 @@ class UsuariosSolicitadosScreen extends StatefulWidget {
 }
 
 class _UsuariosSolicitadosScreenState extends State<UsuariosSolicitadosScreen> {
-  // Para a aba "Solicitações", mantemos a estrutura pré-definida
-  List<Map<String, dynamic>> usuariosSolicitados = [
-    {'id': 2, 'nome': 'Usuário B'},
-    {'id': 4, 'nome': 'Usuário D'},
-    {'id': 8, 'nome': 'Usuário H'},
-  ];
-
+  // Para a aba "SOLICITAÇÕES", vamos buscar os usuários solicitados via service
+  List<UserProfileModel> usuariosSolicitados = [];
+  bool _isLoadingSolicitados = true;
+  
   String criterioOrdenacao = 'nome';
   bool crescente = true;
 
-  void ordenarLista() {
-    setState(() {
-      usuariosSolicitados.sort((a, b) {
-        var valorA = a[criterioOrdenacao];
-        var valorB = b[criterioOrdenacao];
-        return crescente ? valorA.compareTo(valorB) : valorB.compareTo(valorA);
+  void carregarUsuariosSolicitados() async {
+    try {
+      UserService service = UserService();
+      // Para solicitações, usamos isAccepted: false (ou o valor correspondente à solicitação)
+      List<UserProfileModel> fetchedUsers = await service.fetchUsers(
+        isAccepted: false,
+        orderByName: (criterioOrdenacao == 'nome'),
+        orderAsc: crescente,
+      );
+      setState(() {
+        usuariosSolicitados = fetchedUsers;
+        _isLoadingSolicitados = false;
       });
+    } catch (e) {
+      setState(() {
+        _isLoadingSolicitados = false;
+      });
+      print("Erro ao buscar usuários solicitados: $e");
+    }
+  }
+
+  // Atualiza a ordenação (recarrega os dados do service)
+  void atualizarOrdenacaoSolicitados() {
+    setState(() {
+      _isLoadingSolicitados = true;
     });
+    carregarUsuariosSolicitados();
+  }
+
+  // Filtro para a aba de solicitações
+  void mostrarFiltroSolicitados(BuildContext context) {
+    showMenu<dynamic>(
+      context: context,
+      position: RelativeRect.fromLTRB(100, 80, 0, 0),
+      items: <PopupMenuEntry<dynamic>>[
+        PopupMenuItem(
+          child: Text(
+            'Classificar por:',
+            style: GoogleFonts.inter(color: Colors.green),
+          ),
+          enabled: false,
+        ),
+        PopupMenuItem(
+          child: ListTile(
+            title: Text('Nome', style: GoogleFonts.inter()),
+            leading: Radio(
+              value: 'nome',
+              groupValue: criterioOrdenacao,
+              activeColor: Colors.green,
+              onChanged: (value) {
+                setState(() {
+                  criterioOrdenacao = value as String;
+                });
+                Navigator.pop(context);
+                atualizarOrdenacaoSolicitados();
+              },
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          child: ListTile(
+            title: Text('Estrela', style: GoogleFonts.inter()),
+            leading: Radio(
+              value: 'estrelas',
+              groupValue: criterioOrdenacao,
+              activeColor: Colors.green,
+              onChanged: (value) {
+                setState(() {
+                  criterioOrdenacao = value as String;
+                });
+                Navigator.pop(context);
+                atualizarOrdenacaoSolicitados();
+              },
+            ),
+          ),
+        ),
+        PopupMenuDivider(),
+        PopupMenuItem(
+          child: Text('Ordenar de forma:', style: GoogleFonts.inter(color: Colors.green)),
+          enabled: false,
+        ),
+        PopupMenuItem(
+          child: ListTile(
+            title: Text('Crescente', style: GoogleFonts.inter()),
+            leading: Radio(
+              value: true,
+              groupValue: crescente,
+              activeColor: Colors.green,
+              onChanged: (value) {
+                setState(() {
+                  crescente = value as bool;
+                });
+                Navigator.pop(context);
+                atualizarOrdenacaoSolicitados();
+              },
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          child: ListTile(
+            title: Text('Decrescente', style: GoogleFonts.inter()),
+            leading: Radio(
+              value: false,
+              groupValue: crescente,
+              activeColor: Colors.green,
+              onChanged: (value) {
+                setState(() {
+                  crescente = value as bool;
+                });
+                Navigator.pop(context);
+                atualizarOrdenacaoSolicitados();
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    carregarUsuariosSolicitados();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: usuariosSolicitados.length,
-      itemBuilder: (context, index) {
-        final usuario = usuariosSolicitados[index];
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundColor: Colors.grey[300],
-            child: Icon(Icons.person, color: Colors.green),
-          ),
-          title: Text(usuario['nome'],
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          trailing: OutlinedButton(
-            onPressed: () {},
-            child: Text('Detalhes', style: GoogleFonts.inter()),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.green,
-              side: BorderSide(color: Colors.green),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+    return Scaffold(
+      body:  _isLoadingSolicitados
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                // Botão de filtro para solicitações (opcional, você pode adicionar na AppBar ou onde preferir)
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: IconButton(
+                    icon: Icon(Icons.filter_list, color: Colors.green),
+                    onPressed: () => mostrarFiltroSolicitados(context),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: usuariosSolicitados.length,
+                    itemBuilder: (context, index) {
+                      final usuario = usuariosSolicitados[index];
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.grey[300],
+                          child: Icon(Icons.person, color: Colors.green),
+                        ),
+                        title: Text(usuario.profileFullName,
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Row(
+                          children: [
+                            Icon(FontAwesomeIcons.solidStar, color: Colors.green, size: 16),
+                            SizedBox(width: 4),
+                            Text('${usuario.profileStars}'),
+                          ],
+                        ),
+                        trailing: OutlinedButton(
+                          onPressed: () {},
+                          child: Text('Detalhes', style: GoogleFonts.inter()),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.green,
+                            side: BorderSide(color: Colors.green),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-        );
-      },
     );
   }
 }
@@ -83,21 +220,18 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
   bool _isUsariosCadastradosSelected = true;
   bool _isUsuariosSolicitadosSelected = false;
 
-  // Lista de usuários reais (obtida do service)
+  // Lista de usuários reais (obtida do service) para a aba de cadastrados
   List<UserProfileModel> usuarios = [];
   bool _isLoading = true;
 
   // Parâmetros para ordenação
-  // "nome" indica que a ordenação será por nome; caso contrário, por estrelas
   String criterioOrdenacao = 'nome';
   bool crescente = true;
 
-  // Carrega os usuários chamando o service com os parâmetros de ordenação desejados.
+  // Carrega os usuários cadastrados do service
   void carregarUsuarios() async {
     try {
       UserService service = UserService();
-      // Chama o serviço com os parâmetros:
-      // Se ordenar por nome, orderByName será true; caso contrário, false.
       List<UserProfileModel> fetchedUsers = await service.fetchUsers(
         isAccepted: true,
         orderByName: (criterioOrdenacao == 'nome'),
@@ -115,7 +249,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
     }
   }
 
-  // Ao alterar os filtros, chamamos novamente o service com os novos parâmetros.
+  // Atualiza a ordenação para cadastrados (recarrega os dados)
   void atualizarOrdenacao() {
     setState(() {
       _isLoading = true;
@@ -123,7 +257,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
     carregarUsuarios();
   }
 
-  // Filtro (menu pop-up) que chama a atualização via service
+  // Filtro (menu pop-up) para usuários cadastrados
   void mostrarFiltro(BuildContext context, bool isUsuariosCadastrados) {
     showMenu<dynamic>(
       context: context,
@@ -139,10 +273,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
         // Filtro de Nome sempre disponível
         PopupMenuItem(
           child: ListTile(
-            title: Text(
-              'Nome',
-              style: GoogleFonts.inter(),
-            ),
+            title: Text('Nome', style: GoogleFonts.inter()),
             leading: Radio(
               value: 'nome',
               groupValue: criterioOrdenacao,
@@ -158,42 +289,32 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
           ),
         ),
         // Filtro de Estrela disponível apenas para usuários cadastrados
-        if (isUsuariosCadastrados)
-          PopupMenuItem(
-            child: ListTile(
-              title: Text(
-                'Estrela',
-                style: GoogleFonts.inter(),
-              ),
-              leading: Radio(
-                value: 'estrelas',
-                groupValue: criterioOrdenacao,
-                activeColor: Colors.green,
-                onChanged: (value) {
-                  setState(() {
-                    criterioOrdenacao = value as String;
-                  });
-                  Navigator.pop(context);
-                  atualizarOrdenacao();
-                },
-              ),
+        PopupMenuItem(
+          child: ListTile(
+            title: Text('Estrela', style: GoogleFonts.inter()),
+            leading: Radio(
+              value: 'estrelas',
+              groupValue: criterioOrdenacao,
+              activeColor: Colors.green,
+              onChanged: (value) {
+                setState(() {
+                  criterioOrdenacao = value as String;
+                });
+                Navigator.pop(context);
+                atualizarOrdenacao();
+              },
             ),
           ),
+        ),
         PopupMenuDivider(),
         PopupMenuItem(
-          child: Text(
-            'Ordenar de forma:',
-            style: GoogleFonts.inter(color: Colors.green),
-          ),
+          child: Text('Ordenar de forma:', style: GoogleFonts.inter(color: Colors.green)),
           enabled: false,
         ),
         // Ordenação Crescente
         PopupMenuItem(
           child: ListTile(
-            title: Text(
-              'Crescente',
-              style: GoogleFonts.inter(),
-            ),
+            title: Text('Crescente', style: GoogleFonts.inter()),
             leading: Radio(
               value: true,
               groupValue: crescente,
@@ -211,10 +332,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
         // Ordenação Decrescente
         PopupMenuItem(
           child: ListTile(
-            title: Text(
-              'Decrescente',
-              style: GoogleFonts.inter(),
-            ),
+            title: Text('Decrescente', style: GoogleFonts.inter()),
             leading: Radio(
               value: false,
               groupValue: crescente,
@@ -254,7 +372,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
           IconButton(
               icon: Icon(Icons.filter_list, color: Colors.green),
               onPressed: () {
-                // Exibe o menu de filtro
+                // Exibe o menu de filtro para cadastrados
                 mostrarFiltro(context, _isUsariosCadastradosSelected);
               }),
         ],
@@ -271,14 +389,10 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size(100, 40),
                       side: BorderSide(
-                        color: _isUsariosCadastradosSelected
-                            ? Colors.white
-                            : const Color.fromARGB(255, 3, 204, 107),
+                        color: _isUsariosCadastradosSelected ? Colors.white : const Color.fromARGB(255, 3, 204, 107),
                         width: 2,
                       ),
-                      backgroundColor: _isUsariosCadastradosSelected
-                          ? const Color.fromARGB(255, 3, 204, 107)
-                          : Colors.white,
+                      backgroundColor: _isUsariosCadastradosSelected ? const Color.fromARGB(255, 3, 204, 107) : Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -292,10 +406,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                     },
                     child: Text(
                       'USUÁRIOS CADASTRADOS',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: _isUsariosCadastradosSelected ? Colors.white : Colors.green,
-                      ),
+                      style: GoogleFonts.inter(fontSize: 13, color: _isUsariosCadastradosSelected ? Colors.white : Colors.green),
                     ),
                   ),
                 ),
@@ -305,14 +416,10 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size(100, 40),
                       side: BorderSide(
-                        color: _isUsuariosSolicitadosSelected
-                            ? Colors.white
-                            : const Color.fromARGB(255, 3, 204, 107),
+                        color: _isUsuariosSolicitadosSelected ? Colors.white : const Color.fromARGB(255, 3, 204, 107),
                         width: 2,
                       ),
-                      backgroundColor: _isUsuariosSolicitadosSelected
-                          ? const Color.fromARGB(255, 3, 204, 107)
-                          : Colors.white,
+                      backgroundColor: _isUsuariosSolicitadosSelected ? const Color.fromARGB(255, 3, 204, 107) : Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -322,13 +429,15 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                         _isUsuariosSolicitadosSelected = true;
                         _isUsariosCadastradosSelected = false;
                       });
+                      // Carrega os usuários solicitados via service:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => UsuariosSolicitadosScreen()),
+                      );
                     },
                     child: Text(
                       'SOLICITAÇÕES',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: _isUsuariosSolicitadosSelected ? Colors.white : Colors.green,
-                      ),
+                      style: GoogleFonts.inter(fontSize: 13, color: _isUsuariosSolicitadosSelected ? Colors.white : Colors.green),
                     ),
                   ),
                 ),
@@ -352,8 +461,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             subtitle: Row(
                               children: [
-                                Icon(FontAwesomeIcons.solidStar,
-                                    color: Colors.green, size: 16),
+                                Icon(FontAwesomeIcons.solidStar, color: Colors.green, size: 16),
                                 SizedBox(width: 4),
                                 Text('${usuario.profileStars}'),
                               ],
@@ -364,8 +472,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: Colors.green,
                                 side: BorderSide(color: Colors.green),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                               ),
                             ),
                           );
