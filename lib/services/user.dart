@@ -61,4 +61,13 @@ class UserService {
       throw Exception('Erro inesperado: $e');
     }
   }
+
+  Future<List<UserProfileModel>> fetchLoggedUsers() async { //Registered users
+    return await fetchUsers(isAccepted: true);
+  }
+
+  Future<List<UserProfileModel>> fetchSolicitedUsers() async { //Solicited users
+  return await fetchUsers(isAccepted: false);
+}
+
 }

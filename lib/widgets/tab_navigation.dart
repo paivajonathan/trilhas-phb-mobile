@@ -26,7 +26,7 @@ class _TabsNavigationState extends State<TabNavigation> {
         unselectedLabelColor: AppColors.primary,
         indicatorSize: TabBarIndicatorSize.tab,
         tabAlignment: TabAlignment.center,
-        indicatorAnimation: TabIndicatorAnimation.elastic,
+        
         isScrollable: true,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         labelColor: Colors.white,
@@ -44,4 +44,8 @@ class _TabsNavigationState extends State<TabNavigation> {
       ),
     );
   }
+}
+
+class TabIndicatorAnimation {
+  static var elastic;
 }
