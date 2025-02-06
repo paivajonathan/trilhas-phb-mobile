@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/screens/administrator/explore/edit/appointment/appointment_edit.dart';
+import 'package:trilhas_phb/screens/administrator/explore/edit/appointment/participation_view.dart';
 import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/alert_dialog.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
@@ -53,6 +54,16 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
             Navigator.of(context).pop(wasEdited);
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.remove_red_eye),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                return ParticipationViewScreen(appointmentId: widget.appointmentId);
+              }));
+            },
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: _appointmentService.getOne(appointmentId: widget.appointmentId),
