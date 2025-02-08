@@ -490,9 +490,6 @@ class UserListTile extends StatelessWidget {
         user.profileFullName,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
       ),
       subtitle: Row(
         children: [

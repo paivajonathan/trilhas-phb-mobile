@@ -27,9 +27,6 @@ class ParticipationItem extends StatelessWidget {
         participation.profileName,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
       ),
       trailing: confirmAction == null && cancelAction == null
           ? null
