@@ -1,266 +1,119 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:trilhas_phb/services/user.dart';         // Serviço de usuários
-import 'package:trilhas_phb/models/user_data.dart';       // Modelo UserProfileModel
+import 'package:trilhas_phb/constants/app_colors.dart';
+import 'package:trilhas_phb/services/user.dart'; // Serviço de usuários
+import 'package:trilhas_phb/models/user_data.dart';
+import 'package:trilhas_phb/widgets/loader.dart'; // Modelo UserProfileModel
 
-void main() {
-  runApp(MyApp());
-}
+class UserListingScreen extends StatefulWidget {
+  const UserListingScreen({super.key});
 
-class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ListaUsuariosScreen(),
-    );
-  }
+  State<UserListingScreen> createState() => _UserListingScreenState();
 }
 
-class ListaUsuariosScreen extends StatefulWidget {
-  @override
-  _ListaUsuariosScreenState createState() => _ListaUsuariosScreenState();
-}
+class _UserListingScreenState extends State<UserListingScreen> {
+  bool _isUsariosCadastradosSelected = true;
+  bool _isUsuariosSolicitadosSelected = false;
 
-class UsuariosSolicitadosScreen extends StatefulWidget {
-  @override
-  _UsuariosSolicitadosScreenState createState() =>
-      _UsuariosSolicitadosScreenState();
-}
-
-class _UsuariosSolicitadosScreenState extends State<UsuariosSolicitadosScreen> {
-  // Para a aba "SOLICITAÇÕES", vamos buscar os usuários solicitados via service
-  List<UserProfileModel> usuariosSolicitados = [];
-  bool _isLoadingSolicitados = true;
-  
   String criterioOrdenacao = 'nome';
   bool crescente = true;
 
-  void carregarUsuariosSolicitados() async {
-    try {
-      UserService service = UserService();
-      // Para solicitações, usamos isAccepted: false (ou o valor correspondente à solicitação)
-      List<UserProfileModel> fetchedUsers = await service.fetchUsers(
-        isAccepted: false,
-        orderByName: (criterioOrdenacao == 'nome'),
-        orderAsc: crescente,
-      );
-      setState(() {
-        usuariosSolicitados = fetchedUsers;
-        _isLoadingSolicitados = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoadingSolicitados = false;
-      });
-      print("Erro ao buscar usuários solicitados: $e");
-    }
-  }
+  List<UserProfileModel> _registeredUsers = [];
+  bool _isRegisteredUsersLoading = false;
+  String? _isRegisteredUsersLoadingError;
 
-  // Atualiza a ordenação (recarrega os dados do service)
-  void atualizarOrdenacaoSolicitados() {
-    setState(() {
-      _isLoadingSolicitados = true;
-    });
-    carregarUsuariosSolicitados();
-  }
+  List<UserProfileModel> _solicitationUsers = [];
+  bool _isSolicitationUsersLoading = false;
+  String? _isSolicitationUsersLoadingError;
 
-  // Filtro para a aba de solicitações
-  void mostrarFiltroSolicitados(BuildContext context) {
-    showMenu<dynamic>(
-      context: context,
-      position: RelativeRect.fromLTRB(100, 80, 0, 0),
-      items: <PopupMenuEntry<dynamic>>[
-        PopupMenuItem(
-          child: Text(
-            'Classificar por:',
-            style: GoogleFonts.inter(color: Colors.green),
-          ),
-          enabled: false,
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Nome', style: GoogleFonts.inter()),
-            leading: Radio(
-              value: 'nome',
-              groupValue: criterioOrdenacao,
-              activeColor: Colors.green,
-              onChanged: (value) {
-                setState(() {
-                  criterioOrdenacao = value as String;
-                });
-                Navigator.pop(context);
-                atualizarOrdenacaoSolicitados();
-              },
-            ),
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Estrela', style: GoogleFonts.inter()),
-            leading: Radio(
-              value: 'estrelas',
-              groupValue: criterioOrdenacao,
-              activeColor: Colors.green,
-              onChanged: (value) {
-                setState(() {
-                  criterioOrdenacao = value as String;
-                });
-                Navigator.pop(context);
-                atualizarOrdenacaoSolicitados();
-              },
-            ),
-          ),
-        ),
-        PopupMenuDivider(),
-        PopupMenuItem(
-          child: Text('Ordenar de forma:', style: GoogleFonts.inter(color: Colors.green)),
-          enabled: false,
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Crescente', style: GoogleFonts.inter()),
-            leading: Radio(
-              value: true,
-              groupValue: crescente,
-              activeColor: Colors.green,
-              onChanged: (value) {
-                setState(() {
-                  crescente = value as bool;
-                });
-                Navigator.pop(context);
-                atualizarOrdenacaoSolicitados();
-              },
-            ),
-          ),
-        ),
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Decrescente', style: GoogleFonts.inter()),
-            leading: Radio(
-              value: false,
-              groupValue: crescente,
-              activeColor: Colors.green,
-              onChanged: (value) {
-                setState(() {
-                  crescente = value as bool;
-                });
-                Navigator.pop(context);
-                atualizarOrdenacaoSolicitados();
-              },
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  final _userService = UserService();
 
   @override
   void initState() {
     super.initState();
-    carregarUsuariosSolicitados();
+    _loadData();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body:  _isLoadingSolicitados
-          ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: usuariosSolicitados.length,
-                    itemBuilder: (context, index) {
-                      final usuario = usuariosSolicitados[index];
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.grey[300],
-                          child: Icon(Icons.person, color: Colors.green),
-                        ),
-                        title: Text(usuario.profileFullName,
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Row(
-                          children: [
-                            Icon(FontAwesomeIcons.solidStar, color: Colors.green, size: 16),
-                            SizedBox(width: 4),
-                            Text('${usuario.profileStars}'),
-                          ],
-                        ),
-                        trailing: OutlinedButton(
-                          onPressed: () {},
-                          child: Text('Detalhes', style: GoogleFonts.inter()),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.green,
-                            side: BorderSide(color: Colors.green),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-    );
+  void setState(VoidCallback fn) {
+    if (!mounted) return;
+    super.setState(fn);
   }
-}
 
-class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
-  bool _isUsariosCadastradosSelected = true;
-  bool _isUsuariosSolicitadosSelected = false;
+  void _loadData() {
+    Future.wait([
+      _loadSolicitationUsers(),
+      _loadRegisteredUsers(),
+    ]);
+  }
 
-  // Lista de usuários reais (obtida do service) para a aba de cadastrados
-  List<UserProfileModel> usuarios = [];
-  bool _isLoading = true;
-
-  // Parâmetros para ordenação
-  String criterioOrdenacao = 'nome';
-  bool crescente = true;
-
-  // Carrega os usuários cadastrados do service
-  void carregarUsuarios() async {
+  Future<void> _loadSolicitationUsers() async {
     try {
-      UserService service = UserService();
-      List<UserProfileModel> fetchedUsers = await service.fetchUsers(
+      setState(() {
+        _isSolicitationUsersLoading = true;
+      });
+
+      List<UserProfileModel> fetchedUsers = await _userService.fetchUsers(
+        isAccepted: false,
+        orderByName: (criterioOrdenacao == 'nome'),
+        orderAsc: crescente,
+      );
+   
+      setState(() {
+        _solicitationUsers = fetchedUsers;
+        _isSolicitationUsersLoadingError = null;
+      });
+    } catch (e) {
+      setState(() {
+        _isSolicitationUsersLoadingError =
+            e.toString().replaceAll("Exception: ", "");
+      });
+    } finally {
+      setState(() {
+        _isSolicitationUsersLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadRegisteredUsers() async {
+    try {
+      setState(() {
+        _isRegisteredUsersLoading = true;
+      });
+      List<UserProfileModel> fetchedUsers = await _userService.fetchUsers(
         isAccepted: true,
         orderByName: (criterioOrdenacao == 'nome'),
         orderAsc: crescente,
       );
       setState(() {
-        usuarios = fetchedUsers;
-        _isLoading = false;
+        _registeredUsers = fetchedUsers;
+        _isRegisteredUsersLoadingError = null;
       });
     } catch (e) {
       setState(() {
-        _isLoading = false;
+        _isRegisteredUsersLoadingError =
+            e.toString().replaceAll("Exception: ", "");
       });
-      print("Erro ao buscar usuários: $e");
+    } finally {
+      setState(() {
+        _isRegisteredUsersLoading = false;
+      });
     }
   }
 
-  // Atualiza a ordenação para cadastrados (recarrega os dados)
-  void atualizarOrdenacao() {
-    setState(() {
-      _isLoading = true;
-    });
-    carregarUsuarios();
-  }
-
-  // Filtro (menu pop-up) para usuários cadastrados
-  void mostrarFiltro(BuildContext context, bool isUsuariosCadastrados) {
+  void mostrarFiltro(BuildContext context) {
     showMenu<dynamic>(
       context: context,
-      position: RelativeRect.fromLTRB(100, 80, 0, 0),
+      position: const RelativeRect.fromLTRB(100, 80, 0, 0),
       items: <PopupMenuEntry<dynamic>>[
         PopupMenuItem(
+          enabled: false,
           child: Text(
             'Classificar por:',
             style: GoogleFonts.inter(color: Colors.green),
           ),
-          enabled: false,
         ),
         // Filtro de Nome sempre disponível
         PopupMenuItem(
@@ -275,7 +128,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                   criterioOrdenacao = value as String;
                 });
                 Navigator.pop(context);
-                atualizarOrdenacao();
+                _loadData();
               },
             ),
           ),
@@ -293,15 +146,16 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                   criterioOrdenacao = value as String;
                 });
                 Navigator.pop(context);
-                atualizarOrdenacao();
+                _loadData();
               },
             ),
           ),
         ),
-        PopupMenuDivider(),
+        const PopupMenuDivider(),
         PopupMenuItem(
-          child: Text('Ordenar de forma:', style: GoogleFonts.inter(color: Colors.green)),
           enabled: false,
+          child: Text('Ordenar de forma:',
+              style: GoogleFonts.inter(color: Colors.green)),
         ),
         // Ordenação Crescente
         PopupMenuItem(
@@ -316,7 +170,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                   crescente = value as bool;
                 });
                 Navigator.pop(context);
-                atualizarOrdenacao();
+                _loadData();
               },
             ),
           ),
@@ -334,7 +188,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                   crescente = value as bool;
                 });
                 Navigator.pop(context);
-                atualizarOrdenacao();
+                _loadData();
               },
             ),
           ),
@@ -344,130 +198,301 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    carregarUsuarios();
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async {
+        _loadData();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text(
+            'Lista de Usuários',
+            style: GoogleFonts.inter(
+                fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.filter_list, color: Colors.green),
+              onPressed: () {
+                mostrarFiltro(context);
+              },
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            // Botões para alternar entre "USUÁRIOS CADASTRADOS" e "SOLICITAÇÕES"
+            Container(
+              color: Colors.white,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(100, 40),
+                        side: BorderSide(
+                          color: _isUsariosCadastradosSelected
+                              ? Colors.white
+                              : const Color.fromARGB(255, 3, 204, 107),
+                          width: 2,
+                        ),
+                        backgroundColor: _isUsariosCadastradosSelected
+                            ? const Color.fromARGB(255, 3, 204, 107)
+                            : Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isUsariosCadastradosSelected = true;
+                          _isUsuariosSolicitadosSelected = false;
+                        });
+                      },
+                      child: Text(
+                        'CADASTRADOS',
+                        style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: _isUsariosCadastradosSelected
+                                ? Colors.white
+                                : Colors.green),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(100, 40),
+                        side: BorderSide(
+                          color: _isUsuariosSolicitadosSelected
+                              ? Colors.white
+                              : const Color.fromARGB(255, 3, 204, 107),
+                          width: 2,
+                        ),
+                        backgroundColor: _isUsuariosSolicitadosSelected
+                            ? const Color.fromARGB(255, 3, 204, 107)
+                            : Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isUsuariosSolicitadosSelected = true;
+                          _isUsariosCadastradosSelected = false;
+                        });
+                      },
+                      child: Text(
+                        'SOLICITAÇÕES',
+                        style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: _isUsuariosSolicitadosSelected
+                                ? Colors.white
+                                : Colors.green),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Builder(builder: (context) {
+              if (_isUsuariosSolicitadosSelected) {
+                return SolicitationUsersScreen(
+                  solicitationUsers: _solicitationUsers,
+                  isSolicitationUsersLoading: _isSolicitationUsersLoading,
+                  isSolicitationUsersLoadingError:
+                      _isSolicitationUsersLoadingError,
+                  onUpdate: _loadData,
+                );
+              }
+              return RegisteredUsersScreen(
+                registeredUsers: _registeredUsers,
+                isRegisteredUsersLoading: _isRegisteredUsersLoading,
+                isRegisteredUsersLoadingError: _isRegisteredUsersLoadingError,
+                onUpdate: _loadData,
+              );
+            }),
+          ],
+        ),
+      ),
+    );
   }
+}
+
+class RegisteredUsersScreen extends StatelessWidget {
+  const RegisteredUsersScreen({
+    super.key,
+    required this.registeredUsers,
+    required this.isRegisteredUsersLoading,
+    required this.isRegisteredUsersLoadingError,
+    required this.onUpdate,
+  });
+
+  final List<UserProfileModel> registeredUsers;
+  final bool isRegisteredUsersLoading;
+  final String? isRegisteredUsersLoadingError;
+  final void Function() onUpdate;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Lista de Usuários',
-          style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: Colors.black),
+    return Expanded(
+      child: Builder(
+        builder: (context) {
+          if (isRegisteredUsersLoading) {
+            return const Loader();
+          }
+
+          if (isRegisteredUsersLoadingError != null) {
+            return Stack(
+              children: <Widget>[
+                Center(
+                  child: Text(isRegisteredUsersLoadingError!),
+                ),
+                ListView()
+              ],
+            );
+          }
+
+          if (registeredUsers.isEmpty) {
+            return Stack(
+              children: <Widget>[
+                const Center(
+                  child: Text("Os usuários cadastrados aparecerão aqui."),
+                ),
+                ListView()
+              ],
+            );
+          }
+
+          return ListView.builder(
+            itemCount: registeredUsers.length,
+            itemBuilder: (context, index) {
+              final user = registeredUsers[index];
+              return UserListTile(
+                user: user,
+                onPressed: () {},
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class SolicitationUsersScreen extends StatelessWidget {
+  const SolicitationUsersScreen({
+    super.key,
+    required this.solicitationUsers,
+    required this.isSolicitationUsersLoading,
+    required this.isSolicitationUsersLoadingError,
+    required this.onUpdate,
+  });
+
+  final List<UserProfileModel> solicitationUsers;
+  final bool isSolicitationUsersLoading;
+  final String? isSolicitationUsersLoadingError;
+  final void Function() onUpdate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Builder(
+        builder: (context) {
+          if (isSolicitationUsersLoading) {
+            return const Loader();
+          }
+
+          if (isSolicitationUsersLoadingError != null) {
+            return Stack(
+              children: <Widget>[
+                Center(
+                  child: Text(isSolicitationUsersLoadingError!),
+                ),
+                ListView()
+              ],
+            );
+          }
+
+          if (solicitationUsers.isEmpty) {
+            return Stack(
+              children: <Widget>[
+                const Center(
+                  child: Text("Os usuários cadastrados aparecerão aqui."),
+                ),
+                ListView()
+              ],
+            );
+          }
+
+          return ListView.builder(
+            itemCount: solicitationUsers.length,
+            itemBuilder: (context, index) {
+              final user = solicitationUsers[index];
+              return UserListTile(
+                user: user,
+                onPressed: () {},
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class UserListTile extends StatelessWidget {
+  const UserListTile({
+    super.key,
+    required this.user,
+    required this.onPressed,
+  });
+
+  final UserProfileModel user;
+  final void Function() onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: Colors.grey[300],
+        child: const Icon(Icons.person, color: Colors.green),
+      ),
+      title: Text(
+        user.profileFullName,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
         ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-              icon: Icon(Icons.filter_list, color: Colors.green),
-              onPressed: () {
-                // Exibe o menu de filtro para cadastrados
-                mostrarFiltro(context, _isUsariosCadastradosSelected);
-              }),
+      ),
+      subtitle: Row(
+        children: [
+          const Icon(
+            FontAwesomeIcons.solidStar,
+            color: Colors.green,
+            size: 16,
+          ),
+          const SizedBox(width: 4),
+          Text('${user.profileStars}'),
         ],
       ),
-      body: Column(
-        children: [
-          // Botões para alternar entre "USUÁRIOS CADASTRADOS" e "SOLICITAÇÕES"
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(100, 40),
-                      side: BorderSide(
-                        color: _isUsariosCadastradosSelected ? Colors.white : const Color.fromARGB(255, 3, 204, 107),
-                        width: 2,
-                      ),
-                      backgroundColor: _isUsariosCadastradosSelected ? const Color.fromARGB(255, 3, 204, 107) : Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isUsariosCadastradosSelected = true;
-                        _isUsuariosSolicitadosSelected = false;
-                      });
-                      carregarUsuarios(); // Recarrega os usuários do service
-                    },
-                    child: Text(
-                      'USUÁRIOS CADASTRADOS',
-                      style: GoogleFonts.inter(fontSize: 13, color: _isUsariosCadastradosSelected ? Colors.white : Colors.green),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(100, 40),
-                      side: BorderSide(
-                        color: _isUsuariosSolicitadosSelected ? Colors.white : const Color.fromARGB(255, 3, 204, 107),
-                        width: 2,
-                      ),
-                      backgroundColor: _isUsuariosSolicitadosSelected ? const Color.fromARGB(255, 3, 204, 107) : Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isUsuariosSolicitadosSelected = true;
-                        _isUsariosCadastradosSelected = false;
-                      });
-                    },
-                    child: Text(
-                      'SOLICITAÇÕES',
-                      style: GoogleFonts.inter(fontSize: 13, color: _isUsuariosSolicitadosSelected ? Colors.white : Colors.green),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      trailing: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Colors.green,
+          side: const BorderSide(color: Colors.green),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
-          Expanded(
-            child: _isUsariosCadastradosSelected
-                ? _isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : ListView.builder(
-                        itemCount: usuarios.length,
-                        itemBuilder: (context, index) {
-                          final usuario = usuarios[index];
-                          return ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.grey[300],
-                              child: Icon(Icons.person, color: Colors.green),
-                            ),
-                            title: Text(usuario.profileFullName,
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Row(
-                              children: [
-                                Icon(FontAwesomeIcons.solidStar, color: Colors.green, size: 16),
-                                SizedBox(width: 4),
-                                Text('${usuario.profileStars}'),
-                              ],
-                            ),
-                            trailing: OutlinedButton(
-                              onPressed: () {},
-                              child: Text('Detalhes', style: GoogleFonts.inter()),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.green,
-                                side: BorderSide(color: Colors.green),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                : UsuariosSolicitadosScreen(),
-          ),
-        ],
+        ),
+        child: Text('Detalhes', style: GoogleFonts.inter()),
       ),
     );
   }

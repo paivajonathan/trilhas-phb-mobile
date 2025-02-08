@@ -18,6 +18,7 @@ class UserService {
 
     final params = {
       "is_active": true.toString(),
+      "user_type": "H",
     };
 
     if (isAccepted != null) params["is_accepted"] = isAccepted.toString();

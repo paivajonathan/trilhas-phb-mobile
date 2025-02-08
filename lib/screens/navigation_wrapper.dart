@@ -11,7 +11,7 @@ import "package:trilhas_phb/screens/administrator/explore/explore.dart"
     as administrator;
 import "package:trilhas_phb/screens/administrator/profile.dart"
     as administrator;
-import "package:trilhas_phb/screens/administrator/ranking.dart"
+import "package:trilhas_phb/screens/administrator/user_listing_screen.dart"
     as administrator;
 import "package:trilhas_phb/widgets/main_bottom_navigation.dart";
 
@@ -30,7 +30,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
     UserType.administrator: [
       administrator.ExploreScreen(),
       administrator.ChatScreen(),
-      administrator.RankingScreen(),
+      administrator.UserListingScreen(),
       administrator.ProfileScreen(),
     ],
     UserType.hiker: [
