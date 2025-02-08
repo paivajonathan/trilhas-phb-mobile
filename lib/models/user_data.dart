@@ -1,3 +1,5 @@
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
+
 class UserProfileModel {
   final int userId;
   final String userEmail;
@@ -60,5 +62,17 @@ class UserProfileModel {
     }
 
     return "${names.first} ${names.last}";
+  }
+
+  String get readableBirthDate {
+    return "${profileBirthDate.day.toString().padLeft(2, '0')}/${profileBirthDate.month.toString().padLeft(2, '0')}/${profileBirthDate.year}";
+  }
+
+  String get readableCellphone {
+    final controller = MaskedTextController(
+      text: profileCellphone,
+      mask: "(00) 0 0000-0000",
+    );
+    return controller.text;
   }
 }

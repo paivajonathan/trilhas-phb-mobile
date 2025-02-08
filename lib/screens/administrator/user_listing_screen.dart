@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
+import 'package:trilhas_phb/screens/administrator/check_user_info.dart';
 import 'package:trilhas_phb/services/user.dart'; // Serviço de usuários
 import 'package:trilhas_phb/models/user_data.dart';
 import 'package:trilhas_phb/widgets/loader.dart'; // Modelo UserProfileModel
@@ -60,7 +61,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
         orderByName: (criterioOrdenacao == 'nome'),
         orderAsc: crescente,
       );
-   
+
       setState(() {
         _solicitationUsers = fetchedUsers;
         _isSolicitationUsersLoadingError = null;
@@ -378,7 +379,14 @@ class RegisteredUsersScreen extends StatelessWidget {
               final user = registeredUsers[index];
               return UserListTile(
                 user: user,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return CheckUserInfoScreen(userData: user);
+                    }),
+                  );
+                },
               );
             },
           );
@@ -439,7 +447,19 @@ class SolicitationUsersScreen extends StatelessWidget {
               final user = solicitationUsers[index];
               return UserListTile(
                 user: user,
-                onPressed: () {},
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return CheckUserInfoScreen(userData: user);
+                    }),
+                  );
+
+                  if (result == null) return;
+                  if (!result) return;
+
+                  onUpdate();
+                },
               );
             },
           );

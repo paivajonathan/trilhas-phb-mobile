@@ -7,10 +7,12 @@ class FutureButton extends StatefulWidget {
     required this.text,
     required this.primary,
     required this.future,
+    this.color = AppColors.primary,
   });
 
   final String text;
   final bool primary;
+  final Color color;
   final Future<void> Function() future;
 
   @override
@@ -42,7 +44,7 @@ class _FutureButtonState extends State<FutureButton> {
         onPressed: _isLoading ? null : () => _handleOnPressed(),
         style: ElevatedButton.styleFrom(
           backgroundColor: widget.primary
-            ? AppColors.primary
+            ? widget.color
             : Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 20),
           shape: RoundedRectangleBorder(
@@ -50,7 +52,7 @@ class _FutureButtonState extends State<FutureButton> {
           ),
           side: widget.primary
             ? null
-            : const BorderSide(color: AppColors.primary, width: 1)
+            : BorderSide(color: widget.color, width: 1)
         ),
         child: _isLoading 
           ? const SizedBox(
@@ -67,7 +69,7 @@ class _FutureButtonState extends State<FutureButton> {
               style: TextStyle(
                 color: widget.primary
                   ?Colors.white
-                  : AppColors.primary,
+                  : widget.color,
                 fontSize: 16,
               ),
             ),

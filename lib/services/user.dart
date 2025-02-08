@@ -24,12 +24,15 @@ class UserService {
     if (isAccepted != null) params["is_accepted"] = isAccepted.toString();
 
     if (orderByName) {
-      params["ordering"] = "${orderAsc ? "" : "-"}profile_customuser_user__full_name,profile_customuser_user__stars";
+      params["ordering"] =
+          "${orderAsc ? "" : "-"}profile_customuser_user__full_name,profile_customuser_user__stars";
     } else {
-      params["ordering"] = "${orderAsc ? "" : "-"}profile_customuser_user__stars,profile_customuser_user__full_name";
+      params["ordering"] =
+          "${orderAsc ? "" : "-"}profile_customuser_user__stars,profile_customuser_user__full_name";
     }
 
-    final uri = Uri.parse("$_baseUrl/api/v1/users/").replace(queryParameters: params);
+    final uri =
+        Uri.parse("$_baseUrl/api/v1/users/").replace(queryParameters: params);
 
     final headers = {
       'Content-Type': 'application/json',
@@ -63,12 +66,67 @@ class UserService {
     }
   }
 
-  Future<List<UserProfileModel>> fetchLoggedUsers() async { //Registered users
-    return await fetchUsers(isAccepted: true);
+  Future<void> accept({
+    required int userId,
+  }) async {
+    try {
+      String token = await _auth.token;
+      final url = Uri.parse("$_baseUrl/api/v1/users/$userId/accept/");
+
+      final response = await http.patch(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl,
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(responseData["detail"] ??
+            responseData["message"] ??
+            "Um erro inesperado ocorreu");
+      }
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 
-  Future<List<UserProfileModel>> fetchSolicitedUsers() async { //Solicited users
-  return await fetchUsers(isAccepted: false);
-}
+  Future<void> refuse({
+    required int userId,
+  }) async {
+    try {
+      String token = await _auth.token;
+      final url = Uri.parse("$_baseUrl/api/v1/users/$userId/refuse/");
 
+      final response = await http.patch(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl,
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(responseData["detail"] ??
+            responseData["message"] ??
+            "Um erro inesperado ocorreu");
+      }
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 }
