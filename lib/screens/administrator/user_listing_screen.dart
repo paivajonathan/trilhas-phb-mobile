@@ -113,7 +113,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
           enabled: false,
           child: Text(
             'Classificar por:',
-            style: GoogleFonts.inter(color: Colors.green),
+            style: GoogleFonts.inter(color: AppColors.primary),
           ),
         ),
         // Filtro de Nome sempre disponível
@@ -123,7 +123,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
             leading: Radio(
               value: 'nome',
               groupValue: criterioOrdenacao,
-              activeColor: Colors.green,
+              activeColor: AppColors.primary,
               onChanged: (value) {
                 setState(() {
                   criterioOrdenacao = value as String;
@@ -141,7 +141,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
             leading: Radio(
               value: 'estrelas',
               groupValue: criterioOrdenacao,
-              activeColor: Colors.green,
+              activeColor: AppColors.primary,
               onChanged: (value) {
                 setState(() {
                   criterioOrdenacao = value as String;
@@ -156,7 +156,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
         PopupMenuItem(
           enabled: false,
           child: Text('Ordenar de forma:',
-              style: GoogleFonts.inter(color: Colors.green)),
+              style: GoogleFonts.inter(color: AppColors.primary)),
         ),
         // Ordenação Crescente
         PopupMenuItem(
@@ -165,7 +165,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
             leading: Radio(
               value: true,
               groupValue: crescente,
-              activeColor: Colors.green,
+              activeColor: AppColors.primary,
               onChanged: (value) {
                 setState(() {
                   crescente = value as bool;
@@ -183,7 +183,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
             leading: Radio(
               value: false,
               groupValue: crescente,
-              activeColor: Colors.green,
+              activeColor: AppColors.primary,
               onChanged: (value) {
                 setState(() {
                   crescente = value as bool;
@@ -218,7 +218,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
           elevation: 0,
           actions: [
             IconButton(
-              icon: const Icon(Icons.filter_list, color: Colors.green),
+              icon: const Icon(Icons.filter_list, color: AppColors.primary),
               onPressed: () {
                 mostrarFiltro(context);
               },
@@ -263,7 +263,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
                             fontSize: 13,
                             color: _isUsariosCadastradosSelected
                                 ? Colors.white
-                                : Colors.green),
+                                : AppColors.primary),
                       ),
                     ),
                   ),
@@ -297,7 +297,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
                             fontSize: 13,
                             color: _isUsuariosSolicitadosSelected
                                 ? Colors.white
-                                : Colors.green),
+                                : AppColors.primary),
                       ),
                     ),
                   ),
@@ -484,10 +484,12 @@ class UserListTile extends StatelessWidget {
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: Colors.grey[300],
-        child: const Icon(Icons.person, color: Colors.green),
+        child: const Icon(Icons.person, color: AppColors.primary),
       ),
       title: Text(
         user.profileFullName,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
         ),
@@ -496,7 +498,7 @@ class UserListTile extends StatelessWidget {
         children: [
           const Icon(
             FontAwesomeIcons.solidStar,
-            color: Colors.green,
+            color: AppColors.primary,
             size: 16,
           ),
           const SizedBox(width: 4),
@@ -506,8 +508,8 @@ class UserListTile extends StatelessWidget {
       trailing: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.green,
-          side: const BorderSide(color: Colors.green),
+          foregroundColor: AppColors.primary,
+          side: const BorderSide(color: AppColors.primary),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),

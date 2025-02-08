@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/providers/user_data.dart';
 import 'package:trilhas_phb/screens/authentication/login.dart';
 import 'package:trilhas_phb/services/auth.dart';
@@ -110,7 +111,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  const Icon(Icons.person, size: 75),
+                  CircleAvatar(
+                    backgroundColor: Colors.grey[300],
+                    radius: 45,
+                    child: const Icon(Icons.person, size: 75, color: AppColors.primary,),
+                  ),
                   const SizedBox(width: 20),
                   Flexible(
                     child: Column(

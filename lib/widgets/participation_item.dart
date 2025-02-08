@@ -19,13 +19,17 @@ class ParticipationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: const Icon(
-        Icons.person,
+      leading: CircleAvatar(
+        backgroundColor: Colors.grey[300],
+        child: const Icon(Icons.person, color: AppColors.primary),
       ),
       title: Text(
         participation.profileName,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
       ),
       trailing: confirmAction == null && cancelAction == null
           ? null
