@@ -40,8 +40,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return const BlurryDialogWidget(
-          title: "Deseja continuar?",
+          title: "Excluir conta",
           content: "Tem certeza de que deseja excluir a sua conta?",
+          isDestructiveAction: true,
         );
       },
     );
