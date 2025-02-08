@@ -108,6 +108,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
     showMenu<dynamic>(
       context: context,
       position: const RelativeRect.fromLTRB(100, 80, 0, 0),
+      color: Colors.white,
       items: <PopupMenuEntry<dynamic>>[
         if (_isRegisteredUsersSelected)
           PopupMenuItem(
