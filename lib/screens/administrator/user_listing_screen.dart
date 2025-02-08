@@ -15,11 +15,11 @@ class UserListingScreen extends StatefulWidget {
 }
 
 class _UserListingScreenState extends State<UserListingScreen> {
-  bool _isUsariosCadastradosSelected = true;
-  bool _isUsuariosSolicitadosSelected = false;
+  bool _isRegisteredUsersSelected = true;
+  bool _isSolicitationUsersSelected = false;
 
-  String criterioOrdenacao = 'nome';
-  bool crescente = true;
+  String _ordenationParam = 'nome';
+  bool _ordenationAsc = true;
 
   List<UserProfileModel> _registeredUsers = [];
   bool _isRegisteredUsersLoading = false;
@@ -58,8 +58,8 @@ class _UserListingScreenState extends State<UserListingScreen> {
 
       List<UserProfileModel> fetchedUsers = await _userService.fetchUsers(
         isAccepted: false,
-        orderByName: (criterioOrdenacao == 'nome'),
-        orderAsc: crescente,
+        orderByName: true,
+        orderAsc: _ordenationAsc,
       );
 
       setState(() {
@@ -85,8 +85,8 @@ class _UserListingScreenState extends State<UserListingScreen> {
       });
       List<UserProfileModel> fetchedUsers = await _userService.fetchUsers(
         isAccepted: true,
-        orderByName: (criterioOrdenacao == 'nome'),
-        orderAsc: crescente,
+        orderByName: (_ordenationParam == 'nome'),
+        orderAsc: _ordenationAsc,
       );
       setState(() {
         _registeredUsers = fetchedUsers;
@@ -104,55 +104,57 @@ class _UserListingScreenState extends State<UserListingScreen> {
     }
   }
 
-  void mostrarFiltro(BuildContext context) {
+  void showFilter(BuildContext context) {
     showMenu<dynamic>(
       context: context,
       position: const RelativeRect.fromLTRB(100, 80, 0, 0),
       items: <PopupMenuEntry<dynamic>>[
-        PopupMenuItem(
-          enabled: false,
-          child: Text(
-            'Classificar por:',
-            style: GoogleFonts.inter(color: AppColors.primary),
-          ),
-        ),
-        // Filtro de Nome sempre disponível
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Nome', style: GoogleFonts.inter()),
-            leading: Radio(
-              value: 'nome',
-              groupValue: criterioOrdenacao,
-              activeColor: AppColors.primary,
-              onChanged: (value) {
-                setState(() {
-                  criterioOrdenacao = value as String;
-                });
-                Navigator.pop(context);
-                _loadData();
-              },
+        if (_isRegisteredUsersSelected)
+          PopupMenuItem(
+            enabled: false,
+            child: Text(
+              'Classificar por:',
+              style: GoogleFonts.inter(color: AppColors.primary),
             ),
           ),
-        ),
-        // Filtro de Estrela disponível apenas para usuários cadastrados
-        PopupMenuItem(
-          child: ListTile(
-            title: Text('Estrela', style: GoogleFonts.inter()),
-            leading: Radio(
-              value: 'estrelas',
-              groupValue: criterioOrdenacao,
-              activeColor: AppColors.primary,
-              onChanged: (value) {
-                setState(() {
-                  criterioOrdenacao = value as String;
-                });
-                Navigator.pop(context);
-                _loadData();
-              },
+        if (_isRegisteredUsersSelected)
+          PopupMenuItem(
+            child: ListTile(
+              title: Text('Nome', style: GoogleFonts.inter()),
+              leading: Radio(
+                value: 'nome',
+                groupValue: _ordenationParam,
+                activeColor: AppColors.primary,
+                onChanged: (value) {
+                  setState(() {
+                    _ordenationParam = value as String;
+                  });
+                  Navigator.pop(context);
+                  _loadData();
+                },
+              ),
             ),
           ),
-        ),
-        const PopupMenuDivider(),
+        if (_isRegisteredUsersSelected)
+          PopupMenuItem(
+            child: ListTile(
+              title: Text('Estrela', style: GoogleFonts.inter()),
+              leading: Radio(
+                value: 'estrelas',
+                groupValue: _ordenationParam,
+                activeColor: AppColors.primary,
+                onChanged: (value) {
+                  setState(() {
+                    _ordenationParam = value as String;
+                  });
+                  Navigator.pop(context);
+                  _loadData();
+                },
+              ),
+            ),
+          ),
+        if (_isRegisteredUsersSelected)
+          const PopupMenuDivider(),
         PopupMenuItem(
           enabled: false,
           child: Text('Ordenar de forma:',
@@ -164,11 +166,11 @@ class _UserListingScreenState extends State<UserListingScreen> {
             title: Text('Crescente', style: GoogleFonts.inter()),
             leading: Radio(
               value: true,
-              groupValue: crescente,
+              groupValue: _ordenationAsc,
               activeColor: AppColors.primary,
               onChanged: (value) {
                 setState(() {
-                  crescente = value as bool;
+                  _ordenationAsc = value as bool;
                 });
                 Navigator.pop(context);
                 _loadData();
@@ -182,11 +184,11 @@ class _UserListingScreenState extends State<UserListingScreen> {
             title: Text('Decrescente', style: GoogleFonts.inter()),
             leading: Radio(
               value: false,
-              groupValue: crescente,
+              groupValue: _ordenationAsc,
               activeColor: AppColors.primary,
               onChanged: (value) {
                 setState(() {
-                  crescente = value as bool;
+                  _ordenationAsc = value as bool;
                 });
                 Navigator.pop(context);
                 _loadData();
@@ -220,7 +222,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
             IconButton(
               icon: const Icon(Icons.filter_list, color: AppColors.primary),
               onPressed: () {
-                mostrarFiltro(context);
+                showFilter(context);
               },
             ),
           ],
@@ -239,12 +241,12 @@ class _UserListingScreenState extends State<UserListingScreen> {
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(100, 40),
                         side: BorderSide(
-                          color: _isUsariosCadastradosSelected
+                          color: _isRegisteredUsersSelected
                               ? Colors.white
                               : const Color.fromARGB(255, 3, 204, 107),
                           width: 2,
                         ),
-                        backgroundColor: _isUsariosCadastradosSelected
+                        backgroundColor: _isRegisteredUsersSelected
                             ? const Color.fromARGB(255, 3, 204, 107)
                             : Colors.white,
                         shape: RoundedRectangleBorder(
@@ -253,15 +255,15 @@ class _UserListingScreenState extends State<UserListingScreen> {
                       ),
                       onPressed: () {
                         setState(() {
-                          _isUsariosCadastradosSelected = true;
-                          _isUsuariosSolicitadosSelected = false;
+                          _isRegisteredUsersSelected = true;
+                          _isSolicitationUsersSelected = false;
                         });
                       },
                       child: Text(
                         'CADASTRADOS',
                         style: GoogleFonts.inter(
                             fontSize: 13,
-                            color: _isUsariosCadastradosSelected
+                            color: _isRegisteredUsersSelected
                                 ? Colors.white
                                 : AppColors.primary),
                       ),
@@ -273,12 +275,12 @@ class _UserListingScreenState extends State<UserListingScreen> {
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size(100, 40),
                         side: BorderSide(
-                          color: _isUsuariosSolicitadosSelected
+                          color: _isSolicitationUsersSelected
                               ? Colors.white
                               : const Color.fromARGB(255, 3, 204, 107),
                           width: 2,
                         ),
-                        backgroundColor: _isUsuariosSolicitadosSelected
+                        backgroundColor: _isSolicitationUsersSelected
                             ? const Color.fromARGB(255, 3, 204, 107)
                             : Colors.white,
                         shape: RoundedRectangleBorder(
@@ -287,15 +289,15 @@ class _UserListingScreenState extends State<UserListingScreen> {
                       ),
                       onPressed: () {
                         setState(() {
-                          _isUsuariosSolicitadosSelected = true;
-                          _isUsariosCadastradosSelected = false;
+                          _isSolicitationUsersSelected = true;
+                          _isRegisteredUsersSelected = false;
                         });
                       },
                       child: Text(
                         'SOLICITAÇÕES',
                         style: GoogleFonts.inter(
                             fontSize: 13,
-                            color: _isUsuariosSolicitadosSelected
+                            color: _isSolicitationUsersSelected
                                 ? Colors.white
                                 : AppColors.primary),
                       ),
@@ -305,7 +307,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
               ),
             ),
             Builder(builder: (context) {
-              if (_isUsuariosSolicitadosSelected) {
+              if (_isSolicitationUsersSelected) {
                 return SolicitationUsersScreen(
                   solicitationUsers: _solicitationUsers,
                   isSolicitationUsersLoading: _isSolicitationUsersLoading,
