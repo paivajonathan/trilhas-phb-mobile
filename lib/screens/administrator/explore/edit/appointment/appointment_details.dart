@@ -133,8 +133,10 @@ class _BottomDrawerState extends State<BottomDrawer> {
       context: context,
       builder: (BuildContext context) {
         return const BlurryDialogWidget(
-          title: "Deseja continuar?",
-          content: "Tem certeza de que deseja continuar?",
+          title: "Inativar agendamento",
+          content: "Você realmente deseja inativar esse agendamento?",
+          continueText: "Inativar",
+          isDestructiveAction: true,
         );
       },
     );

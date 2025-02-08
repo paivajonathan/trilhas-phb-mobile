@@ -23,9 +23,10 @@ class _CheckUserInfoScreenState extends State<CheckUserInfoScreen> {
     final keepAction = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const BlurryDialogWidget(
-          title: "Deseja continuar?",
-          content: "Tem certeza de que deseja aceitar o usuário?",
+        return BlurryDialogWidget(
+          title: "Aceitar acesso",
+          content: "Você realmente deseja aceitar a solicitação de ${widget.userData.profileFullName}?",
+          continueText: "Aceitar",
         );
       },
     );
@@ -68,9 +69,11 @@ class _CheckUserInfoScreenState extends State<CheckUserInfoScreen> {
     final keepAction = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const BlurryDialogWidget(
-          title: "Deseja continuar?",
-          content: "Tem certeza de que deseja recusar o usuário?",
+        return BlurryDialogWidget(
+          title: "Recusar acesso",
+          content: "Você realmente deseja recusar a solicitação de ${widget.userData.profileFullName}?",
+          continueText: "Recusar",
+          isDestructiveAction: true,
         );
       },
     );

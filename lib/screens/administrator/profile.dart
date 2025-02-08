@@ -21,9 +21,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return const BlurryDialogWidget(
-          title: "Sair da Conta",
+          title: "Sair",
           content:
-              "Tem certeza de que deseja sair da sua conta? Você deverá fazer login novamente.",
+              "Você realmente deseja sair? Caso saia, terá que logar novamente para acessar o app.",
           continueText: "Sair",
           isDestructiveAction: true,
         );
@@ -73,7 +73,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (BuildContext context) {
         return const BlurryDialogWidget(
           title: "Excluir conta",
-          content: "Tem certeza de que deseja excluir a sua conta?",
+          content: "Você realmente deseja excluir sua conta? Caso exclua, terá que criar uma nova conta para acessar o app.",
+          continueText: "Excluir",
           isDestructiveAction: true,
         );
       },

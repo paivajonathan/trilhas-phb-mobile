@@ -145,7 +145,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
           builder: (BuildContext context) {
             return const BlurryDialogWidget(
               title: "Cancelar participação",
-              content: "Tem certeza de que deseja cancelar a sua participação?",
+              content: "Você realmente deseja cancelar a sua participação?",
               cancelText: "Não",
               continueText: "Cancelar",
               isDestructiveAction: true,
