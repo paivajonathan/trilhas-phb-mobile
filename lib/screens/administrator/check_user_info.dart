@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/models/user_data.dart';
 import 'package:trilhas_phb/services/user.dart';
 import 'package:trilhas_phb/widgets/alert_dialog.dart';
@@ -133,10 +134,18 @@ class _CheckUserInfoScreenState extends State<CheckUserInfoScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 8),
         child: ListView(
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.person, size: 100),
+                CircleAvatar(
+                  backgroundColor: Colors.grey[300],
+                  radius: 45,
+                  child: const Icon(
+                    Icons.person,
+                    size: 75,
+                    color: AppColors.primary,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
