@@ -225,7 +225,7 @@ class RankingListItem extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.star, color: Colors.green, size: 30),
+          const Icon(Icons.star, color: AppColors.primary, size: 30),
           Text(
             '${user.profileStars}',
             style: const TextStyle(
