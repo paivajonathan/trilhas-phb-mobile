@@ -1,17 +1,110 @@
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:trilhas_phb/providers/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/models/user_data.dart';
 import 'package:trilhas_phb/services/user.dart';
 import "package:trilhas_phb/constants/app_colors.dart";
+import 'package:trilhas_phb/widgets/loader.dart';
 
 class RankingScreen extends StatefulWidget {
+  const RankingScreen({super.key});
+
   @override
-  _RankingScreenState createState() => _RankingScreenState();
+  State<RankingScreen> createState() => _RankingScreenState();
 }
 
 class _RankingScreenState extends State<RankingScreen> {
   final UserService _userService = UserService();
+
+  String ordenationParam = 'nome';
+  bool ordenationAsc = true;
+
+  void showFilter(BuildContext context) {
+    showMenu<dynamic>(
+      context: context,
+      position: const RelativeRect.fromLTRB(100, 80, 0, 0),
+      items: <PopupMenuEntry<dynamic>>[
+        PopupMenuItem(
+          enabled: false,
+          child: Text(
+            'Classificar por:',
+            style: GoogleFonts.inter(color: AppColors.primary),
+          ),
+        ),
+        PopupMenuItem(
+          child: ListTile(
+            title: Text('Nome', style: GoogleFonts.inter()),
+            leading: Radio(
+              value: 'nome',
+              groupValue: ordenationParam,
+              activeColor: AppColors.primary,
+              onChanged: (value) {
+                setState(() {
+                  ordenationParam = value as String;
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          child: ListTile(
+            title: Text('Estrela', style: GoogleFonts.inter()),
+            leading: Radio(
+              value: 'estrelas',
+              groupValue: ordenationParam,
+              activeColor: AppColors.primary,
+              onChanged: (value) {
+                setState(() {
+                  ordenationParam = value as String;
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ),
+        const PopupMenuDivider(),
+        PopupMenuItem(
+          enabled: false,
+          child: Text('Ordenar de forma:',
+              style: GoogleFonts.inter(color: AppColors.primary)),
+        ),
+        PopupMenuItem(
+          child: ListTile(
+            title: Text('Crescente', style: GoogleFonts.inter()),
+            leading: Radio(
+              value: true,
+              groupValue: ordenationAsc,
+              activeColor: AppColors.primary,
+              onChanged: (value) {
+                setState(() {
+                  ordenationAsc = value as bool;
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          child: ListTile(
+            title: Text('Decrescente', style: GoogleFonts.inter()),
+            leading: Radio(
+              value: false,
+              groupValue: ordenationAsc,
+              activeColor: AppColors.primary,
+              onChanged: (value) {
+                setState(() {
+                  ordenationAsc = value as bool;
+                });
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +119,14 @@ class _RankingScreenState extends State<RankingScreen> {
           backgroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.filter_list, color: AppColors.primary),
+              onPressed: () {
+                showFilter(context);
+              },
+            ),
+          ],
           title: const Text(
             "Tabela de Classificação",
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -39,19 +140,22 @@ class _RankingScreenState extends State<RankingScreen> {
           ),
         ),
         body: FutureBuilder<List<UserProfileModel>>(
-          future: _userService.fetchUsers(),
+          future: _userService.fetchUsers(
+            isAccepted: true,
+            orderByName: (ordenationParam == 'nome'),
+            orderAsc: ordenationAsc,
+          ),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                  child: CircularProgressIndicator(
-                color: AppColors.primary,
-              ));
+              return const Loader();
             }
 
             if (snapshot.hasError) {
               return Center(
-                  child: Text(
-                      'Erro ao carregar dados: ${snapshot.error!.toString().replaceAll("Exception: ", "")}'));
+                child: Text(
+                  'Erro ao carregar dados: ${snapshot.error!.toString().replaceAll("Exception: ", "")}',
+                ),
+              );
             }
 
             final users = snapshot.data ?? [];
@@ -80,10 +184,10 @@ class RankingListItem extends StatelessWidget {
   final int rank;
 
   const RankingListItem({
-    Key? key,
+    super.key,
     required this.user,
     required this.rank,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
