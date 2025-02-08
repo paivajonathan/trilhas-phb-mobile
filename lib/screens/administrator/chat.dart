@@ -113,7 +113,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: () async {
-        _loadMoreMessages();
+        await _loadMoreMessages();
       },
       child: Scaffold(
         backgroundColor: Colors.white,

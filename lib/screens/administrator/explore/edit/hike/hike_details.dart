@@ -286,7 +286,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     children: [
                       Expanded(
                         child: DecoratedButton(
-                          primary: true,
+                          primary: false,
                           text: "EDITAR",
                           onPressed: () => _handleEdit(),
                         ),
@@ -298,6 +298,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         child: FutureButton(
                           primary: false,
                           text: "INATIVAR",
+                          color: Colors.red,
                           future: _handleInactivate,
                         ),
                       ),
