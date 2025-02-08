@@ -493,7 +493,7 @@ class UserListTile extends StatelessWidget {
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: Row(
+      subtitle: !user.userIsAccepted ? null : Row(
         children: [
           const Icon(
             FontAwesomeIcons.solidStar,
