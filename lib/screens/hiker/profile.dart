@@ -17,22 +17,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _auth = AuthService();
 
   Future<void> _handleLogout() async {
-    await _auth.logout();
-
-    if (!mounted) {
-      return;
-    }
-
-    await Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
-      (Route<dynamic> route) => false,
+    final keepAction = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const BlurryDialogWidget(
+          title: "Sair da Conta",
+          content:
+              "Tem certeza de que deseja sair da sua conta? Você deverá fazer login novamente.",
+          continueText: "Sair",
+          isDestructiveAction: true,
+        );
+      },
     );
 
-    if (!mounted) {
-      return;
-    }
+    if (keepAction == null) return;
+    if (!keepAction) return;
 
-    Provider.of<UserDataProvider>(context, listen: false).clearUserData();
+    try {
+      await _auth.logout();
+
+      if (!mounted) {
+        return;
+      }
+
+      await Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (Route<dynamic> route) => false,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      Provider.of<UserDataProvider>(context, listen: false).clearUserData();
+    } catch (e) {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              "Ocorreu um erro ao tentar sair da conta: ${e.toString().replaceAll("Exception: ", "")}",
+            ),
+          ),
+        );
+    }
   }
 
   Future<void> _handleAccountDeletion() async {
@@ -121,7 +153,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CircleAvatar(
                     backgroundColor: Colors.grey[300],
                     radius: 45,
-                    child: const Icon(Icons.person, size: 75, color: AppColors.primary,),
+                    child: const Icon(
+                      Icons.person,
+                      size: 75,
+                      color: AppColors.primary,
+                    ),
                   ),
                   const SizedBox(width: 20),
                   Flexible(
