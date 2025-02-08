@@ -24,9 +24,9 @@ class UserService {
     if (isAccepted != null) params["is_accepted"] = isAccepted.toString();
 
     if (orderByName) {
-      params["ordering"] = "${orderAsc ? "" : "-"}profile_customuser_user__full_name";
+      params["ordering"] = "${orderAsc ? "" : "-"}profile_customuser_user__full_name,profile_customuser_user__stars";
     } else {
-      params["ordering"] = "${orderAsc ? "" : "-"}profile_customuser_user__stars";
+      params["ordering"] = "${orderAsc ? "" : "-"}profile_customuser_user__stars,profile_customuser_user__full_name";
     }
 
     final uri = Uri.parse("$_baseUrl/api/v1/users/").replace(queryParameters: params);
