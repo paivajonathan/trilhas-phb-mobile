@@ -1,6 +1,10 @@
+import 'package:provider/provider.dart';
+import 'package:trilhas_phb/providers/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/models/user_data.dart';
 import 'package:trilhas_phb/services/user.dart';
+import "package:trilhas_phb/constants/app_colors.dart";
+
 
 class RankingScreen extends StatefulWidget {
   @override
@@ -13,6 +17,7 @@ class _RankingScreenState extends State<RankingScreen> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
+      color: AppColors.primary,
       onRefresh: () async {
         setState(() {});
       },
@@ -38,7 +43,9 @@ class _RankingScreenState extends State<RankingScreen> {
           future: _userService.fetchUsers(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator(
+                color: AppColors.primary,
+              ));
             }
             
             if (snapshot.hasError) {
@@ -57,6 +64,7 @@ class _RankingScreenState extends State<RankingScreen> {
                 final user = users[index];
                 final rank = index + 1; // Posição no ranking
                 return RankingListItem(user: user, rank: rank);
+
               },
             );
           },
@@ -78,24 +86,41 @@ class RankingListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = Provider.of<UserDataProvider>(context).userData;
+    final isCurrentUser = currentUser != null && currentUser.userId == user.userId;
+
     return ListTile(
+      tileColor: isCurrentUser ? const Color.fromARGB(255, 91, 104, 116).withOpacity(0.2) : null,
       leading: rank <= 3
-          ? Icon(
-              Icons.emoji_events,
-              color: rank == 1
-                  ? Colors.amber
-                  : rank == 2
-                      ? Colors.grey
-                      : Colors.brown,
-            )
-          : Text('$rank', style: const TextStyle(fontSize: 18)),
+    ? Icon(
+        Icons.emoji_events,
+        color: rank == 1
+            ? Colors.amber
+            : rank == 2
+                ? Colors.grey
+                : Colors.brown,
+        size: 28,
+      )
+    : SizedBox(
+        width: 27,
+        child: Text(
+          '$rank',
+          style: const TextStyle(fontSize: 25, color: AppColors.primary),
+          textAlign: TextAlign.center,
+        ),
+      ),
+
       title: Text(user.profileFullName),
-      
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.star, color: Colors.green),
-          Text('${user.profileStars}'),
+          const Icon(Icons.star, color: Colors.green, size: 30),
+          Text(
+            '${user.profileStars}',
+            style: const TextStyle(
+              fontSize: 16,
+            ),
+          ),
         ],
       ),
     );
