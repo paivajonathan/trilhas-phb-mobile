@@ -76,9 +76,11 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
         ..clearSnackBars()
         ..showSnackBar(
           const SnackBar(
-            content: Text("Frequência raelizada com sucesso."),
+            content: Text("Frequência realizada com sucesso."),
           ),
         );
+
+      Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) {
         return;

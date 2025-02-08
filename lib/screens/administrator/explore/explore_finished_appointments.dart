@@ -76,13 +76,18 @@ class ExploreFinishedAppointmentsScreen extends StatelessWidget {
                       appointment: appointment,
                       actionText: "Frequência",
                       onTap: () async {
-                        await Navigator.of(context).push(
+                        final result = await Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => FrequencyRegisterScreen(
                               appointment: appointment,
                             ),
                           ),
                         );
+
+                        if (result == null) return;
+                        if (!result) return;
+
+                        onUpdate();
                       },
                     );
                   },
