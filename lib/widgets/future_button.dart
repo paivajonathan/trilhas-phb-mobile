@@ -55,12 +55,12 @@ class _FutureButtonState extends State<FutureButton> {
             : BorderSide(color: widget.color, width: 1)
         ),
         child: _isLoading 
-          ? const SizedBox(
+          ? SizedBox(
               height: 23.0,
               width: 23.0,
               child: Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white)
+                  valueColor: AlwaysStoppedAnimation<Color>(widget.primary ? Colors.white : widget.color)
                 )
               ),
             )

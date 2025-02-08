@@ -169,7 +169,7 @@ class _CheckUserInfoScreenState extends State<CheckUserInfoScreen> {
             DisabledTextFormField(
               initialValue: widget.userData.readableCellphone,
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 24),
             if (!widget.userData.userIsAccepted)
               Row(
                 children: [

@@ -159,144 +159,145 @@ class _PersonalDataScreenState extends State<PersonalData> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white, //Background color dos formulários
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: SizedBox(
-            height: 20,
-            width: 20,
-            child: Image.asset('assets/icon_voltar.png'),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white, //Background color dos formulários
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: SizedBox(
+              height: 20,
+              width: 20,
+              child: Image.asset('assets/icon_voltar.png'),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          top: 8.0,
-          left: 25.0,
-          right: 25.0,
-          bottom: 25.0,
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                "Dados Pessoais",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+        body: Padding(
+          padding: const EdgeInsets.only(
+            top: 8.0,
+            left: 25.0,
+            right: 25.0,
+            bottom: 25.0,
+          ),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                const Text(
+                  "Dados Pessoais",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4), // Ajusta a posição do subtítulo
-              const Text(
-                "Insira seus dados pessoais abaixo",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Color(0xFF71727A),
+                const SizedBox(height: 4), // Ajusta a posição do subtítulo
+                const Text(
+                  "Insira seus dados pessoais abaixo",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF71727A),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 30), // Ajuste inicial
+                const SizedBox(height: 30), // Ajuste inicial
 
-              // Campo Nome Completo
-              const Text(
-                "Nome Completo",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                // Campo Nome Completo
+                const Text(
+                  "Nome Completo",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              DecoratedTextFormField(
-                initialValue: widget._sharedData["fullName"],
-                hintText: "Digite aqui",
-                onChanged: (value) {
-                  widget._sharedData["fullName"] = value;
-                },
-                validator: _validateFullName,
-              ),
-              const SizedBox(height: 16),
-
-              // Campo Data de Aniversário
-              const Text(
-                "Data de Aniversário",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                const SizedBox(height: 8),
+                DecoratedTextFormField(
+                  initialValue: widget._sharedData["fullName"],
+                  hintText: "Digite aqui",
+                  onChanged: (value) {
+                    widget._sharedData["fullName"] = value;
+                  },
+                  validator: _validateFullName,
                 ),
-              ),
-              const SizedBox(height: 8),
-              DecoratedTextFormField(
-                hintText: "DD/MM/AAAA",
-                controller: _dateController,
-                textInputType: TextInputType.number,
-                onChanged: (value) {
-                  widget._sharedData["birthDate"] = value;
-                },
-                validator: _validateBirthDate,
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Campo Número
-              const Text(
-                "Contato",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                // Campo Data de Aniversário
+                const Text(
+                  "Data de Aniversário",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              DecoratedTextFormField(
-                hintText: "Digite aqui",
-                controller: _phoneController,
-                textInputType: TextInputType.number,
-                validator: _validatePhone,
-                onChanged: (value) {
-                  widget._sharedData["phone"] = value;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Campo Bairro (opcional)
-              const Text(
-                "Bairro (opcional)",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                const SizedBox(height: 8),
+                DecoratedTextFormField(
+                  hintText: "DD/MM/AAAA",
+                  controller: _dateController,
+                  textInputType: TextInputType.number,
+                  onChanged: (value) {
+                    widget._sharedData["birthDate"] = value;
+                  },
+                  validator: _validateBirthDate,
                 ),
-              ),
-              const SizedBox(height: 8),
-              DecoratedTextFormField(
-                initialValue: widget._sharedData["neighborhoodName"],
-                hintText: "Digite aqui",
-                validator: _validateNeighborhoodName,
-                onChanged: (value) {
-                  widget._sharedData["neighborhoodName"] = value;
-                },
-              ),
+                const SizedBox(height: 16),
 
-              // Empurra o botão "Continuar" para o fundo
-              const Spacer(),
+                // Campo Número
+                const Text(
+                  "Contato",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                DecoratedTextFormField(
+                  hintText: "Digite aqui",
+                  controller: _phoneController,
+                  textInputType: TextInputType.number,
+                  validator: _validatePhone,
+                  onChanged: (value) {
+                    widget._sharedData["phone"] = value;
+                  },
+                ),
+                const SizedBox(height: 16),
 
-              DecoratedButton(
-                primary: true,
-                text: "Cadastrar-se",
-                isLoading: _isLoading,
-                onPressed: _isLoading ? null : () => _register(context),
-              ),
-            ],
+                // Campo Bairro (opcional)
+                const Text(
+                  "Bairro (opcional)",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                DecoratedTextFormField(
+                  initialValue: widget._sharedData["neighborhoodName"],
+                  hintText: "Digite aqui",
+                  validator: _validateNeighborhoodName,
+                  onChanged: (value) {
+                    widget._sharedData["neighborhoodName"] = value;
+                  },
+                ),
+
+                const SizedBox(height: 50),
+                DecoratedButton(
+                  primary: true,
+                  text: "Cadastrar-se",
+                  isLoading: _isLoading,
+                  onPressed: _isLoading ? null : () => _register(context),
+                ),
+              ],
+            ),
           ),
         ),
       ),
