@@ -20,7 +20,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final keepAction = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const BlurryDialogWidget(
+        return const DialogWidget(
           title: "Sair",
           content:
               "Você realmente deseja sair? Caso saia, terá que logar novamente para acessar o app.",
@@ -71,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final keepAction = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const BlurryDialogWidget(
+        return const DialogWidget(
           title: "Excluir conta",
           content: "Você realmente deseja excluir sua conta? Caso exclua, terá que criar uma nova conta para acessar o app.",
           continueText: "Excluir",

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 
-class BlurryDialogWidget extends StatelessWidget {
-  const BlurryDialogWidget({
+class DialogWidget extends StatelessWidget {
+  const DialogWidget({
     super.key,
     required this.title,
     required this.content,
@@ -10,8 +10,6 @@ class BlurryDialogWidget extends StatelessWidget {
     this.continueText = "Continuar",
     this.isDestructiveAction = false,
   });
-
-  final TextStyle textStyle = const TextStyle(color: Colors.black);
 
   final String title;
   final String content;
@@ -24,11 +22,12 @@ class BlurryDialogWidget extends StatelessWidget {
     return AlertDialog(
       title: Text(
         title,
-        style: textStyle,
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       content: Text(
         content,
-        style: textStyle,
+        textAlign: TextAlign.center,
       ),
       backgroundColor: Colors.white,
       actions: <Widget>[

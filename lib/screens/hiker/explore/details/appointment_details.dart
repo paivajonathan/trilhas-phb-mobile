@@ -143,7 +143,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
         final keepAction = await showDialog(
           context: context,
           builder: (BuildContext context) {
-            return const BlurryDialogWidget(
+            return const DialogWidget(
               title: "Cancelar participação",
               content: "Você realmente deseja cancelar a sua participação?",
               cancelText: "Não",

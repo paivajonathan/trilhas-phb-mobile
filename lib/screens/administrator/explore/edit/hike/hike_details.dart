@@ -121,7 +121,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
     final keepAction = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const BlurryDialogWidget(
+        return const DialogWidget(
           title: "Inativar trilha",
           content: "Você realmente deseja inativar essa trilha?",
           continueText: "Inativar",
