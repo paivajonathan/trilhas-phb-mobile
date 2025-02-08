@@ -5,12 +5,14 @@ class TitleQuantityTrait extends StatelessWidget {
     super.key,
     required this.number,
     required this.title,
+    required this.titleSingular,
     required this.color,
   });
 
   final int number;
   final String title;
   final Color color;
+  final String titleSingular;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class TitleQuantityTrait extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 5,),
-          Text(title),
+          Text(number > 1 ? title : titleSingular),
         ],
       ),
     );

@@ -84,6 +84,7 @@ class _ParticipationViewScreenState extends State<ParticipationViewScreen> {
                       TitleQuantityTrait(
                         number: participations.length,
                         title: 'Participantes',
+                        titleSingular: 'Participante',
                         color: AppColors.primary,
                       )
                     ],

@@ -168,6 +168,7 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
                         .toList()
                         .length,
                     title: "Presentes",
+                    titleSingular: "Presente",
                   ),
                   TitleQuantityTrait(
                     color: Colors.red,
@@ -176,6 +177,7 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
                         .toList()
                         .length,
                     title: "Ausentes",
+                    titleSingular: "Ausente",
                   ),
                 ],
               ),
