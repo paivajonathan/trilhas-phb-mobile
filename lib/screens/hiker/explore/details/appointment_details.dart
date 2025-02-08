@@ -5,6 +5,7 @@ import 'package:trilhas_phb/helpers/map.dart';
 import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/services/hike.dart';
 import 'package:trilhas_phb/services/participation.dart';
+import 'package:trilhas_phb/widgets/alert_dialog.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
 
 class AppointmentDetailsScreen extends StatefulWidget {
@@ -132,13 +133,29 @@ class _BottomDrawerState extends State<BottomDrawer> {
     }
   }
 
-  Future<void> _handleParticipation(BuildContext context) async {
+  Future<void> _handleParticipation() async {
     try {
       setState(() {
         _isButtonLoading = true;
       });
 
       if (_doesUserParticipate) {
+        final keepAction = await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const BlurryDialogWidget(
+              title: "Cancelar participação",
+              content: "Tem certeza de que deseja cancelar a sua participação?",
+              cancelText: "Não",
+              continueText: "Cancelar",
+              isDestructiveAction: true,
+            );
+          },
+        );
+
+        if (keepAction == null) return;
+        if (!keepAction) return;
+
         await _participationService.cancel(
           appointmentId: widget._appointment.id,
         );
@@ -147,7 +164,9 @@ class _BottomDrawerState extends State<BottomDrawer> {
           _doesUserParticipate = false;
         });
 
-        if (!context.mounted) return;
+        if (!mounted) {
+          return;
+        }
 
         ScaffoldMessenger.of(context)
           ..clearSnackBars()
@@ -156,29 +175,33 @@ class _BottomDrawerState extends State<BottomDrawer> {
               content: Text("Participação cancelada com sucesso."),
             ),
           );
+      } else {
+        await _participationService.create(
+          appointmentId: widget._appointment.id,
+        );
 
+        setState(() {
+          _doesUserParticipate = true;
+        });
+
+        if (!mounted) {
+          return;
+        }
+
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text("Participação registrada com sucesso."),
+            ),
+          );
+      }
+    } catch (e) {
+      if (!mounted) {
         return;
       }
 
-      await _participationService.create(
-        appointmentId: widget._appointment.id,
-      );
-
-      setState(() {
-        _doesUserParticipate = true;
-      });
-
-      if (!context.mounted) return;
-
-      ScaffoldMessenger.of(context)
-        ..clearSnackBars()
-        ..showSnackBar(
-          const SnackBar(content: Text("Participação registrada com sucesso.")),
-        );
-    } catch (e) {
-      if (!context.mounted) return;
-
-      late String message = _doesUserParticipate
+      final message = _doesUserParticipate
           ? "Ocorreu um erro ao tentar cancelar a sua participação na trilha."
           : "Ocorreu um erro ao tentar fixar sua participação na trilha.";
 
@@ -298,7 +321,10 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     text: _doesUserParticipate
                         ? "CANCELAR INSCRIÇÃO"
                         : "PARTICIPAR",
-                    onPressed: _isButtonLoading ? null : () => _handleParticipation(context),
+                    color:
+                        _doesUserParticipate ? Colors.red : AppColors.primary,
+                    onPressed:
+                        _isButtonLoading ? null : () => _handleParticipation(),
                     isLoading: _isButtonLoading,
                   ),
                 )
