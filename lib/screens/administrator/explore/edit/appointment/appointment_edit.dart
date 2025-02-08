@@ -144,7 +144,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
     );
 
     if (currentTimestamp.compareTo(desiredTimestamp) == 1) {
-      return "Data inválida.";
+      return "Horário inválido.";
     }
 
     return null;

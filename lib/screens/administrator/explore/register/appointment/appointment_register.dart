@@ -130,7 +130,7 @@ class _AppointmentRegisterScreenState extends State<AppointmentRegisterScreen> {
     );
 
     if (currentTimestamp.compareTo(desiredTimestamp) == 1) {
-      return "Data inválida.";
+      return "Horário inválido.";
     }
 
     return null;
