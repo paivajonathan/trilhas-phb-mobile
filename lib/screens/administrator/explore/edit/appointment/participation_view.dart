@@ -26,6 +26,7 @@ class _ParticipationViewScreenState extends State<ParticipationViewScreen> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       color: AppColors.primary,
+      backgroundColor: Colors.white,
       onRefresh: () async {
         setState(() {});
       },

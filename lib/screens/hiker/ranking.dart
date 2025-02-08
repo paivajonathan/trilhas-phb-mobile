@@ -110,6 +110,7 @@ class _RankingScreenState extends State<RankingScreen> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       color: AppColors.primary,
+      backgroundColor: Colors.white,
       onRefresh: () async {
         setState(() {});
       },

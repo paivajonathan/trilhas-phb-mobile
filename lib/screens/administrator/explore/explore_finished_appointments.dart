@@ -23,6 +23,7 @@ class ExploreFinishedAppointmentsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       color: AppColors.primary,
+      backgroundColor: Colors.white,
       onRefresh: () async {
         onUpdate();
       },

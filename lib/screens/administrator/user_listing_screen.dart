@@ -204,6 +204,7 @@ class _UserListingScreenState extends State<UserListingScreen> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       color: AppColors.primary,
+      backgroundColor: Colors.white,
       onRefresh: () async {
         _loadData();
       },
