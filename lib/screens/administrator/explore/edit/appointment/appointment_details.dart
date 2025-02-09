@@ -293,7 +293,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                       Text("DATA: $date"),
                       Text("HORÁRIO: $time"),
                       const SizedBox(height: 25),
-                      const Text("Sobre"),
+                      const Text("SOBRE"),
                       Text(description),
                     ],
                   ),
