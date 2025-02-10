@@ -20,7 +20,7 @@ class ParticipationItem extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: CircleAvatar(
-        backgroundColor: Colors.grey[300],
+        backgroundColor: AppColors.secondary,
         child: const Icon(Icons.person, color: AppColors.primary),
       ),
       title: Text(
