@@ -17,7 +17,7 @@ class ParticipationService {
     final queryParameters = {
       "appointment_id": appointmentId.toString(),
       "is_active": true.toString(),
-      "ordering": "-id",
+      "ordering": "profile__full_name",
     };
 
     final uri = Uri.parse("$_baseUrl/api/v1/participations/")

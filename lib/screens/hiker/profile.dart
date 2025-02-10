@@ -170,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   CircleAvatar(
-                    backgroundColor: AppColors.secondary,
+                    backgroundColor: Colors.grey[300],
                     radius: 45,
                     child: const Icon(
                       Icons.person,

@@ -141,7 +141,7 @@ class _CheckUserInfoScreenState extends State<CheckUserInfoScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  backgroundColor: AppColors.secondary,
+                  backgroundColor: Colors.grey[300],
                   radius: 45,
                   child: const Icon(
                     Icons.person,

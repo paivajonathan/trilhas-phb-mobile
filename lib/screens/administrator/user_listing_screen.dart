@@ -487,7 +487,7 @@ class UserListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: AppColors.secondary,
+        backgroundColor: Colors.grey[300],
         child: const Icon(Icons.person, color: AppColors.primary),
       ),
       title: Text(
