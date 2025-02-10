@@ -73,7 +73,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (BuildContext context) {
         return const DialogWidget(
           title: "Excluir conta",
-          content: "Você realmente deseja excluir sua conta? Caso exclua, terá que criar uma nova conta para acessar o app.",
+          content:
+              "Você realmente deseja excluir sua conta? Caso exclua, terá que criar uma nova conta para acessar o app.",
           continueText: "Excluir",
           isDestructiveAction: true,
         );
@@ -92,11 +93,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
-        ..showSnackBar(const SnackBar(
-          content: Text("Conta excluída com sucesso."),
-        ));
+        ..showSnackBar(
+          const SnackBar(
+            content: Text("Conta excluída com sucesso."),
+          ),
+        );
 
-      await _handleLogout();
+      await _auth.logout();
+
+      if (!mounted) {
+        return;
+      }
+
+      await Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (Route<dynamic> route) => false,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      Provider.of<UserDataProvider>(context, listen: false).clearUserData();
     } catch (e) {
       if (!mounted) {
         return;
