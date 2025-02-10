@@ -120,17 +120,23 @@ class _UserListingScreenState extends State<UserListingScreen> {
           ),
         if (_isRegisteredUsersSelected)
           PopupMenuItem(
+            onTap: () {
+              setState(() {
+                _ordenationParam = "nome";
+              });
+              _loadData();
+            },
             child: ListTile(
-              title: Text('Nome', style: GoogleFonts.inter()),
+              title: Text("Nome", style: GoogleFonts.inter()),
               leading: Radio(
-                value: 'nome',
+                value: "nome",
                 groupValue: _ordenationParam,
                 activeColor: AppColors.primary,
                 onChanged: (value) {
+                  Navigator.pop(context);
                   setState(() {
                     _ordenationParam = value as String;
                   });
-                  Navigator.pop(context);
                   _loadData();
                 },
               ),
@@ -138,42 +144,55 @@ class _UserListingScreenState extends State<UserListingScreen> {
           ),
         if (_isRegisteredUsersSelected)
           PopupMenuItem(
+            onTap: () {
+              setState(() {
+                _ordenationParam = "estrelas";
+              });
+              _loadData();
+            },
             child: ListTile(
-              title: Text('Estrela', style: GoogleFonts.inter()),
+              title: Text("Estrela", style: GoogleFonts.inter()),
               leading: Radio(
-                value: 'estrelas',
+                value: "estrelas",
                 groupValue: _ordenationParam,
                 activeColor: AppColors.primary,
                 onChanged: (value) {
+                  Navigator.pop(context);
                   setState(() {
                     _ordenationParam = value as String;
                   });
-                  Navigator.pop(context);
                   _loadData();
                 },
               ),
             ),
           ),
-        if (_isRegisteredUsersSelected)
-          const PopupMenuDivider(),
+        if (_isRegisteredUsersSelected) const PopupMenuDivider(),
         PopupMenuItem(
           enabled: false,
-          child: Text('Ordenar de forma:',
-              style: GoogleFonts.inter(color: AppColors.primary)),
+          child: Text(
+            'Ordenar de forma:',
+            style: GoogleFonts.inter(color: AppColors.primary),
+          ),
         ),
         // Ordenação Crescente
         PopupMenuItem(
+          onTap: () {
+            setState(() {
+              _ordenationAsc = true;
+            });
+            _loadData();
+          },
           child: ListTile(
-            title: Text('Crescente', style: GoogleFonts.inter()),
+            title: Text("Crescente", style: GoogleFonts.inter()),
             leading: Radio(
               value: true,
               groupValue: _ordenationAsc,
               activeColor: AppColors.primary,
               onChanged: (value) {
+                Navigator.pop(context);
                 setState(() {
                   _ordenationAsc = value as bool;
                 });
-                Navigator.pop(context);
                 _loadData();
               },
             ),
@@ -181,6 +200,12 @@ class _UserListingScreenState extends State<UserListingScreen> {
         ),
         // Ordenação Decrescente
         PopupMenuItem(
+          onTap: () {
+            setState(() {
+              _ordenationAsc = false;
+            });
+            _loadData();
+          },
           child: ListTile(
             title: Text('Decrescente', style: GoogleFonts.inter()),
             leading: Radio(
@@ -188,10 +213,10 @@ class _UserListingScreenState extends State<UserListingScreen> {
               groupValue: _ordenationAsc,
               activeColor: AppColors.primary,
               onChanged: (value) {
+                Navigator.pop(context);
                 setState(() {
                   _ordenationAsc = value as bool;
                 });
-                Navigator.pop(context);
                 _loadData();
               },
             ),
@@ -495,17 +520,19 @@ class UserListTile extends StatelessWidget {
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
-      subtitle: !user.userIsAccepted ? null : Row(
-        children: [
-          const Icon(
-            FontAwesomeIcons.solidStar,
-            color: AppColors.primary,
-            size: 16,
-          ),
-          const SizedBox(width: 4),
-          Text('${user.profileStars}'),
-        ],
-      ),
+      subtitle: !user.userIsAccepted
+          ? null
+          : Row(
+              children: [
+                const Icon(
+                  FontAwesomeIcons.solidStar,
+                  color: AppColors.primary,
+                  size: 16,
+                ),
+                const SizedBox(width: 4),
+                Text('${user.profileStars}'),
+              ],
+            ),
       trailing: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
