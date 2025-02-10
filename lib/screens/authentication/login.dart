@@ -9,6 +9,7 @@ import "package:trilhas_phb/screens/authentication/reset_password/insert_email.d
 import "package:trilhas_phb/services/auth.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_text_form_field.dart";
+import "package:trilhas_phb/widgets/future_button.dart";
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,21 +25,22 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  bool _isLoading = false;
   bool _isPasswordVisible = false;
 
-  Future<void> _login(BuildContext context) async {
-    if (!_formKey.currentState!.validate()) return;
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
     try {
-      setState(() => _isLoading = true);
-
       final userData = await _auth.login(
         email: _emailController.text,
         password: _passwordController.text,
       );
 
-      if (!context.mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       final userDataProvider =
           Provider.of<UserDataProvider>(context, listen: false);
@@ -58,8 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         );
-    } finally {
-      setState(() => _isLoading = false);
     }
   }
 
@@ -95,8 +95,9 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        resizeToAvoidBottomInset: false,
-        body: Column(
+        extendBodyBehindAppBar: true,
+        body: ListView(
+          padding: EdgeInsets.zero,
           children: [
             Container(
               clipBehavior: Clip.hardEdge,
@@ -169,11 +170,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    DecoratedButton(
+                    FutureButton(
                       text: "Login",
                       primary: true,
-                      isLoading: _isLoading,
-                      onPressed: _isLoading ? null : () => _login(context),
+                      future: _login,
                     ),
                     const SizedBox(height: 20),
                     DecoratedButton(
