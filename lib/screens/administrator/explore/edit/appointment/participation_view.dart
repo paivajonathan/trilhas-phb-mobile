@@ -58,25 +58,37 @@ class _ParticipationViewScreenState extends State<ParticipationViewScreen> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: Loader());
               }
-          
+
               if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    'Erro ao carregar dados: ${snapshot.error!.toString().replaceAll("Exception: ", "")}',
-                  ),
+                return Stack(
+                  children: <Widget>[
+                    Center(
+                      child: Text(
+                        "Erro ao carregar dados: ${snapshot.error!.toString().replaceAll("Exception: ", "")}",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    ListView()
+                  ],
                 );
               }
-          
+
               final participations = snapshot.data ?? [];
-          
+
               if (participations.isEmpty) {
-                return const Center(
-                  child: Text(
-                    'Não há participantes neste agendamento de trilha.',
-                  ),
+                return Stack(
+                  children: <Widget>[
+                    const Center(
+                      child: Text(
+                        "Não há participantes neste agendamento de trilha.",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    ListView()
+                  ],
                 );
               }
-          
+
               return ListView(
                 children: [
                   Row(

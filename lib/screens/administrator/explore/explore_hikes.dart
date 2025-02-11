@@ -73,10 +73,13 @@ class ExploreHikesScreen extends StatelessWidget {
                 }
       
                 if (isHikesLoadingError != null) {
-                  return Center(
-                    child: Text(
-                      isHikesLoadingError!,
-                    ),
+                  return Stack(
+                    children: <Widget>[
+                      Center(
+                        child: Text(isHikesLoadingError!),
+                      ),
+                      ListView()
+                    ],
                   );
                 }
       

@@ -46,10 +46,13 @@ class ExploreAvailableScreen extends StatelessWidget {
                 }
       
                 if (isAvailableAppointmentsLoadingError != null) {
-                  return Center(
-                    child: Text(
-                      isAvailableAppointmentsLoadingError!,
-                    ),
+                  return Stack(
+                    children: <Widget>[
+                      Center(
+                        child: Text(isAvailableAppointmentsLoadingError!),
+                      ),
+                      ListView()
+                    ],
                   );
                 }
       

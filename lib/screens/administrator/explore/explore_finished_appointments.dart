@@ -45,10 +45,13 @@ class ExploreFinishedAppointmentsScreen extends StatelessWidget {
                 }
 
                 if (isFinishedAppointmentsLoadingError != null) {
-                  return Center(
-                    child: Text(
-                      isFinishedAppointmentsLoadingError!,
-                    ),
+                  return Stack(
+                    children: <Widget>[
+                      Center(
+                        child: Text(isFinishedAppointmentsLoadingError!),
+                      ),
+                      ListView()
+                    ],
                   );
                 }
 

@@ -54,17 +54,33 @@ class _RankingScreenState extends State<RankingScreen> {
             }
 
             if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  'Erro ao carregar dados: ${snapshot.error!.toString().replaceAll("Exception: ", "")}',
-                ),
+              return Stack(
+                children: <Widget>[
+                  Center(
+                    child: Text(
+                      "Erro ao carregar dados: ${snapshot.error!.toString().replaceAll("Exception: ", "")}",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  ListView()
+                ],
               );
             }
 
             final users = snapshot.data ?? [];
 
             if (users.isEmpty) {
-              return const Center(child: Text('Nenhum usuário encontrado.'));
+              return Stack(
+                children: <Widget>[
+                  const Center(
+                    child: Text(
+                      "Nenhum usuário encontrado.",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  ListView()
+                ],
+              );
             }
 
             return ListView.builder(

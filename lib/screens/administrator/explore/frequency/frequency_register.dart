@@ -141,18 +141,24 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
           }
 
           if (_areParticipationsLoadingError != null) {
-            return Center(
-              child: Text(
-                _areParticipationsLoadingError!,
-              ),
+            return Stack(
+              children: <Widget>[
+                Center(
+                  child: Text(_areParticipationsLoadingError!),
+                ),
+                ListView()
+              ],
             );
           }
 
           if (_participations.isEmpty) {
-            return const Center(
-              child: Text(
-                "Não há participações para esse agendamento.",
-              ),
+            return Stack(
+              children: <Widget>[
+                const Center(
+                  child: Text("Não há participações para esse agendamento."),
+                ),
+                ListView()
+              ],
             );
           }
 
@@ -181,7 +187,9 @@ class _FrequencyRegisterScreenState extends State<FrequencyRegisterScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20,),
+              const SizedBox(
+                height: 20,
+              ),
               for (final (i, p) in _participations.indexed)
                 ParticipationItem(
                   participation: p,

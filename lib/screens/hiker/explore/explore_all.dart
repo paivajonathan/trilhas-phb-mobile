@@ -57,14 +57,24 @@ class ExploreAllScreen extends StatelessWidget {
                 }
 
                 if (isAvailableAppointmentsLoadingError != null) {
-                  return Center(
-                    child: Text(isAvailableAppointmentsLoadingError!),
+                  return Stack(
+                    children: <Widget>[
+                      Center(
+                        child: Text(isAvailableAppointmentsLoadingError!),
+                      ),
+                      ListView()
+                    ],
                   );
                 }
 
                 if (availableAppointments.isEmpty) {
-                  return const Center(
-                    child: Text("Os agendamentos aparecerão aqui."),
+                  return Stack(
+                    children: <Widget>[
+                      const Center(
+                        child: Text("Os agendamentos aparecerão aqui."),
+                      ),
+                      ListView()
+                    ],
                   );
                 }
 
@@ -116,8 +126,13 @@ class ExploreAllScreen extends StatelessWidget {
                 }
 
                 if (isUserAppointmentsLoadingError != null) {
-                  return Center(
-                    child: Text(isUserAppointmentsLoadingError!),
+                  return Stack(
+                    children: <Widget>[
+                      Center(
+                        child: Text(isUserAppointmentsLoadingError!),
+                      ),
+                      ListView()
+                    ],
                   );
                 }
 
