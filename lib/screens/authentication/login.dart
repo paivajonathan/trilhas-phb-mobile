@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:provider/provider.dart";
 import "package:trilhas_phb/constants/app_colors.dart";
 import "package:trilhas_phb/helpers/validators.dart";
@@ -132,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       textInputType: TextInputType.emailAddress,
                       hintText: "Email",
                       validator: _validateEmail,
+                      inputFormatters: [LengthLimitingTextInputFormatter(254)],
                       controller: _emailController,
                       isHintTextLabel: true,
                     ),

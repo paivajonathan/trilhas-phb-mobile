@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:flutter_masked_text2/flutter_masked_text2.dart";
 import "package:trilhas_phb/helpers/calculators.dart";
 import "package:trilhas_phb/screens/authentication/login.dart";
@@ -106,10 +107,6 @@ class _PersonalDataScreenState extends State<PersonalData> {
       return "Digite seu nome completo.";
     }
 
-    if (value.length > 150) {
-      return "Tamanho do nome não pode superar 150 caracteres.";
-    }
-
     return null;
   }
 
@@ -144,14 +141,6 @@ class _PersonalDataScreenState extends State<PersonalData> {
 
     if (cleanedValue.length != 11) {
       return "Número de celular deve conter 11 caracteres.";
-    }
-
-    return null;
-  }
-
-  String? _validateNeighborhoodName(String? value) {
-    if (value != null && value.length > 150) {
-      return "Nome do bairro não pode superar 150 caracteres.";
     }
 
     return null;
@@ -221,6 +210,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 DecoratedTextFormField(
                   initialValue: widget._sharedData["fullName"],
                   hintText: "Digite aqui",
+                  inputFormatters: [LengthLimitingTextInputFormatter(150)],
                   onChanged: (value) {
                     widget._sharedData["fullName"] = value;
                   },
@@ -283,7 +273,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
                 DecoratedTextFormField(
                   initialValue: widget._sharedData["neighborhoodName"],
                   hintText: "Digite aqui",
-                  validator: _validateNeighborhoodName,
+                  inputFormatters: [LengthLimitingTextInputFormatter(150)],
                   onChanged: (value) {
                     widget._sharedData["neighborhoodName"] = value;
                   },
