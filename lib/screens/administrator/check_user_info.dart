@@ -188,7 +188,7 @@ class _CheckUserInfoScreenState extends State<CheckUserInfoScreen> {
                   Expanded(
                     child: FutureButton(
                       primary: false,
-                      text: "ACEITAR",
+                      text: "Aceitar",
                       future: _handleAccept,
                     ),
                   ),
@@ -198,7 +198,7 @@ class _CheckUserInfoScreenState extends State<CheckUserInfoScreen> {
                   Expanded(
                     child: FutureButton(
                       primary: false,
-                      text: "RECUSAR",
+                      text: "Recusar",
                       future: _handleRefuse,
                       color: Colors.red,
                     ),

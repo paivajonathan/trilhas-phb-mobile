@@ -740,7 +740,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                   FutureButton(
                     future: _handleSubmit,
                     primary: true,
-                    text: "Salvar",
+                    text: "Cadastrar",
                   ),
                   const SizedBox(height: 25),
                 ],

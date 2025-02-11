@@ -830,7 +830,7 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
                   FutureButton(
                     future: _handleSubmit,
                     primary: true,
-                    text: "Salvar",
+                    text: "Editar",
                     disableDependencies: [_isGpxLoading, _isImagesLoading],
                   ),
                   const SizedBox(height: 25),

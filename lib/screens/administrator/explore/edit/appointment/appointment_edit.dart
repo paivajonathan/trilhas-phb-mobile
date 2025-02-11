@@ -237,7 +237,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
                 const Spacer(),
                 DecoratedButton(
                   primary: true,
-                  text: "EDITAR",
+                  text: "Editar",
                   isLoading: _isLoading,
                   onPressed: _isLoading ? null : () => _handleSubmit(context),
                 ),

@@ -238,7 +238,7 @@ class _AppointmentRegisterScreenState extends State<AppointmentRegisterScreen> {
                 const Spacer(),
                 DecoratedButton(
                   primary: true,
-                  text: "Salvar",
+                  text: "Agendar",
                   isLoading: _isLoading,
                   onPressed: _isLoading ? null : () => _handleSubmit(context),
                 ),

@@ -319,8 +319,8 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   child: DecoratedButton(
                     primary: _doesUserParticipate ? false : true,
                     text: _doesUserParticipate
-                        ? "CANCELAR INSCRIÇÃO"
-                        : "PARTICIPAR",
+                        ? "Cancelar Inscrição"
+                        : "Participar",
                     color:
                         _doesUserParticipate ? Colors.red : AppColors.primary,
                     onPressed:
