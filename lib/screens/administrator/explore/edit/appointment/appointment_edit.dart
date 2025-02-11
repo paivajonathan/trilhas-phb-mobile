@@ -89,22 +89,18 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
       return "Data inválida.";
     }
 
-    DateTime? desiredTime = DateFormat("HH:mm").tryParseStrict(
-      _timeController.text,
+    final currentTimestamp = DateTime.now().copyWith(
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+      microsecond: 0,
     );
-
-    if (desiredTime == null) {
-      return null;
-    }
-
-    final currentTimestamp = DateTime.now();
 
     final desiredTimestamp = DateTime(
       desiredDate.year,
       desiredDate.month,
       desiredDate.day,
-      desiredTime.hour,
-      desiredTime.minute,
     );
 
     if (currentTimestamp.compareTo(desiredTimestamp) == 1) {
