@@ -1,4 +1,5 @@
 import "dart:typed_data";
+import "package:device_info_plus/device_info_plus.dart";
 import "package:flutter/material.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/services.dart";
@@ -118,9 +119,16 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
         return;
       }
 
-      final storagePermission = await Permission.storage.request();
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      final storageStatus = androidInfo.version.sdkInt < 33
+          ? await Permission.storage.request()
+          : PermissionStatus.granted;
 
-      if (!storagePermission.isGranted) {
+      if (storageStatus == PermissionStatus.permanentlyDenied) {
+        openAppSettings();
+      }
+
+      if (storageStatus != PermissionStatus.granted) {
         if (!mounted) return;
 
         ScaffoldMessenger.of(context)
@@ -232,9 +240,16 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
         return;
       }
 
-      final storagePermission = await Permission.storage.request();
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      final storageStatus = androidInfo.version.sdkInt < 33
+          ? await Permission.storage.request()
+          : PermissionStatus.granted;
 
-      if (!storagePermission.isGranted) {
+      if (storageStatus == PermissionStatus.permanentlyDenied) {
+        openAppSettings();
+      }
+
+      if (storageStatus != PermissionStatus.granted) {
         if (!mounted) return;
 
         ScaffoldMessenger.of(context)
