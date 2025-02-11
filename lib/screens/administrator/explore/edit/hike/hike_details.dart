@@ -145,7 +145,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
         ..showSnackBar(
-          const SnackBar(content: Text("Agendamento inativado com sucesso!")),
+          const SnackBar(content: Text("Trilha inativada com sucesso!")),
         );
 
       Navigator.of(context).pop(true);
