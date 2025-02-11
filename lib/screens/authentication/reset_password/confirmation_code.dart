@@ -20,6 +20,7 @@ class ConfirmationCodeScreen extends StatefulWidget {
 
 class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
   bool _isLoading = false;
+  bool _isConfirmationCodeLoading = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -27,15 +28,17 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
 
   String _verificationCode = "";
 
-  Future<void> _handleSubmit(BuildContext context) async {
+  Future<void> _handleSubmit() async {
     try {
       setState(() {
-        _isLoading = true;
+        _isConfirmationCodeLoading = true;
       });
 
       await _authService.sendConfirmationCode(email: widget.email);
 
-      if (!context.mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
@@ -50,12 +53,12 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
         );
     } finally {
       setState(() {
-        _isLoading = false;
+        _isConfirmationCodeLoading = false;
       });
     }
   }
 
-  Future<void> _validateCode(BuildContext context) async {
+  Future<void> _validateCode() async {
     if (_verificationCode == "" || _verificationCode.length != 6) {
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
@@ -77,7 +80,9 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
         confirmationCode: _verificationCode,
       );
 
-      if (!context.mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
@@ -193,15 +198,15 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                   ),
                   const Spacer(),
                   GestureDetector(
-                    onTap: _isLoading ? null : () => _handleSubmit(context),
-                    child: const Align(
+                    onTap: (_isLoading || _isConfirmationCodeLoading) ? null : () => _handleSubmit(),
+                    child: Align(
                       alignment: Alignment.center,
                       child: Text(
                         "Reenviar Código",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
+                          color: (_isLoading || _isConfirmationCodeLoading) ? Colors.grey : AppColors.primary,
                         ),
                       ),
                     ),
@@ -210,7 +215,7 @@ class _ConfirmationCodeScreenState extends State<ConfirmationCodeScreen> {
                   DecoratedButton(
                     primary: true,
                     text: "Continuar",
-                    onPressed: _isLoading ? null : () => _validateCode(context),
+                    onPressed: (_isLoading || _isConfirmationCodeLoading) ? null : () => _validateCode(),
                     isLoading: _isLoading,
                   ),
                 ],

@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:trilhas_phb/helpers/validators.dart";
 import "package:trilhas_phb/screens/authentication/registration/personal_data.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";
@@ -131,6 +132,7 @@ class _LoginDataState extends State<LoginData> {
                     hintText: "Digite aqui",
                     textInputType: TextInputType.emailAddress,
                     validator: _validateEmail,
+                    inputFormatters: [LengthLimitingTextInputFormatter(254)],
                     onChanged: (value) {
                       setState(() => widget._sharedData["email"] = value);
                     },

@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:trilhas_phb/helpers/validators.dart";
 import "package:trilhas_phb/widgets/decorated_button.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
@@ -131,6 +132,7 @@ class _InsertEmailState extends State<InsertEmail> {
                   textInputType: TextInputType.emailAddress,
                   controller: _emailController,
                   validator: _validateEmail,
+                  inputFormatters: [LengthLimitingTextInputFormatter(254)],
                 ),
       
                 // Para jogar botão no final da tela
