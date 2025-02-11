@@ -32,7 +32,7 @@ class DecoratedListTile extends StatelessWidget {
       trailing = const Icon(Icons.chevron_right);
     } else if (hike != null) {
       title = hike!.name;
-      subtitle = "Distância: ${hike!.length.toString()}km";
+      subtitle = "Distância: ${hike!.readableLength} Km";
       imageUrl = hike!.images[0].url;
       trailing = Container(
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),

@@ -428,7 +428,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                   ),
                   const SizedBox(height: 16),
                   const DecoratedLabel(
-                    content: "Distância Percorrida (km)",
+                    content: "Distância Percorrida (Km)",
                   ),
                   const SizedBox(height: 8),
                   DecoratedTextFormField(

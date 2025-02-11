@@ -193,7 +193,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
   @override
   Widget build(BuildContext context) {
     String name = widget.appointment.hike.name;
-    String length = widget.appointment.hike.length.toString();
+    String length = widget.appointment.hike.readableLength;
     String difficulty = widget.appointment.hike.readableDifficulty;
     String date = widget.appointment.readableDate;
     String time = widget.appointment.readableTime;
@@ -288,7 +288,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 25),
-                      Text("DISTÂNCIA: $length"),
+                      Text("DISTÂNCIA: $length Km"),
                       Text("DIFICULDADE: $difficulty"),
                       Text("DATA: $date"),
                       Text("HORÁRIO: $time"),
