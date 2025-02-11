@@ -831,6 +831,7 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
                     future: _handleSubmit,
                     primary: true,
                     text: "Salvar",
+                    disableDependencies: [_isGpxLoading, _isImagesLoading],
                   ),
                   const SizedBox(height: 25),
                 ],
