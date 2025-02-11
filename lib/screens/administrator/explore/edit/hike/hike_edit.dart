@@ -1,6 +1,7 @@
 import "dart:typed_data";
 import "package:flutter/material.dart";
 import "package:file_picker/file_picker.dart";
+import "package:flutter/services.dart";
 import "package:permission_handler/permission_handler.dart";
 import "package:trilhas_phb/models/hike.dart";
 import "package:trilhas_phb/services/hike.dart";
@@ -417,10 +418,6 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
       return "Digite o nome da trilha.";
     }
 
-    if (value.length > 50) {
-      return "O nome da trilha não pode possuir mais do que 50 caracteres.";
-    }
-
     return null;
   }
 
@@ -439,10 +436,6 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
   String? _validateDescription(String? value) {
     if (value == null || value.isEmpty) {
       return "Digite a descrição da trilha.";
-    }
-
-    if (value.length > 200) {
-      return "A descrição da trilha não pode possuir mais do que 200 caracteres.";
     }
 
     return null;
@@ -502,6 +495,7 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
                     hintText: "Digite aqui",
                     controller: _nameController,
                     validator: _validateName,
+                    inputFormatters: [LengthLimitingTextInputFormatter(50)],
                   ),
                   const SizedBox(height: 16),
                   const DecoratedLabel(
@@ -511,6 +505,7 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
                   DecoratedTextFormField(
                     textInputType:
                         const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [LengthLimitingTextInputFormatter(16)],
                     controller: _lengthController,
                     hintText: "Digite aqui",
                     validator: _validateLength,
@@ -646,6 +641,7 @@ class _HikeEditScreenState extends State<HikeEditScreen> {
                     textInputType: TextInputType.multiline,
                     controller: _descriptionController,
                     validator: _validateDescription,
+                    inputFormatters: [LengthLimitingTextInputFormatter(200)],
                     hintText: "Descreva a trilha",
                   ),
                   const SizedBox(height: 16),
