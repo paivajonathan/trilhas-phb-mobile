@@ -36,66 +36,76 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Informações",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: SizedBox(
-            height: 20,
-            width: 20,
-            child: Image.asset("assets/icon_voltar.png"),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) {
+          return;
+        }
+
+        Navigator.of(context).pop(wasEdited);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Informações",
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          onPressed: () {
-            Navigator.of(context).pop(wasEdited);
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.remove_red_eye),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: SizedBox(
+              height: 20,
+              width: 20,
+              child: Image.asset("assets/icon_voltar.png"),
+            ),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                return ParticipationViewScreen(appointmentId: widget.appointmentId);
-              }));
+              Navigator.of(context).pop(wasEdited);
             },
           ),
-        ],
-      ),
-      body: FutureBuilder(
-        future: _appointmentService.getOne(appointmentId: widget.appointmentId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.remove_red_eye),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                  return ParticipationViewScreen(appointmentId: widget.appointmentId);
+                }));
+              },
+            ),
+          ],
+        ),
+        body: FutureBuilder(
+          future: _appointmentService.getOne(appointmentId: widget.appointmentId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
+            }
+      
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(snapshot.error!.toString()),
+              );
+            }
+      
+            if (snapshot.data == null) {
+              return const Center(
+                child: Text("Não há dados para mostrar."),
+              );
+            }
+      
+            return Stack(
+              children: [
+                MapView(appointment: snapshot.data!),
+                BottomDrawer(
+                  appointment: snapshot.data!,
+                  onUpdate: _reloadScreen,
+                ),
+              ],
             );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error!.toString()),
-            );
-          }
-
-          if (snapshot.data == null) {
-            return const Center(
-              child: Text("Não há dados para mostrar."),
-            );
-          }
-
-          return Stack(
-            children: [
-              MapView(appointment: snapshot.data!),
-              BottomDrawer(
-                appointment: snapshot.data!,
-                onUpdate: _reloadScreen,
-              ),
-            ],
-          );
-        },
+          },
+        ),
       ),
     );
   }
