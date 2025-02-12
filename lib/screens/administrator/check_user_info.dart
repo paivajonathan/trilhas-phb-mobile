@@ -25,7 +25,8 @@ class _CheckUserInfoScreenState extends State<CheckUserInfoScreen> {
       builder: (BuildContext context) {
         return DialogWidget(
           title: "Aceitar acesso",
-          content: "Você realmente deseja aceitar a solicitação de ${widget.userData.profileFullName}?",
+          content:
+              "Você realmente deseja aceitar a solicitação de ${widget.userData.profileFullName}?",
           continueText: "Aceitar",
         );
       },
@@ -71,7 +72,8 @@ class _CheckUserInfoScreenState extends State<CheckUserInfoScreen> {
       builder: (BuildContext context) {
         return DialogWidget(
           title: "Recusar acesso",
-          content: "Você realmente deseja recusar a solicitação de ${widget.userData.profileFullName}?",
+          content:
+              "Você realmente deseja recusar a solicitação de ${widget.userData.profileFullName}?",
           continueText: "Recusar",
           isDestructiveAction: true,
         );
@@ -131,6 +133,16 @@ class _CheckUserInfoScreenState extends State<CheckUserInfoScreen> {
             color: Colors.black.withOpacity(.25),
             height: 1.0,
           ),
+        ),
+        leading: IconButton(
+          icon: SizedBox(
+            height: 20,
+            width: 20,
+            child: Image.asset("assets/icon_voltar.png"),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ),
       body: Padding(

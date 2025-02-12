@@ -32,6 +32,16 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
           "Informações",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        leading: IconButton(
+          icon: SizedBox(
+            height: 20,
+            width: 20,
+            child: Image.asset("assets/icon_voltar.png"),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Stack(
         children: [

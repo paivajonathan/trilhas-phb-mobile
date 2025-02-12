@@ -237,10 +237,12 @@ class _UserListingScreenState extends State<UserListingScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Lista de Usuários',
-            style: GoogleFonts.inter(
-                fontWeight: FontWeight.bold, color: Colors.black),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
           centerTitle: true,
           backgroundColor: Colors.white,
@@ -253,6 +255,13 @@ class _UserListingScreenState extends State<UserListingScreen> {
               },
             ),
           ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1.0),
+            child: Container(
+              color: Colors.black.withOpacity(.25),
+              height: 1.0,
+            ),
+          ),
         ),
         body: Column(
           children: [

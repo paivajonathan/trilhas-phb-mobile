@@ -165,7 +165,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
               child: Image.asset("assets/icon_voltar.png"),
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pop(context);
             },
           ),
         ),

@@ -47,6 +47,16 @@ class _ParticipationViewScreenState extends State<ParticipationViewScreen> {
               height: 1.0,
             ),
           ),
+          leading: IconButton(
+            icon: SizedBox(
+              height: 20,
+              width: 20,
+              child: Image.asset("assets/icon_voltar.png"),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(25.0),
