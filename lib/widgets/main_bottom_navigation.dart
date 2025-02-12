@@ -7,10 +7,12 @@ class MainBottomNavigation extends StatelessWidget {
     super.key,
     required this.currentIndex,
     required this.onTap,
+    required this.isAdmin,
   });
 
   final int currentIndex;
   final void Function(int)? onTap;
+  final bool isAdmin;
 
   @override
   Widget build(BuildContext context) {
@@ -25,20 +27,26 @@ class MainBottomNavigation extends StatelessWidget {
       unselectedFontSize: 10,
       showSelectedLabels: true,
       showUnselectedLabels: true,
-      items: const [
-        BottomNavigationBarItem(
+      items: [
+        const BottomNavigationBarItem(
           icon: Icon(FontAwesomeIcons.solidCompass),
           label: "Explorar",
         ),
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(Icons.chat_bubble),
           label: "Comunicados",
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.leaderboard),
-          label: "Classificação",
-        ),
-        BottomNavigationBarItem(
+        if (isAdmin)
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.group),
+            label: "Usuários",
+          ),
+        if (!isAdmin)
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.leaderboard),
+            label: "Classificação",
+          ),
+        const BottomNavigationBarItem(
           icon: Icon(Icons.person),
           label: "Perfil",
         ),

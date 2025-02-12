@@ -25,19 +25,20 @@ class NavigationWrapper extends StatefulWidget {
 class _NavigationWrapperState extends State<NavigationWrapper> {
   int _selectedIndex = 0;
   late List<Widget> _screens;
+  late String _userType;
 
   final _roleScreens = {
     UserType.administrator: [
-      administrator.ExploreScreen(),
-      administrator.ChatScreen(),
-      administrator.UserListingScreen(),
-      administrator.ProfileScreen(),
+      const administrator.ExploreScreen(),
+      const administrator.ChatScreen(),
+      const administrator.UserListingScreen(),
+      const administrator.ProfileScreen(),
     ],
     UserType.hiker: [
-      hiker.ExploreScreen(),
-      hiker.ChatScreen(),
-      hiker.RankingScreen(),
-      hiker.ProfileScreen()
+      const hiker.ExploreScreen(),
+      const hiker.ChatScreen(),
+      const hiker.RankingScreen(),
+      const hiker.ProfileScreen()
     ]
   };
 
@@ -52,8 +53,8 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
     super.initState();
 
     final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
-    final userType = userDataProvider.userData!.userType;
-    _screens = _roleScreens[userType]!;
+    _userType = userDataProvider.userData!.userType;
+    _screens = _roleScreens[_userType]!;
   }
 
   @override
@@ -63,6 +64,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
       bottomNavigationBar: MainBottomNavigation(
         currentIndex: _selectedIndex,
         onTap: _updateIndex,
+        isAdmin: _userType == UserType.administrator,
       ),
     );
   }

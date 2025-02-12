@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/screens/administrator/check_user_info.dart';
@@ -534,9 +533,9 @@ class UserListTile extends StatelessWidget {
           : Row(
               children: [
                 const Icon(
-                  FontAwesomeIcons.solidStar,
+                  Icons.star,
                   color: AppColors.primary,
-                  size: 16,
+                  size: 20,
                 ),
                 const SizedBox(width: 4),
                 Text('${user.profileStars}'),

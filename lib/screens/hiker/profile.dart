@@ -216,7 +216,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 color: Colors.white,
                                 size: 20,
                               ),
-                              const SizedBox(width: 5),
+                              const SizedBox(width: 4),
                               Text(
                                 userData.profileStars.toString(),
                                 maxLines: 1,
