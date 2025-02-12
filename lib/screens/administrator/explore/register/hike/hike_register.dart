@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/services.dart";
 import "package:permission_handler/permission_handler.dart";
+import "package:trilhas_phb/helpers/validators.dart";
 import "package:trilhas_phb/services/hike.dart";
 import "package:trilhas_phb/models/file.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
@@ -371,6 +372,10 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
     }
 
     if (double.tryParse(value) == null) {
+      return "Valor inválido.";
+    }
+
+    if (!isDecimalValid(value, 15, 2)) {
       return "Valor inválido.";
     }
 
