@@ -178,6 +178,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
           child: Form(
             key: _formKey,
             child: ListView(
+              key: ValueKey("listview"),
               children: [
                 const Text(
                   "Dados Pessoais",
@@ -281,6 +282,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
 
                 const SizedBox(height: 50),
                 DecoratedButton(
+                  key: ValueKey("teste"),
                   primary: true,
                   text: "Cadastrar-se",
                   isLoading: _isLoading,

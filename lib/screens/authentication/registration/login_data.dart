@@ -174,6 +174,7 @@ class _LoginDataState extends State<LoginData> {
 
                   const SizedBox(height: 50),
                   DecoratedButton(
+                    key: const ValueKey("logindatascreen_continuebutton"),
                     primary: true,
                     text: "Continuar",
                     onPressed: () => _navigateToPersonalData(context),
