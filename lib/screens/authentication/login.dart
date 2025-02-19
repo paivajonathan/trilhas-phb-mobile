@@ -173,6 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 20),
                     FutureButton(
+                      key: ValueKey("loginscreen_loginbutton"),
                       text: "Login",
                       primary: true,
                       future: _login,

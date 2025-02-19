@@ -7,6 +7,18 @@ import "package:trilhas_phb/models/user_data.dart";
 import "package:trilhas_phb/services/storage.dart";
 
 class AuthService {
+  static AuthService? _instance;
+
+  factory AuthService() {
+    return _instance ?? AuthService._internal();
+  }
+
+  AuthService._internal(); // Real constructor
+
+  static void setMockInstance(AuthService mock) {
+    _instance = mock;
+  }
+
   final _baseUrl = dotenv.env["BASE_URL"]!;
   final _storage = StorageService();
   
