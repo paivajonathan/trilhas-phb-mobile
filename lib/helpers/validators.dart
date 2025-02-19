@@ -1,3 +1,5 @@
+import 'package:xml/xml.dart';
+
 bool isEmailValid(String email) {
   final bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
 
@@ -18,4 +20,22 @@ bool isDecimalValid(String value, int maxDigits, int decimalPlaces) {
   }
 
   return true;
+}
+
+bool isGpxValid(String gpxString) {
+  try {
+    final document = XmlDocument.parse(gpxString);
+    final root = document.rootElement;
+
+    // Ensure root is <gpx> and contains valid elements
+    if (root.name.local != 'gpx') return false;
+
+    bool hasValidChild = root.findElements('wpt').isNotEmpty ||
+                         root.findElements('rte').isNotEmpty ||
+                         root.findElements('trk').isNotEmpty;
+
+    return hasValidChild;
+  } catch (e) {
+    return false; // Invalid XML
+  }
 }
