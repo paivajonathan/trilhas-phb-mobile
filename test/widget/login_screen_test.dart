@@ -10,18 +10,20 @@ import 'package:trilhas_phb/screens/navigation_wrapper.dart';
 import 'package:trilhas_phb/services/auth.dart';
 import 'package:mockito/mockito.dart';
 
-import 'check_user_info_screen_test.mocks.dart';
+import 'login_screen_test.mocks.dart';
 
 @GenerateNiceMocks([MockSpec<AuthService>()])
 void main() {
   late MockAuthService mockAuthService;
+  late UserProfileModel userProfileModel;
 
   setUpAll(() async {
     await dotenv.load(); // Load only once before all tests
+    
     mockAuthService = MockAuthService();
     AuthService.setMockInstance(mockAuthService);
 
-    final userProfileModel = UserProfileModel(
+    userProfileModel = UserProfileModel(
       userId: 1,
       userType: "A",
       userEmail: "admin@gmail.com",
@@ -35,8 +37,6 @@ void main() {
       profileStars: 0,
       profileIsActive: true,
     );
-    when(mockAuthService.login(email: "admin@gmail.com", password: "123456"))
-        .thenAnswer((_) async => userProfileModel);
   });
 
   testWidgets('LoginScreen renders correctly', (WidgetTester tester) async {
@@ -76,22 +76,22 @@ void main() {
     );
 
     // Ensure the "Login" button is visible by scrolling the screen if necessary
-    final loginButtonFinder = find.byKey(Key("loginscreen_loginbutton"));
-
+    final loginButtonFinder = find.byKey(const Key("loginscreen_loginbutton"));
     await tester.ensureVisible(loginButtonFinder);
-
     await tester.pumpAndSettle();
-
     await tester.tap(loginButtonFinder);
-
     await tester.pumpAndSettle();
 
     // Check if validation error is shown for email
     expect(find.text('Digite um email.'), findsOneWidget);
+    expect(find.text('Digite uma senha.'), findsOneWidget);
   });
 
   testWidgets('Login button triggers login method when form is valid',
       (WidgetTester tester) async {
+    when(mockAuthService.login(email: "admin@gmail.com", password: "123456"))
+        .thenAnswer((_) async => userProfileModel);
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -110,7 +110,7 @@ void main() {
     await tester.enterText(find.byType(TextFormField).at(1), "123456");
 
     // Tap the login button
-    final loginButtonFinder = find.byKey(Key("loginscreen_loginbutton"));
+    final loginButtonFinder = find.byKey(const Key("loginscreen_loginbutton"));
     await tester.ensureVisible(loginButtonFinder);
     await tester.pumpAndSettle();
     await tester.tap(loginButtonFinder);
