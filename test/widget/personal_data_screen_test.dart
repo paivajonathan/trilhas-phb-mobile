@@ -83,6 +83,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text("Digite seu nome completo."), findsOneWidget);
+    expect(find.text("Digite sua data de aniversário."), findsOneWidget);
+    expect(find.text("Digite seu número de celular."), findsOneWidget);
   });
 
   testWidgets('Register button triggers register method when form is valid',
