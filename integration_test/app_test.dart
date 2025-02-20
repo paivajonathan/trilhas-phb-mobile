@@ -14,6 +14,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Bem Vindo(a)!'), findsOneWidget); // Adjust based on UI
+  });
+
+  testWidgets('Login successfull', (WidgetTester tester) async {
+    await dotenv.load();
+    await tester.pumpWidget(const MainApp()); // Replace with your main widget
+    await tester.pumpAndSettle();
+
+    expect(find.text('Bem Vindo(a)!'), findsOneWidget); // Adjust based on UI
 
     await tester.enterText(find.byType(TextFormField).at(0), "admin@gmail.com");
     await tester.enterText(find.byType(TextFormField).at(1), "123456");
