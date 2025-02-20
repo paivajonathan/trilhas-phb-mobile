@@ -159,6 +159,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        key: ValueKey("personaldatascreen_scaffold"),
         backgroundColor: Colors.white, //Background color dos formulários
         appBar: AppBar(
           backgroundColor: Colors.white,

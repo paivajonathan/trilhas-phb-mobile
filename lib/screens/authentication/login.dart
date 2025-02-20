@@ -180,6 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 20),
                     DecoratedButton(
+                      key: ValueKey("loginscreen_createaccountbutton"),
                       text: "Criar Conta",
                       primary: false,
                       onPressed: () {

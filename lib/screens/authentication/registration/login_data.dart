@@ -81,6 +81,7 @@ class _LoginDataState extends State<LoginData> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        key: ValueKey("logindatascreen_scaffold"),
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
