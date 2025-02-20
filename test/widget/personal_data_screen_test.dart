@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
-import 'package:trilhas_phb/models/user_data.dart';
 import 'package:trilhas_phb/screens/authentication/login.dart';
 import 'package:provider/provider.dart';
 import 'package:trilhas_phb/providers/user_data.dart';
