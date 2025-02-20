@@ -51,7 +51,7 @@ class _PersonalDataScreenState extends State<PersonalData> {
     super.dispose();
   }
 
-  Future<void> _register(BuildContext context) async {
+  Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
     try {
@@ -75,7 +75,9 @@ class _PersonalDataScreenState extends State<PersonalData> {
 
       setState(() => _isLoading = false);
 
-      if (!context.mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
@@ -88,6 +90,10 @@ class _PersonalDataScreenState extends State<PersonalData> {
         (Route<dynamic> route) => false,
       );
     } catch (e) {
+      if (!mounted) {
+        return;
+      }
+
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
         ..showSnackBar(
@@ -282,11 +288,11 @@ class _PersonalDataScreenState extends State<PersonalData> {
 
                 const SizedBox(height: 50),
                 DecoratedButton(
-                  key: ValueKey("teste"),
+                  key: ValueKey("personaldatascreen_registerbutton"),
                   primary: true,
                   text: "Cadastrar-se",
                   isLoading: _isLoading,
-                  onPressed: _isLoading ? null : () => _register(context),
+                  onPressed: _isLoading ? null : () => _register(),
                 ),
               ],
             ),
