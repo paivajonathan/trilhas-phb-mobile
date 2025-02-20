@@ -6,6 +6,7 @@ import 'package:trilhas_phb/models/user_data.dart';
 import 'package:trilhas_phb/screens/authentication/login.dart';
 import 'package:provider/provider.dart';
 import 'package:trilhas_phb/providers/user_data.dart';
+import 'package:trilhas_phb/screens/authentication/registration/login_data.dart';
 import 'package:trilhas_phb/screens/authentication/registration/personal_data.dart';
 import 'package:trilhas_phb/screens/navigation_wrapper.dart';
 import 'package:trilhas_phb/services/auth.dart';
@@ -26,28 +27,14 @@ void main() {
     AuthService.setMockInstance(mockAuthService);
 
     sharedData = {
-      "email": "afadsfsda",
-      "password": "fasdfasdf",
-      "confirmPassword": "fddfasfads",
+      "email": "jose@gmail.com",
+      "password": "123456",
+      "confirmPassword": "123456",
       "fullName": null,
       "birthDate": null,
       "phone": null,
       "neighborhoodName": null,
     };
-    userProfileModel = UserProfileModel(
-      userId: 1,
-      userType: "H",
-      userEmail: "jose@gmail.com",
-      userIsAccepted: true,
-      userIsActive: true,
-      profileId: 1,
-      profileBirthDate: DateTime(2005, 07, 18),
-      profileCellphone: "86994717931",
-      profileFullName: "Jose da Silva",
-      profileNeighborhoodName: "Centro",
-      profileStars: 0,
-      profileIsActive: true,
-    );
   });
 
   testWidgets('PersonalDataScreen renders correctly',
@@ -84,80 +71,73 @@ void main() {
       ),
     );
 
-    final continueButtonFinder = find.byKey(
+    final registerButtonFinder = find.byKey(
       const Key("personaldatascreen_registerbutton"),
     );
 
     await tester.dragUntilVisible(
-      continueButtonFinder,
+      registerButtonFinder,
       find.byType(ListView),
       const Offset(0, -1000),
       duration: Duration(seconds: 2),
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(continueButtonFinder);
+    await tester.tap(registerButtonFinder);
     await tester.pumpAndSettle();
 
     expect(find.text("Digite seu nome completo."), findsOneWidget);
   });
 
-  // testWidgets('Field validation shows error on empty input',
-  //     (WidgetTester tester) async {
-  //   await tester.pumpWidget(
-  //     MultiProvider(
-  //       providers: [
-  //         ChangeNotifierProvider<UserDataProvider>(
-  //           create: (context) => UserDataProvider(),
-  //         ),
-  //       ],
-  //       child: MaterialApp(
-  //         home: PersonalData(
-  //           sharedData: sharedData,
-  //         ),
-  //       ),
-  //     ),
-  //   );
+  testWidgets('Register button triggers register method when form is valid',
+      (WidgetTester tester) async {
+    when(mockAuthService.register(
+      email: "jose@gmail.com",
+      password: "123456",
+      birthDate: "2005-07-18",
+      cellphone: "86994717931",
+      fullName: "Jose Silva",
+      neighborhoodName: "Centro",
+    )).thenAnswer((_) async {});
 
-  //   final registerButtonFinder = find.byKey(const Key("personaldatascreen_registerbutton"));
-  //   await tester.ensureVisible(registerButtonFinder);
-  //   await tester.pumpAndSettle();
-  //   await tester.tap(registerButtonFinder);
-  //   await tester.pumpAndSettle();
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<UserDataProvider>(
+            create: (context) => UserDataProvider(),
+          ),
+        ],
+        child: MaterialApp(
+          home: PersonalData(
+            sharedData: sharedData,
+          ),
+        ),
+      ),
+    );
 
-  //   expect(1, 1);
-  // });
+    // Fill the form with valid input
+    await tester.enterText(find.byType(TextFormField).at(0), "Jose Silva");
+    await tester.enterText(find.byType(TextFormField).at(1), "18/07/2005");
+    await tester.enterText(find.byType(TextFormField).at(2), "(86) 9 9471-7931");
+    await tester.enterText(find.byType(TextFormField).at(3), "Centro");
 
-  // testWidgets('Login button triggers login method when form is valid',
-  //     (WidgetTester tester) async {
-  //   when(mockAuthService.login(email: "admin@gmail.com", password: "123456"))
-  //       .thenAnswer((_) async => userProfileModel);
+    // Tap the register button
 
-  //   await tester.pumpWidget(
-  //     MultiProvider(
-  //       providers: [
-  //         ChangeNotifierProvider<UserDataProvider>(
-  //           create: (context) => UserDataProvider(),
-  //         ),
-  //       ],
-  //       child: const MaterialApp(
-  //         home: LoginScreen(),
-  //       ),
-  //     ),
-  //   );
+    final registerButtonFinder = find.byKey(
+      const Key("personaldatascreen_registerbutton"),
+    );
 
-  //   // Fill the form with valid input
-  //   await tester.enterText(find.byType(TextFormField).at(0), "admin@gmail.com");
-  //   await tester.enterText(find.byType(TextFormField).at(1), "123456");
+    await tester.dragUntilVisible(
+      registerButtonFinder,
+      find.byType(ListView),
+      const Offset(0, -1000),
+      duration: Duration(seconds: 2),
+    );
+    await tester.pumpAndSettle();
 
-  //   // Tap the login button
-  //   final loginButtonFinder = find.byKey(const Key("loginscreen_loginbutton"));
-  //   await tester.ensureVisible(loginButtonFinder);
-  //   await tester.pumpAndSettle();
-  //   await tester.tap(loginButtonFinder);
-  //   await tester.pumpAndSettle();
+    await tester.tap(registerButtonFinder);
+    await tester.pumpAndSettle();
 
-  //   // Check if the navigation happened
-  //   expect(find.byType(NavigationWrapper), findsOneWidget);
-  // });
+    expect(find.byType(LoginScreen), findsOneWidget);
+  });
 }
