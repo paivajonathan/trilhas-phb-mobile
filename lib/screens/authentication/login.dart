@@ -95,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
+        key: ValueKey("loginscreen_scaffold"),
         backgroundColor: Colors.white,
         extendBodyBehindAppBar: true,
         body: ListView(

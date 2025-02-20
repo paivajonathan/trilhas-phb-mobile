@@ -47,6 +47,7 @@ class MainBottomNavigation extends StatelessWidget {
             label: "Classificação",
           ),
         const BottomNavigationBarItem(
+          key: ValueKey("mainbottomnavigation_profile"),
           icon: Icon(Icons.person),
           label: "Perfil",
         ),

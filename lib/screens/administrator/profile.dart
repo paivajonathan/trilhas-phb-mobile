@@ -208,6 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             GestureDetector(
               child: Text(
+                key: ValueKey("profilescreen_leavetext"),
                 "Sair",
                 style: Theme.of(context).textTheme.bodyLarge,
               ),

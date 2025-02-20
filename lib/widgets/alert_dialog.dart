@@ -47,6 +47,7 @@ class DialogWidget extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: DialogButton(
+                key: ValueKey("dialogwidget_confirmbutton"),
                 text: continueText,
                 primary: true,
                 color: isDestructiveAction ? Colors.red : AppColors.primary,
