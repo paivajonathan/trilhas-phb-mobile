@@ -6,9 +6,7 @@ import 'package:trilhas_phb/models/user_data.dart';
 import 'package:trilhas_phb/screens/authentication/login.dart';
 import 'package:provider/provider.dart';
 import 'package:trilhas_phb/providers/user_data.dart';
-import 'package:trilhas_phb/screens/authentication/registration/login_data.dart';
 import 'package:trilhas_phb/screens/authentication/registration/personal_data.dart';
-import 'package:trilhas_phb/screens/navigation_wrapper.dart';
 import 'package:trilhas_phb/services/auth.dart';
 import 'package:mockito/mockito.dart';
 
@@ -17,7 +15,6 @@ import 'login_screen_test.mocks.dart';
 @GenerateNiceMocks([MockSpec<AuthService>()])
 void main() {
   late MockAuthService mockAuthService;
-  late UserProfileModel userProfileModel;
   late Map<String, dynamic> sharedData;
 
   setUpAll(() async {
