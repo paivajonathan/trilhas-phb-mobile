@@ -1,10 +1,16 @@
 import 'package:flutter_map/flutter_map.dart';
 import 'package:gpx/gpx.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:trilhas_phb/helpers/validators.dart';
 
 List<LatLng> parseGpx(String gpxData) {
-  Gpx gpx = GpxReader().fromString(gpxData);
   List<LatLng> result = [];
+
+  if (!isGpxValid(gpxData)) {
+    return result;
+  }
+
+  Gpx gpx = GpxReader().fromString(gpxData);
 
   if (gpx.trks.isNotEmpty) {
     for (int i = 0; i < gpx.trks.length; i++) {

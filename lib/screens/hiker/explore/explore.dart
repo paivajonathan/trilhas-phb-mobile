@@ -113,6 +113,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
         backgroundColor: Colors.white,
         appBar: TabNavigation(tabsTitles: _tabsTitles),
         body: TabBarView(
+          physics: const NeverScrollableScrollPhysics(),
           children: [
             ExploreAllScreen(
               availableAppointments: _availableAppointments,

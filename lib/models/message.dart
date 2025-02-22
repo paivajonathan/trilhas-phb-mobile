@@ -37,4 +37,14 @@ class MessageModel {
   String get readableTimestamp {
     return "$readableDate $readableTime";
   }
+
+  String get readableSender {
+    final names = sender.split(" ");
+
+    if (names.length == 1) {
+      return names.first;
+    }
+
+    return "${names.first} ${names.last}";
+  }
 }

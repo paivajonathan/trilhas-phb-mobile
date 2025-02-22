@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 
 class DecoratedTextFormField extends StatelessWidget {
@@ -12,6 +13,7 @@ class DecoratedTextFormField extends StatelessWidget {
     String? initialValue,
     String? hintText,
     TextInputType? textInputType,
+    List<TextInputFormatter>? inputFormatters,
     TextEditingController? controller,
     Function()? onPasswordToggle,
     String? Function(String?)? validator,
@@ -24,6 +26,7 @@ class DecoratedTextFormField extends StatelessWidget {
     _initialValue = initialValue,
     _hintText = hintText,
     _textInputType = textInputType,
+    _inputFormatters = inputFormatters,
     _controller = controller,
     _onPasswordToggle = onPasswordToggle,
     _validator = validator,
@@ -36,6 +39,7 @@ class DecoratedTextFormField extends StatelessWidget {
   final String? _initialValue;
   final String? _hintText;
   final TextInputType? _textInputType;
+  final List<TextInputFormatter>? _inputFormatters;
   final TextEditingController? _controller;
   final void Function()? _onPasswordToggle;
   final String? Function(String?)? _validator;
@@ -50,6 +54,7 @@ class DecoratedTextFormField extends StatelessWidget {
       onChanged: _onChanged,
       initialValue: _initialValue,
       keyboardType: _textInputType,
+      inputFormatters: _inputFormatters,
       maxLines: _maxLines,
       obscureText: _isPassword && !_isPasswordVisible,
       decoration: InputDecoration(

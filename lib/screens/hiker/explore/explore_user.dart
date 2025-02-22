@@ -24,6 +24,7 @@ class ExploreUserScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       color: AppColors.primary,
+      backgroundColor: Colors.white,
       onRefresh: () async {
         onUpdate();
       },
@@ -44,13 +45,18 @@ class ExploreUserScreen extends StatelessWidget {
                 if (isUserAppointmentsLoading) {
                   return const Loader();
                 }
-      
+
                 if (isUserAppointmentsLoadingError != null) {
-                  return Center(
-                    child: Text(isUserAppointmentsLoadingError!),
+                  return Stack(
+                    children: <Widget>[
+                      Center(
+                        child: Text(isUserAppointmentsLoadingError!),
+                      ),
+                      ListView()
+                    ],
                   );
                 }
-      
+
                 if (userAppointments.isEmpty) {
                   return Stack(
                     children: <Widget>[
@@ -61,7 +67,7 @@ class ExploreUserScreen extends StatelessWidget {
                     ],
                   );
                 }
-      
+
                 return ListView.separated(
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.symmetric(horizontal: 20),

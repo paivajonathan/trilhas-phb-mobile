@@ -7,10 +7,14 @@ class FutureButton extends StatefulWidget {
     required this.text,
     required this.primary,
     required this.future,
+    this.color = AppColors.primary,
+    this.disableDependencies,
   });
 
   final String text;
   final bool primary;
+  final Color color;
+  final List<bool>? disableDependencies;
   final Future<void> Function() future;
 
   @override
@@ -36,41 +40,43 @@ class _FutureButtonState extends State<FutureButton> {
 
   @override
   Widget build(BuildContext context) {
+    void Function()? onPressed = () => _handleOnPressed();
+
+    if (_isLoading ||
+        ((widget.disableDependencies != null) &&
+            (widget.disableDependencies!.any((d) => d)))) {
+      onPressed = null;
+    }
+
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _isLoading ? null : () => _handleOnPressed(),
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: widget.primary
-            ? AppColors.primary
-            : Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          side: widget.primary
-            ? null
-            : const BorderSide(color: AppColors.primary, width: 1)
-        ),
-        child: _isLoading 
-          ? const SizedBox(
-              height: 23.0,
-              width: 23.0,
-              child: Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white)
-                )
-              ),
-            )
-          : Text(
-              widget.text,
-              style: TextStyle(
-                color: widget.primary
-                  ?Colors.white
-                  : AppColors.primary,
-                fontSize: 16,
-              ),
+            backgroundColor: widget.primary ? widget.color : Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
+            side: widget.primary
+                ? null
+                : BorderSide(color: widget.color, width: 1)),
+        child: _isLoading
+            ? SizedBox(
+                height: 23.0,
+                width: 23.0,
+                child: Center(
+                    child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                            widget.primary ? Colors.white : widget.color))),
+              )
+            : Text(
+                widget.text,
+                style: TextStyle(
+                  color: widget.primary ? Colors.white : widget.color,
+                  fontSize: 16,
+                ),
+              ),
       ),
     );
   }

@@ -36,7 +36,9 @@ class MessageBubbleWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    chatMessage.sender,
+                    chatMessage.readableSender,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 13, color: Colors.white),
                   ),
                   const SizedBox(height: 5),

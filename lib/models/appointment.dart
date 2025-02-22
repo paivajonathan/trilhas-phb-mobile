@@ -8,6 +8,7 @@ class AppointmentModel {
     required this.isActive,
     required this.isAvailable,
     required this.hasUserParticipation,
+    required this.hasFrequencyMade,
   });
 
   final int id;
@@ -15,6 +16,7 @@ class AppointmentModel {
   final bool isActive;
   final bool isAvailable;
   final bool hasUserParticipation;
+  final bool hasFrequencyMade;
   final HikeModel hike;
 
   factory AppointmentModel.fromMap(Map<String, dynamic> map) {
@@ -24,6 +26,7 @@ class AppointmentModel {
       isActive: map["is_active"],
       isAvailable: map["is_available"],
       hasUserParticipation: map["has_user_participation"],
+      hasFrequencyMade: map["has_frequency_made"],
       hike: HikeModel.fromMap(map["hike"]),
     );
   }

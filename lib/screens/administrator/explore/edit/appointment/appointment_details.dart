@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
 import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/screens/administrator/explore/edit/appointment/appointment_edit.dart';
+import 'package:trilhas_phb/screens/administrator/explore/edit/appointment/participation_view.dart';
 import 'package:trilhas_phb/services/appointment.dart';
 import 'package:trilhas_phb/widgets/alert_dialog.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
@@ -35,56 +36,76 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Informações",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: SizedBox(
-            height: 20,
-            width: 20,
-            child: Image.asset("assets/icon_voltar.png"),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) {
+          return;
+        }
+
+        Navigator.of(context).pop(wasEdited);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Informações",
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          onPressed: () {
-            Navigator.of(context).pop(wasEdited);
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: SizedBox(
+              height: 20,
+              width: 20,
+              child: Image.asset("assets/icon_voltar.png"),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(wasEdited);
+            },
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.remove_red_eye),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                  return ParticipationViewScreen(appointmentId: widget.appointmentId);
+                }));
+              },
+            ),
+          ],
+        ),
+        body: FutureBuilder(
+          future: _appointmentService.getOne(appointmentId: widget.appointmentId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
+            }
+      
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(snapshot.error!.toString()),
+              );
+            }
+      
+            if (snapshot.data == null) {
+              return const Center(
+                child: Text("Não há dados para mostrar."),
+              );
+            }
+      
+            return Stack(
+              children: [
+                MapView(appointment: snapshot.data!),
+                BottomDrawer(
+                  appointment: snapshot.data!,
+                  onUpdate: _reloadScreen,
+                ),
+              ],
+            );
           },
         ),
-      ),
-      body: FutureBuilder(
-        future: _appointmentService.getOne(appointmentId: widget.appointmentId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error!.toString()),
-            );
-          }
-
-          if (snapshot.data == null) {
-            return const Center(
-              child: Text("Não há dados para mostrar."),
-            );
-          }
-
-          return Stack(
-            children: [
-              MapView(appointment: snapshot.data!),
-              BottomDrawer(
-                appointment: snapshot.data!,
-                onUpdate: _reloadScreen,
-              ),
-            ],
-          );
-        },
       ),
     );
   }
@@ -121,9 +142,11 @@ class _BottomDrawerState extends State<BottomDrawer> {
     final keepAction = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const BlurryDialogWidget(
-          title: "Deseja continuar?",
-          content: "Tem certeza de que deseja continuar?",
+        return const DialogWidget(
+          title: "Inativar agendamento",
+          content: "Você realmente deseja inativar esse agendamento?",
+          continueText: "Inativar",
+          isDestructiveAction: true,
         );
       },
     );
@@ -180,7 +203,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
   @override
   Widget build(BuildContext context) {
     String name = widget.appointment.hike.name;
-    String length = widget.appointment.hike.length.toString();
+    String length = widget.appointment.hike.readableLength;
     String difficulty = widget.appointment.hike.readableDifficulty;
     String date = widget.appointment.readableDate;
     String time = widget.appointment.readableTime;
@@ -275,12 +298,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 25),
-                      Text("DISTÂNCIA: $length"),
+                      Text("DISTÂNCIA: $length Km"),
                       Text("DIFICULDADE: $difficulty"),
                       Text("DATA: $date"),
                       Text("HORÁRIO: $time"),
                       const SizedBox(height: 25),
-                      const Text("Sobre"),
+                      const Text("SOBRE"),
                       Text(description),
                     ],
                   ),
@@ -291,8 +314,8 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     children: [
                       Expanded(
                         child: DecoratedButton(
-                          primary: true,
-                          text: "EDITAR",
+                          primary: false,
+                          text: "Editar",
                           onPressed: () => _handleEdit(),
                         ),
                       ),
@@ -302,7 +325,8 @@ class _BottomDrawerState extends State<BottomDrawer> {
                       Expanded(
                         child: FutureButton(
                           primary: false,
-                          text: "INATIVAR",
+                          text: "Inativar",
+                          color: Colors.red,
                           future: _handleInactivate,
                         ),
                       ),

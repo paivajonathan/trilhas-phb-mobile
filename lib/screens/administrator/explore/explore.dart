@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:trilhas_phb/models/appointment.dart";
 import "package:trilhas_phb/models/hike.dart";
 import "package:trilhas_phb/screens/administrator/explore/explore_appointments.dart";
+import "package:trilhas_phb/screens/administrator/explore/explore_finished_appointments.dart";
 import "package:trilhas_phb/screens/administrator/explore/explore_hikes.dart";
 import "package:trilhas_phb/services/appointment.dart";
 import "package:trilhas_phb/services/hike.dart";
@@ -18,10 +19,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
   final _appointmentService = AppointmentService();
   final _hikeService = HikeService();
 
+  List<AppointmentModel> _finishedAppointments = [];
+  bool _isFinishedAppointmentsLoading = false;
+  String? _isFinishedAppointmentsLoadingError;
+
   List<AppointmentModel> _appointments = [];
   bool _isAppointmentsLoading = false;
   String? _isAppointmentsLoadingError;
-  
+
   List<HikeModel> _hikes = [];
   bool _isHikesLoading = false;
   String? _isHikesLoadingError;
@@ -33,7 +38,40 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   void _loadData() {
-    Future.wait([_loadAppointments(), _loadHikes()]);
+    Future.wait([
+      _loadFinishedAppointments(),
+      _loadAppointments(),
+      _loadHikes(),
+    ]);
+  }
+
+  Future<void> _loadFinishedAppointments() async {
+    try {
+      setState(() {
+        _isFinishedAppointmentsLoading = true;
+      });
+
+      final finishedAppointments = await _appointmentService.getAll(
+        isActive: true,
+        isAvailable: false,
+        hasFrequencyMade: false,
+      );
+
+      setState(() {
+        _finishedAppointments = finishedAppointments;
+        _isFinishedAppointmentsLoadingError = null;
+      });
+    } catch (e) {
+      setState(() {
+        _finishedAppointments = [];
+        _isFinishedAppointmentsLoadingError =
+            e.toString().replaceAll("Exception: ", "");
+      });
+    } finally {
+      setState(() {
+        _isFinishedAppointmentsLoading = false;
+      });
+    }
   }
 
   Future<void> _loadAppointments() async {
@@ -54,7 +92,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
     } catch (e) {
       setState(() {
         _appointments = [];
-        _isAppointmentsLoadingError = e.toString().replaceAll("Exception: ", "");
+        _isAppointmentsLoadingError =
+            e.toString().replaceAll("Exception: ", "");
       });
     } finally {
       setState(() {
@@ -94,6 +133,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   final _tabsTitles = [
+    "CONCLUÍDAS",
     "AGENDADAS",
     "CADASTRADAS",
   ];
@@ -107,7 +147,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
         backgroundColor: Colors.white,
         appBar: TabNavigation(tabsTitles: _tabsTitles),
         body: TabBarView(
+          physics: const NeverScrollableScrollPhysics(),
           children: [
+            ExploreFinishedAppointmentsScreen(
+              finishedAppointments: _finishedAppointments,
+              isFinishedAppointmentsLoading: _isFinishedAppointmentsLoading,
+              isFinishedAppointmentsLoadingError:
+                  _isFinishedAppointmentsLoadingError,
+              onUpdate: _loadData,
+            ),
             ExploreAppointmentsScreen(
               appointments: _appointments,
               isAppointmentsLoading: _isAppointmentsLoading,
@@ -120,9 +168,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
               isHikesLoadingError: _isHikesLoadingError,
               onUpdate: _loadData,
             ),
-          ]
-        )
-      )
+          ],
+        ),
+      ),
     );
   }
 }

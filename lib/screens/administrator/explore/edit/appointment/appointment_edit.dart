@@ -89,22 +89,18 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
       return "Data inválida.";
     }
 
-    DateTime? desiredTime = DateFormat("HH:mm").tryParseStrict(
-      _timeController.text,
+    final currentTimestamp = DateTime.now().copyWith(
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+      microsecond: 0,
     );
-
-    if (desiredTime == null) {
-      return null;
-    }
-
-    final currentTimestamp = DateTime.now();
 
     final desiredTimestamp = DateTime(
       desiredDate.year,
       desiredDate.month,
       desiredDate.day,
-      desiredTime.hour,
-      desiredTime.minute,
     );
 
     if (currentTimestamp.compareTo(desiredTimestamp) == 1) {
@@ -144,7 +140,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
     );
 
     if (currentTimestamp.compareTo(desiredTimestamp) == 1) {
-      return "Data inválida.";
+      return "Horário inválido.";
     }
 
     return null;
@@ -169,7 +165,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
               child: Image.asset("assets/icon_voltar.png"),
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.pop(context);
             },
           ),
         ),
@@ -241,7 +237,7 @@ class _AppointmentEditScreenState extends State<AppointmentEditScreen> {
                 const Spacer(),
                 DecoratedButton(
                   primary: true,
-                  text: "EDITAR",
+                  text: "Editar",
                   isLoading: _isLoading,
                   onPressed: _isLoading ? null : () => _handleSubmit(context),
                 ),

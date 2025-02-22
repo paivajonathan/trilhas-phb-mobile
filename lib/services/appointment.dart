@@ -15,6 +15,7 @@ class AppointmentService {
       bool? isActive,
       bool? isAvailable,
       bool? hasUserParticipation,
+      bool? hasFrequencyMade,
     }
   ) async {
     String token = await _auth.token;
@@ -23,6 +24,7 @@ class AppointmentService {
     if (hasUserParticipation != null) queryParameters["has_user_participation"] = hasUserParticipation.toString();
     if (isActive != null) queryParameters["is_active"] = isActive.toString();
     if (isAvailable != null) queryParameters["is_available"] = isAvailable.toString();
+    if (hasFrequencyMade != null) queryParameters["has_frequency_made"] = hasFrequencyMade.toString();
     
     final uri = Uri.parse("$_baseUrl/api/v1/appointments/").replace(queryParameters: queryParameters);
 
@@ -35,7 +37,7 @@ class AppointmentService {
           "Origin": _baseUrl,
           "Authorization": "Bearer $token",
         },
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -51,8 +53,8 @@ class AppointmentService {
         .toList();
 
       return appointments;
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -76,7 +78,7 @@ class AppointmentService {
           "Origin": _baseUrl,
           "Authorization": "Bearer $token",
         },
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -89,8 +91,8 @@ class AppointmentService {
 
       AppointmentModel appointment = AppointmentModel.fromMap(responseData);
       return appointment;
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -122,7 +124,7 @@ class AppointmentService {
             "time": time,
           },
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -132,8 +134,8 @@ class AppointmentService {
           responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
         );
       }
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    
@@ -164,7 +166,7 @@ class AppointmentService {
             "time": time,
           },
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -174,8 +176,8 @@ class AppointmentService {
           responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
         );
       }
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    
@@ -198,7 +200,7 @@ class AppointmentService {
           "Origin": _baseUrl,
           "Authorization": "Bearer $token",
         },
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -208,8 +210,8 @@ class AppointmentService {
           responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
         );
       }
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    

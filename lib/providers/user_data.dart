@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:trilhas_phb/models/user_data.dart';
 
 class UserDataProvider extends ChangeNotifier {
-  UserDataModel? _userData;
+  UserProfileModel? _userData;
 
-  void setUserData(UserDataModel? userData) {
+  void setUserData(UserProfileModel? userData) {
     _userData = userData;
     notifyListeners();
   }
@@ -14,7 +14,7 @@ class UserDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  UserDataModel? get userData {
+  UserProfileModel? get userData {
     return _userData;
   }
 }

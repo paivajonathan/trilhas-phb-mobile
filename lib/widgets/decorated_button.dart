@@ -8,11 +8,13 @@ class DecoratedButton extends StatelessWidget {
     required this.primary,
     required this.onPressed,
     this.isLoading = false,
+    this.color = AppColors.primary,
   });
 
   final String text;
   final bool primary;
   final bool isLoading;
+  final Color color;
   final void Function()? onPressed;
 
   @override
@@ -23,7 +25,7 @@ class DecoratedButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: primary
-            ? AppColors.primary
+            ? color
             : Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 20),
           shape: RoundedRectangleBorder(
@@ -31,15 +33,15 @@ class DecoratedButton extends StatelessWidget {
           ),
           side: primary
             ? null
-            : const BorderSide(color: AppColors.primary, width: 1)
+            : BorderSide(color: color, width: 1)
         ),
         child: isLoading 
-          ? const SizedBox(
+          ? SizedBox(
               height: 23.0,
               width: 23.0,
               child: Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white)
+                  valueColor: AlwaysStoppedAnimation<Color>(primary ? Colors.white : color)
                 )
               ),
             )
@@ -48,7 +50,7 @@ class DecoratedButton extends StatelessWidget {
               style: TextStyle(
                 color: primary
                   ?Colors.white
-                  : AppColors.primary,
+                  : color,
                 fontSize: 16,
               ),
             ),

@@ -23,6 +23,7 @@ class ExploreAvailableScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       color: AppColors.primary,
+      backgroundColor: Colors.white,
       onRefresh: () async {
         onUpdate();
       },
@@ -45,10 +46,13 @@ class ExploreAvailableScreen extends StatelessWidget {
                 }
       
                 if (isAvailableAppointmentsLoadingError != null) {
-                  return Center(
-                    child: Text(
-                      isAvailableAppointmentsLoadingError!,
-                    ),
+                  return Stack(
+                    children: <Widget>[
+                      Center(
+                        child: Text(isAvailableAppointmentsLoadingError!),
+                      ),
+                      ListView()
+                    ],
                   );
                 }
       

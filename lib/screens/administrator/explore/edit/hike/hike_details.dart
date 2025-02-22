@@ -35,56 +35,66 @@ class _HikeDetailsScreenState extends State<HikeDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          "Informações",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        leading: IconButton(
-          icon: SizedBox(
-            height: 20,
-            width: 20,
-            child: Image.asset("assets/icon_voltar.png"),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) {
+          return;
+        }
+
+        Navigator.of(context).pop(wasEdited);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text(
+            "Informações",
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          onPressed: () {
-            Navigator.of(context).pop(wasEdited);
+          leading: IconButton(
+            icon: SizedBox(
+              height: 20,
+              width: 20,
+              child: Image.asset("assets/icon_voltar.png"),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(wasEdited);
+            },
+          ),
+        ),
+        body: FutureBuilder(
+          future: _hikeService.getOne(hikeId: widget.hikeId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
+            }
+      
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(snapshot.error!.toString()),
+              );
+            }
+      
+            if (snapshot.data == null) {
+              return const Center(
+                child: Text("Não há dados para mostrar."),
+              );
+            }
+      
+            return Stack(
+              children: [
+                MapView(hike: snapshot.data!),
+                BottomDrawer(
+                  hike: snapshot.data!,
+                  onUpdate: _reloadScreen,
+                ),
+              ],
+            );
           },
         ),
-      ),
-      body: FutureBuilder(
-        future: _hikeService.getOne(hikeId: widget.hikeId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error!.toString()),
-            );
-          }
-
-          if (snapshot.data == null) {
-            return const Center(
-              child: Text("Não há dados para mostrar."),
-            );
-          }
-
-          return Stack(
-            children: [
-              MapView(hike: snapshot.data!),
-              BottomDrawer(
-                hike: snapshot.data!,
-                onUpdate: _reloadScreen,
-              ),
-            ],
-          );
-        },
       ),
     );
   }
@@ -121,9 +131,11 @@ class _BottomDrawerState extends State<BottomDrawer> {
     final keepAction = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return const BlurryDialogWidget(
-          title: "Deseja continuar?",
-          content: "Tem certeza de que deseja continuar?",
+        return const DialogWidget(
+          title: "Inativar trilha",
+          content: "Você realmente deseja inativar essa trilha?",
+          continueText: "Inativar",
+          isDestructiveAction: true,
         );
       },
     );
@@ -143,7 +155,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
         ..showSnackBar(
-          const SnackBar(content: Text("Agendamento inativado com sucesso!")),
+          const SnackBar(content: Text("Trilha inativada com sucesso!")),
         );
 
       Navigator.of(context).pop(true);
@@ -178,7 +190,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
   @override
   Widget build(BuildContext context) {
     String name = widget.hike.name;
-    String length = widget.hike.length.toString();
+    String length = widget.hike.readableLength;
     String difficulty = widget.hike.readableDifficulty;
     String description = widget.hike.description;
 
@@ -272,7 +284,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 25),
-                      Text("DISTÂNCIA: $length KM"),
+                      Text("DISTÂNCIA: $length Km"),
                       Text("DIFICULDADE: $difficulty"),
                       const SizedBox(height: 25),
                       const Text("SOBRE"),
@@ -286,8 +298,8 @@ class _BottomDrawerState extends State<BottomDrawer> {
                     children: [
                       Expanded(
                         child: DecoratedButton(
-                          primary: true,
-                          text: "EDITAR",
+                          primary: false,
+                          text: "Editar",
                           onPressed: () => _handleEdit(),
                         ),
                       ),
@@ -297,7 +309,8 @@ class _BottomDrawerState extends State<BottomDrawer> {
                       Expanded(
                         child: FutureButton(
                           primary: false,
-                          text: "INATIVAR",
+                          text: "Inativar",
+                          color: Colors.red,
                           future: _handleInactivate,
                         ),
                       ),

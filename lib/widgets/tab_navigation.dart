@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:trilhas_phb/constants/app_colors.dart';
-import 'package:trilhas_phb/widgets/tab_navigation_item.dart';
 
 class TabNavigation extends StatefulWidget implements PreferredSizeWidget {
   const TabNavigation({
     super.key,
-    required List<String> tabsTitles,
-  }) : _tabsTitles = tabsTitles;
+    required this.tabsTitles,
+  });
 
-  final List<String> _tabsTitles;
+  final List<String> tabsTitles;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -23,23 +22,26 @@ class _TabsNavigationState extends State<TabNavigation> {
     return AppBar(
       elevation: 0,
       backgroundColor: Colors.white,
-      bottom: TabBar(
+      bottom: TabBar(        
         unselectedLabelColor: AppColors.primary,
-        indicatorSize: TabBarIndicatorSize.label,
+        indicatorSize: TabBarIndicatorSize.tab,
+        tabAlignment: TabAlignment.center,
+        indicatorAnimation: TabIndicatorAnimation.elastic,
+        isScrollable: true,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         labelColor: Colors.white,
-        indicator: BoxDecoration(borderRadius: BorderRadius.circular(50), color: AppColors.primary),
+        indicator: BoxDecoration(
+            borderRadius: BorderRadius.circular(50), color: AppColors.primary),
         dividerColor: Colors.transparent,
         splashFactory: NoSplash.splashFactory,
         overlayColor: WidgetStateProperty.resolveWith<Color?>(
-          (Set<WidgetState> states) => states.contains(WidgetState.focused)
-            ? null
-            : Colors.transparent
-        ),
-        tabs: [
-          for (final tabTitle in widget._tabsTitles)
-            TabNavigationItem(tabTitle: tabTitle),
-        ]
-      )
+            (Set<WidgetState> states) => states.contains(WidgetState.focused)
+                ? null
+                : Colors.transparent),
+        tabs: widget.tabsTitles
+            .map((e) => Tab(child: Container(width: 100, alignment: Alignment.center, child: Text(e),),))
+            .toList(),
+      ),
     );
   }
 }

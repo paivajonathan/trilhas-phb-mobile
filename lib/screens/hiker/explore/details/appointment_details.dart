@@ -5,6 +5,7 @@ import 'package:trilhas_phb/helpers/map.dart';
 import 'package:trilhas_phb/models/appointment.dart';
 import 'package:trilhas_phb/services/hike.dart';
 import 'package:trilhas_phb/services/participation.dart';
+import 'package:trilhas_phb/widgets/alert_dialog.dart';
 import 'package:trilhas_phb/widgets/decorated_button.dart';
 
 class AppointmentDetailsScreen extends StatefulWidget {
@@ -30,6 +31,16 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
         title: const Text(
           "Informações",
           style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        leading: IconButton(
+          icon: SizedBox(
+            height: 20,
+            width: 20,
+            child: Image.asset("assets/icon_voltar.png"),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
       ),
       body: Stack(
@@ -132,13 +143,29 @@ class _BottomDrawerState extends State<BottomDrawer> {
     }
   }
 
-  Future<void> _handleParticipation(BuildContext context) async {
+  Future<void> _handleParticipation() async {
     try {
       setState(() {
         _isButtonLoading = true;
       });
 
       if (_doesUserParticipate) {
+        final keepAction = await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const DialogWidget(
+              title: "Cancelar participação",
+              content: "Você realmente deseja cancelar a sua participação?",
+              cancelText: "Não",
+              continueText: "Cancelar",
+              isDestructiveAction: true,
+            );
+          },
+        );
+
+        if (keepAction == null) return;
+        if (!keepAction) return;
+
         await _participationService.cancel(
           appointmentId: widget._appointment.id,
         );
@@ -147,7 +174,9 @@ class _BottomDrawerState extends State<BottomDrawer> {
           _doesUserParticipate = false;
         });
 
-        if (!context.mounted) return;
+        if (!mounted) {
+          return;
+        }
 
         ScaffoldMessenger.of(context)
           ..clearSnackBars()
@@ -156,29 +185,33 @@ class _BottomDrawerState extends State<BottomDrawer> {
               content: Text("Participação cancelada com sucesso."),
             ),
           );
+      } else {
+        await _participationService.create(
+          appointmentId: widget._appointment.id,
+        );
 
+        setState(() {
+          _doesUserParticipate = true;
+        });
+
+        if (!mounted) {
+          return;
+        }
+
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text("Participação registrada com sucesso."),
+            ),
+          );
+      }
+    } catch (e) {
+      if (!mounted) {
         return;
       }
 
-      await _participationService.create(
-        appointmentId: widget._appointment.id,
-      );
-
-      setState(() {
-        _doesUserParticipate = true;
-      });
-
-      if (!context.mounted) return;
-
-      ScaffoldMessenger.of(context)
-        ..clearSnackBars()
-        ..showSnackBar(
-          const SnackBar(content: Text("Participação registrada com sucesso.")),
-        );
-    } catch (e) {
-      if (!context.mounted) return;
-
-      late String message = _doesUserParticipate
+      final message = _doesUserParticipate
           ? "Ocorreu um erro ao tentar cancelar a sua participação na trilha."
           : "Ocorreu um erro ao tentar fixar sua participação na trilha.";
 
@@ -201,7 +234,7 @@ class _BottomDrawerState extends State<BottomDrawer> {
   @override
   Widget build(BuildContext context) {
     String name = widget._appointment.hike.name;
-    String length = widget._appointment.hike.length.toString();
+    String length = widget._appointment.hike.readableLength;
     String difficulty = widget._appointment.hike.readableDifficulty;
     String date = widget._appointment.readableDate;
     String time = widget._appointment.readableTime;
@@ -281,12 +314,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 25),
-                      Text("DISTÂNCIA: $length"),
+                      Text("DISTÂNCIA: $length Km"),
                       Text("DIFICULDADE: $difficulty"),
                       Text("DATA: $date"),
                       Text("HORÁRIO: $time"),
                       const SizedBox(height: 25),
-                      const Text("Sobre"),
+                      const Text("SOBRE"),
                       Text(description),
                     ],
                   ),
@@ -296,9 +329,12 @@ class _BottomDrawerState extends State<BottomDrawer> {
                   child: DecoratedButton(
                     primary: _doesUserParticipate ? false : true,
                     text: _doesUserParticipate
-                        ? "CANCELAR INSCRIÇÃO"
-                        : "PARTICIPAR",
-                    onPressed: _isButtonLoading ? null : () => _handleParticipation(context),
+                        ? "Cancelar Inscrição"
+                        : "Participar",
+                    color:
+                        _doesUserParticipate ? Colors.red : AppColors.primary,
+                    onPressed:
+                        _isButtonLoading ? null : () => _handleParticipation(),
                     isLoading: _isButtonLoading,
                   ),
                 )

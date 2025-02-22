@@ -7,17 +7,29 @@ import "package:trilhas_phb/models/user_data.dart";
 import "package:trilhas_phb/services/storage.dart";
 
 class AuthService {
-  final _baseUrl = dotenv.env["BASE_URL"];
+  static AuthService? _instance;
+
+  factory AuthService() {
+    return _instance ?? AuthService._internal();
+  }
+
+  AuthService._internal(); // Real constructor
+
+  static void setMockInstance(AuthService mock) {
+    _instance = mock;
+  }
+
+  final _baseUrl = dotenv.env["BASE_URL"]!;
   final _storage = StorageService();
   
-  Future<UserDataModel?> get userData async {
+  Future<UserProfileModel?> get userData async {
     var (storedUserData, storedToken) = await _storage.loadKeys();
 
     if (storedUserData == null || storedToken == null) return null;
 
     if (Jwt.isExpired(storedToken)) return null;
 
-    final userData = UserDataModel.fromMap(json.decode(storedUserData));
+    final userData = UserProfileModel.fromMap(json.decode(storedUserData));
 
     return userData;
   }
@@ -31,7 +43,7 @@ class AuthService {
     await _storage.destroyKeys();
   }
 
-  Future<UserDataModel> login({
+  Future<UserProfileModel> login({
     required String email,
     required String password,
   }) async {
@@ -43,13 +55,13 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "Origin": _baseUrl!,
+          "Origin": _baseUrl,
         },
         body: json.encode({
           "email": email,
           "password": password,
         }),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -62,15 +74,15 @@ class AuthService {
 
       final token = responseData["token"];
       final userData = {
-        "id": responseData["user"]["id"],
-        "type": responseData["user"]["user_type"],
+        "user": responseData["user"],
+        "profile": responseData["profile"],
       };
 
       await _storage.saveKeys(token, userData);
 
-      return UserDataModel.fromMap(userData);
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+      return UserProfileModel.fromMap(userData);
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }
@@ -94,7 +106,7 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "Origin": _baseUrl!,
+          "Origin": _baseUrl,
         },
         body: json.encode(
           {
@@ -110,7 +122,7 @@ class AuthService {
             }
           }
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -120,8 +132,8 @@ class AuthService {
           responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
         );
       }
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    
@@ -140,14 +152,14 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "Origin": _baseUrl!,
+          "Origin": _baseUrl,
         },
         body: json.encode(
           {
             "email": email,
           }
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -159,8 +171,8 @@ class AuthService {
       }
 
       return responseData["message"];
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    
@@ -180,7 +192,7 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "Origin": _baseUrl!,
+          "Origin": _baseUrl,
         },
         body: json.encode(
           {
@@ -188,7 +200,7 @@ class AuthService {
             "confirmation_code": confirmationCode,
           }
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -200,8 +212,8 @@ class AuthService {
       }
 
       return responseData["message"];
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    
@@ -222,7 +234,7 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
-          "Origin": _baseUrl!,
+          "Origin": _baseUrl,
         },
         body: json.encode(
           {
@@ -231,7 +243,7 @@ class AuthService {
             "password": newPassword,
           }
         ),
-      ).timeout(const Duration(seconds: 10));
+      );
 
       final responseStatus = response.statusCode;
       final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -243,8 +255,38 @@ class AuthService {
       }
 
       return responseData["message"];
-    } on TimeoutException catch (_) {
-      throw Exception("Tempo limite da requisição atingido.");
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
+    } catch (e) {
+      throw Exception(e);
+    }    
+  }
+
+  Future<void> inactivateAccount() async {
+    try {
+      String token = await this.token;
+      final url = Uri.parse("$_baseUrl/api/v1/users/");
+    
+      final response = await http.patch(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": _baseUrl,
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      final responseStatus = response.statusCode;
+      final responseData = json.decode(response.body) as Map<String, dynamic>;
+
+      if (![200, 201].contains(responseStatus)) {
+        throw Exception(
+          responseData["detail"] ?? responseData["message"] ?? "Um erro inesperado ocorreu"
+        );
+      }
+    } on http.ClientException catch (_) {
+      throw Exception("Verifique a sua conexão com a internet.");
     } catch (e) {
       throw Exception(e);
     }    

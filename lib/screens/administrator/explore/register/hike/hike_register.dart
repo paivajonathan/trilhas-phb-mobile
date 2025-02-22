@@ -1,7 +1,10 @@
 import "dart:typed_data";
+import "package:device_info_plus/device_info_plus.dart";
 import "package:flutter/material.dart";
 import "package:file_picker/file_picker.dart";
+import "package:flutter/services.dart";
 import "package:permission_handler/permission_handler.dart";
+import "package:trilhas_phb/helpers/validators.dart";
 import "package:trilhas_phb/services/hike.dart";
 import "package:trilhas_phb/models/file.dart";
 import "package:trilhas_phb/widgets/decorated_label.dart";
@@ -43,9 +46,16 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
         return;
       }
 
-      final storagePermission = await Permission.storage.request();
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      final storageStatus = androidInfo.version.sdkInt < 33
+          ? await Permission.storage.request()
+          : PermissionStatus.granted;
 
-      if (!storagePermission.isGranted) {
+      if (storageStatus == PermissionStatus.permanentlyDenied) {
+        openAppSettings();
+      }
+
+      if (storageStatus != PermissionStatus.granted) {
         if (!mounted) return;
 
         ScaffoldMessenger.of(context)
@@ -159,9 +169,16 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
         return;
       }
 
-      final storagePermission = await Permission.storage.request();
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      final storageStatus = androidInfo.version.sdkInt < 33
+          ? await Permission.storage.request()
+          : PermissionStatus.granted;
 
-      if (!storagePermission.isGranted) {
+      if (storageStatus == PermissionStatus.permanentlyDenied) {
+        openAppSettings();
+      }
+
+      if (storageStatus != PermissionStatus.granted) {
         if (!mounted) return;
 
         ScaffoldMessenger.of(context)
@@ -346,10 +363,6 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
       return "Digite o nome da trilha.";
     }
 
-    if (value.length > 50) {
-      return "O nome da trilha não pode possuir mais do que 50 caracteres.";
-    }
-
     return null;
   }
 
@@ -362,16 +375,16 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
       return "Valor inválido.";
     }
 
+    if (!isDecimalValid(value, 15, 2)) {
+      return "Valor inválido.";
+    }
+
     return null;
   }
 
   String? _validateDescription(String? value) {
     if (value == null || value.isEmpty) {
       return "Digite a descrição da trilha.";
-    }
-
-    if (value.length > 200) {
-      return "A descrição da trilha não pode possuir mais do que 200 caracteres.";
     }
 
     return null;
@@ -384,7 +397,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: true,  // avoid getting hidden keyboard
+        resizeToAvoidBottomInset: true, // avoid getting hidden keyboard
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -431,10 +444,11 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                     hintText: "Digite aqui",
                     controller: _nameController,
                     validator: _validateName,
+                    inputFormatters: [LengthLimitingTextInputFormatter(50)],
                   ),
                   const SizedBox(height: 16),
                   const DecoratedLabel(
-                    content: "Distância Percorrida (km)",
+                    content: "Distância Percorrida (Km)",
                   ),
                   const SizedBox(height: 8),
                   DecoratedTextFormField(
@@ -443,6 +457,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                     controller: _lengthController,
                     hintText: "Digite aqui",
                     validator: _validateLength,
+                    inputFormatters: [LengthLimitingTextInputFormatter(16)],
                   ),
                   const SizedBox(height: 16),
                   const DecoratedLabel(
@@ -577,6 +592,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                     textInputType: TextInputType.multiline,
                     controller: _descriptionController,
                     validator: _validateDescription,
+                    inputFormatters: [LengthLimitingTextInputFormatter(200)],
                     hintText: "Descreva a trilha",
                   ),
                   const SizedBox(height: 16),
@@ -744,7 +760,7 @@ class _HikeRegisterScreenState extends State<HikeRegisterScreen> {
                   FutureButton(
                     future: _handleSubmit,
                     primary: true,
-                    text: "Salvar",
+                    text: "Cadastrar",
                   ),
                   const SizedBox(height: 25),
                 ],

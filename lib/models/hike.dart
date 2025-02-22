@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:trilhas_phb/models/file_out.dart';
 
 class HikeModel {
@@ -49,11 +50,16 @@ class HikeModel {
   }
 
   int get difficultyColor {
-    return switch(difficulty) {
+    return switch (difficulty) {
       "H" => 0xFFFF0000,
       "M" => 0xFFFFDE21,
       "E" => 0xFF00BF63,
       _ => 0xFF000000,
     };
+  }
+
+  String get readableLength {
+    final formatter = NumberFormat("#,##0.00", "pt_BR");
+    return formatter.format(length);
   }
 }

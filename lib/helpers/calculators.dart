@@ -1,5 +1,5 @@
-int calculateAge(DateTime birthDate) {
-  final DateTime today = DateTime.now();
+int calculateAge(DateTime birthDate, [DateTime? today]) {
+  today = today ?? DateTime.now();
 
   int age = today.year - birthDate.year;
 

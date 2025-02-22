@@ -24,6 +24,7 @@ class ExploreAppointmentsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       color: AppColors.primary,
+      backgroundColor: Colors.white,
       onRefresh: () async {
         onUpdate();
       },
@@ -44,7 +45,7 @@ class ExploreAppointmentsScreen extends StatelessWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) {
-                          return HikeChoiceScreen();
+                          return const HikeChoiceScreen();
                         },
                       ),
                     ).then((value) {
@@ -72,10 +73,13 @@ class ExploreAppointmentsScreen extends StatelessWidget {
                 }
       
                 if (isAppointmentsLoadingError != null) {
-                  return Center(
-                    child: Text(
-                      isAppointmentsLoadingError!,
-                    ),
+                  return Stack(
+                    children: <Widget>[
+                      Center(
+                        child: Text(isAppointmentsLoadingError!),
+                      ),
+                      ListView()
+                    ],
                   );
                 }
       

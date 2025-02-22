@@ -354,19 +354,19 @@ class _OtpTextFieldState extends State<OtpTextField> {
     }
   }
 
-  void _handlePaste(String str) {
-    if (str.length > widget.numberOfFields) {
-      str = str.substring(0, widget.numberOfFields);
-    }
+  // void _handlePaste(String str) {
+  //   if (str.length > widget.numberOfFields) {
+  //     str = str.substring(0, widget.numberOfFields);
+  //   }
 
-    for (int i = 0; i < str.length; i++) {
-      String digit = str.substring(i, i + 1);
-      _textControllers[i]!.text = digit;
-      _textControllers[i]!.value = TextEditingValue(text: digit);
-      _verificationCode[i] = digit;
-    }
+  //   for (int i = 0; i < str.length; i++) {
+  //     String digit = str.substring(i, i + 1);
+  //     _textControllers[i]!.text = digit;
+  //     _textControllers[i]!.value = TextEditingValue(text: digit);
+  //     _verificationCode[i] = digit;
+  //   }
 
-    FocusScope.of(context).requestFocus(_focusNodes[widget.numberOfFields - 1]);
-    setState(() {});
-  }
+  //   FocusScope.of(context).requestFocus(_focusNodes[widget.numberOfFields - 1]);
+  //   setState(() {});
+  // }
 }
