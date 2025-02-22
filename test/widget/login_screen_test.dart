@@ -105,18 +105,15 @@ void main() {
       ),
     );
 
-    // Fill the form with valid input
     await tester.enterText(find.byType(TextFormField).at(0), "admin@gmail.com");
     await tester.enterText(find.byType(TextFormField).at(1), "123456");
 
-    // Tap the login button
     final loginButtonFinder = find.byKey(const Key("loginscreen_loginbutton"));
     await tester.ensureVisible(loginButtonFinder);
     await tester.pumpAndSettle();
     await tester.tap(loginButtonFinder);
     await tester.pumpAndSettle();
 
-    // Check if the navigation happened
     expect(find.byType(NavigationWrapper), findsOneWidget);
   });
 }

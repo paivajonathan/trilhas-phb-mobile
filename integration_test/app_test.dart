@@ -110,12 +110,11 @@ void main() {
 
   testWidgets('Create account successful', (WidgetTester tester) async {
     await dotenv.load();
-    await tester.pumpWidget(const MainApp()); // Replace with your main widget
+    await tester.pumpWidget(const MainApp());
     await tester.pumpAndSettle();
 
-    expect(find.text('Bem Vindo(a)!'), findsOneWidget); // Adjust based on UI
+    expect(find.text('Bem Vindo(a)!'), findsOneWidget);
 
-    // Tap the create account button
     final createAccountButtonFinder = find.byKey(
       const Key("loginscreen_createaccountbutton"),
     );
@@ -129,7 +128,6 @@ void main() {
     await tester.tap(createAccountButtonFinder);
     await tester.pumpAndSettle();
 
-    // Check if the navigation happened
     expect(find.byType(LoginData), findsOneWidget);
 
     await tester.enterText(
@@ -140,7 +138,6 @@ void main() {
     await tester.tap(find.byKey(Key("logindatascreen_scaffold")));
     await tester.pumpAndSettle();
 
-    // Tap the continue button
     final continueButtonFinder = find.byKey(
       const Key("logindatascreen_continuebutton"),
     );
